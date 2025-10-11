@@ -1,0 +1,87 @@
+﻿/* Reset và base styles */
+*{margin:0;padding:0;box-sizing:border-box}
+
+.main-header{
+    background:linear-gradient(135deg,#FFD700 0%,#FFC107 100%);
+    box-shadow:0 2px 4px rgba(0,0,0,.1);
+    position:sticky;top:0;z-index:1000;
+}
+
+/* Thu gọn ~30% và gom vào giữa */
+.header-container{
+    max-width:720px;              /* 1040px -> ~720px */
+    margin:0 auto;
+    padding:3px 4px;              /* 4px 6px -> 3px 4px */
+    display:flex;align-items:center;justify-content:space-between;
+    height:30px;                  /* 42px -> 30px */
+}
+
+/* Logo */
+.logo-section{display:flex;align-items:center;min-width:100px;flex-shrink:0}
+.logo-link{display:flex;align-items:center;color:#000;text-decoration:none}
+.logo-circle{width:20px;height:20px;background:#000;border-radius:4px;display:flex;align-items:center;justify-content:center;margin-right:5px;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.logo-icon{font-size:11px;color:#FFD700}
+.logo-text{font-size:11px;font-weight:700;color:#000}
+
+/* Search - chiếm toàn bộ khoảng giữa, chỉ chừa 2 mép 4px */
+.search-section{flex:1 1 auto;max-width:none;margin:0 4px}
+.search-container{display:flex;position:relative}
+.search-input{
+    width:100%;height:24px;padding:0 8px;border:1px solid #ddd;border-radius:12px 0 0 12px;
+    outline:none;font-size:11px;background:#fff
+}
+.search-input::placeholder{color:#999}
+.search-btn{
+    width:28px;height:24px;border:1px solid #ddd;border-left:none;background:#fff;border-radius:0 12px 12px 0;
+    cursor:pointer;display:flex;align-items:center;justify-content:center
+}
+.search-btn:hover{background:#f5f5f5}
+.search-icon{font-size:11px;color:#666}
+
+/* User actions - nhỏ gọn */
+.user-actions{display:flex;align-items:center;gap:4px;min-width:140px;flex-shrink:0;justify-content:flex-end}
+.user-login,.cart-link{
+    display:flex;align-items:center;gap:3px;color:#000;text-decoration:none;
+    font-size:10px;font-weight:500;padding:2px 4px;border-radius:3px;transition:background .3s
+}
+.user-login:hover,.cart-link:hover{background:rgba(255,255,255,.3);color:#000}
+.user-icon,.cart-icon,.location-icon{font-size:11px}
+.location{display:flex;align-items:center;gap:3px;color:#000;font-size:10px;font-weight:500}
+
+/* Nav - đồng bộ bề rộng và thu nhỏ item */
+.main-navigation{background:#FFC107;border-top:1px solid rgba(0,0,0,.1)}
+.nav-container{max-width:720px;margin:0 auto;padding:0 4px}
+.nav-menu{display:flex;list-style:none;margin:0;padding:0;gap:0;flex-wrap:nowrap;overflow:hidden}
+.nav-item{flex:1;min-width:0}
+.nav-link{
+    display:flex;align-items:center;justify-content:center;gap:2px;
+    padding:5px 4px;               /* nhỏ hơn */
+    color:#000;text-decoration:none;font-size:9px;font-weight:500;white-space:nowrap;
+    border-right:1px solid rgba(0,0,0,.08);transition:background .3s;text-overflow:ellipsis;overflow:hidden
+}
+.nav-link:hover{background:rgba(255,255,255,.3);color:#000}
+.nav-icon{font-size:9px;flex-shrink:0}
+
+/* Responsive */
+@media (max-width:1024px){
+    .header-container,.nav-container{max-width:640px}
+    .nav-item:nth-child(n+7){display:none}
+}
+@media (max-width:768px){
+    .header-container{padding:3px;height:28px;max-width:560px}
+    .logo-section{min-width:90px}
+    .logo-text{display:none}
+    .search-section{margin:0 4px}
+    .user-actions{gap:4px;min-width:120px}
+    .nav-container{max-width:560px}
+    .nav-item:nth-child(n+6){display:none}
+    .nav-link{padding:4px 3px;font-size:8px}
+}
+@media (max-width:480px){
+    .header-container{height:26px;max-width:100%}
+    .logo-circle{width:18px;height:18px}
+    .search-input,.search-btn{height:22px}
+    .nav-item:nth-child(n+5){display:none}
+    .nav-link{padding:3px 2px;font-size:8px}
+    .nav-icon{font-size:8px}
+}

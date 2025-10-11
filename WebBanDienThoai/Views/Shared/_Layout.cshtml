@@ -3,35 +3,163 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - Thế Giới Di Động</title>
     @Styles.Render("~/Content/css")
+    <link href="~/Content/header-style.css" rel="stylesheet" />
+    <link href="~/Content/footer-style.css" rel="stylesheet" />
+
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-        <div class="container">
-            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                </ul>
+    <!-- Header Section - Thay thế navbar cũ -->
+    <header class="main-header">
+        <div class="header-container">
+            <!-- Logo -->
+            <div class="logo-section">
+                <a href="@Url.Action("Index", "Home")" class="logo-link">
+                    <div class="logo-circle">
+                        <span class="logo-icon">📱</span>
+                    </div>
+                    <span class="logo-text">thegioididong</span>
+                </a>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-section">
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Laptop nhập học...">
+                    <button class="search-btn">
+                        <span class="search-icon">🔍</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- User Actions -->
+            <div class="user-actions">
+                <a href="#" class="user-login">
+                    <span class="user-icon">👤</span>
+                    <span>Đăng nhập</span>
+                </a>
+                <a href="#" class="cart-link">
+                    <span class="cart-icon">🛒</span>
+                    <span>Giỏ hàng</span>
+                </a>
+                <div class="location">
+                    <span class="location-icon">📍</span>
+                    <span>Hồ Chí Minh</span>
+                </div>
             </div>
         </div>
-    </nav>
+
+        <!-- Navigation Menu -->
+        <nav class="main-navigation">
+            <div class="nav-container">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index", "Home")" class="nav-link">
+                            <span class="nav-icon">📱</span>
+                            Điện thoại
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">💻</span>
+                            Laptop
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">🔌</span>
+                            Phụ kiện
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">⌚</span>
+                            Smartwatch
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">📱</span>
+                            Tablet
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">♻️</span>
+                            Máy cũ, Thu cũ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">📶</span>
+                            Sim, thẻ cào
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
     <div class="container body-content">
         @RenderBody()
         <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
-    </div>
 
+    </div>
+    <footer>
+        <div class="footer-top">
+            <div class="footer-container">
+                <div class="footer-columns">
+                    <div class="footer-col">
+                        <h4>Tổng đài hỗ trợ</h4>
+                        <ul>
+                            <li>Gọi mua: <a href="tel:18001060">1800 1060</a> (7:30 - 22:00)</li>
+                            <li>Khiếu nại: <a href="tel:18001062">1800 1062</a> (8:00 - 21:30)</li>
+                            <li>Bảo hành: <a href="tel:18001064">1800 1064</a> (8:00 - 21:00)</li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Về công ty</h4>
+                        <ul>
+                            <li><a href="#">Giới thiệu công ty (MWG.vn)</a></li>
+                            <li><a href="#">Tuyển dụng</a></li>
+                            <li><a href="#">Gửi góp ý, khiếu nại</a></li>
+                            <li><a href="#">Tìm siêu thị (gần bạn)</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Thông tin khác</h4>
+                        <ul>
+                            <li><a href="#">Trung tâm bảo hành</a></li>
+                            <li><a href="#">Chính sách bảo hành</a></li>
+                            <li><a href="#">Hướng dẫn mua hàng</a></li>
+                            <li><a href="#">Bảo mật và điều khoản</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Website cùng tập đoàn</h4>
+                        <div class="partner-badges">
+                            <a href="#" class="badge">TopZone</a>
+                            <a href="#" class="badge">Điện máy XANH</a>
+                            <a href="#" class="badge">Bách hóa XANH</a>
+                            <a href="#" class="badge">Nhà thuốc An Khang</a>
+                        </div>
+                        <div class="socials">
+                            <a href="#" class="social">Facebook</a>
+                            <a href="#" class="social">YouTube</a>
+                            <a href="#" class="social">Zalo</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-container">
+                <p>© @DateTime.Now.Year - Thế Giới Di Động. Nội dung mang tính minh họa cho bài thực hành.</p>
+            </div>
+        </div>
+    </footer>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
