@@ -1,4 +1,213 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Trang chủ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<link href="~/Content/home-promo.css" rel="stylesheet" />
 
+<!--
+    Trang chủ - Khối "Khuyến mãi online"
+    - Giao diện dùng CSS biến + scale (xem home-promo.css).
+    - Có 4 tab: Điện thoại, Apple, Laptop, Phụ kiện.
+    - Mỗi tab hiển thị 1 grid sản phẩm (dữ liệu demo), chỉ panel "active" được hiển thị.
+    - Link "Xem thêm ..." đổi theo tab đang chọn.
+-->
+<section class="promo-section compact-50 narrow-70">
+    <div class="promo-scale">
+
+        <!-- Tiêu đề khối -->
+        <div class="promo-header">
+            <h2 class="promo-title">Khuyến mãi online</h2>
+        </div>
+
+        <!-- Tabs danh mục (click để chuyển panel) -->
+        <nav class="promo-tabs" aria-label="Danh mục khuyến mãi">
+            <ul class="tab-list" role="tablist">
+                <li class="tab-item active" data-tab="dienthoai">Điện thoại</li>
+                <li class="tab-item" data-tab="apple">Apple</li>
+                <li class="tab-item" data-tab="laptop">Laptop</li>
+                <li class="tab-item" data-tab="phukien">Phụ kiện</li>
+            </ul>
+        </nav>
+
+        <!-- Banner thông điệp -->
+        <div class="promo-banner">
+            <span>ĐIỆN THOẠI GIÁ SỐC - DỊCH VỤ ĐẲNG CẤP</span>
+        </div>
+
+        <!--
+            Panel: Điện thoại
+            - Demo 12 sản phẩm (chừa phần ảnh để tự thêm sau)
+        -->
+        <div class="product-grid active" data-tab-panel="dienthoai">
+            @for (int i = 0; i < 12; i++)
+            {
+                <article class="product-card">
+                    <div class="card-topline">
+                        <span class="pill mint">Trả góp 0%</span>
+                        <span class="pill rose">Mẫu mới</span>
+                    </div>
+
+                    <div class="product-thumb" aria-label="Placeholder image"></div>
+
+                    <h3 class="product-name">Tên sản phẩm</h3>
+                    <div class="product-variant">6GB/128GB</div>
+
+                    <div class="price-line">
+                        <span class="price">4.590.000₫</span>
+                        <span class="price-old">7.290.000₫</span>
+                        <span class="discount">-21%</span>
+                    </div>
+
+                    <div class="benefit">Quà 350.000₫</div>
+                    <div class="rating-line">★ 4.9 • 3.6k đánh giá</div>
+                </article>
+            }
+        </div>
+
+        <!-- Panel: Apple -->
+        <div class="product-grid" data-tab-panel="apple">
+            @for (int i = 0; i < 12; i++)
+            {
+                <article class="product-card">
+                    <div class="card-topline">
+                        <span class="pill mint">Trả góp 0%</span>
+                        <span class="pill rose">Mẫu mới</span>
+                    </div>
+
+                    <div class="product-thumb" aria-label="Placeholder image"></div>
+
+                    <h3 class="product-name">Sản phẩm Apple</h3>
+                    <div class="product-variant">128GB</div>
+
+                    <div class="price-line">
+                        <span class="price">16.990.000₫</span>
+                        <span class="price-old">18.990.000₫</span>
+                        <span class="discount">-11%</span>
+                    </div>
+
+                    <div class="benefit">Quà 500.000₫</div>
+                    <div class="rating-line">★ 4.8 • 1.2k đánh giá</div>
+                </article>
+            }
+        </div>
+
+        <!-- Panel: Laptop -->
+        <div class="product-grid" data-tab-panel="laptop">
+            @for (int i = 0; i < 12; i++)
+            {
+                <article class="product-card">
+                    <div class="card-topline">
+                        <span class="pill mint">Trả góp 0%</span>
+                    </div>
+
+                    <div class="product-thumb" aria-label="Placeholder image"></div>
+
+                    <h3 class="product-name">Laptop XYZ</h3>
+                    <div class="product-variant">i5 • 16GB • 512GB</div>
+
+                    <div class="price-line">
+                        <span class="price">12.990.000₫</span>
+                        <span class="price-old">14.990.000₫</span>
+                        <span class="discount">-13%</span>
+                    </div>
+
+                    <div class="benefit">Quà 300.000₫</div>
+                    <div class="rating-line">★ 4.7 • 689 đánh giá</div>
+                </article>
+            }
+        </div>
+
+        <!-- Panel: Phụ kiện -->
+        <div class="product-grid" data-tab-panel="phukien">
+            @for (int i = 0; i < 12; i++)
+            {
+                <article class="product-card">
+                    <div class="card-topline">
+                        <span class="pill mint">Trả góp 0%</span>
+                    </div>
+
+                    <div class="product-thumb" aria-label="Placeholder image"></div>
+
+                    <h3 class="product-name">Phụ kiện ABC</h3>
+                    <div class="product-variant">Màu đen</div>
+
+                    <div class="price-line">
+                        <span class="price">299.000₫</span>
+                        <span class="price-old">399.000₫</span>
+                        <span class="discount">-25%</span>
+                    </div>
+
+                    <div class="benefit">Freeship nội thành</div>
+                    <div class="rating-line">★ 4.8 • 2.3k đánh giá</div>
+                </article>
+            }
+        </div>
+
+        <!-- Link "Xem thêm ..." (đổi theo tab đang chọn) -->
+        <div class="see-more">
+            <a id="seeMoreLink" href="#" class="see-more-link">
+                Xem thêm <span id="seeMoreText">Điện thoại</span> <span class="chev">›</span>
+            </a>
+        </div>
+
+    </div>
+</section>
+
+@section scripts {
+    <script>
+        // JS đơn giản cho tabs + cập nhật link "Xem thêm ..."
+        (function () {
+            'use strict';
+
+            // Gốc tabs (event delegation để code gọn và chịu được DOM thay đổi)
+            var tabsRoot = document.querySelector('.promo-tabs');
+            var seeMoreLink = document.getElementById('seeMoreLink');
+            var seeMoreText = document.getElementById('seeMoreText');
+
+            // Hiển thị panel theo "key" (giá trị data-tab / data-tab-panel)
+            function showPanel(key) {
+                document.querySelectorAll('.product-grid').forEach(function (panel) {
+                    panel.classList.toggle('active', panel.getAttribute('data-tab-panel') === key);
+                });
+            }
+
+            // Cập nhật text + href của "Xem thêm ..."
+            function updateSeeMore(tabEl) {
+                if (!tabEl) return;
+                var name = (tabEl.textContent || '').trim();      // Ví dụ: "Apple"
+                var key = tabEl.getAttribute('data-tab');          // Ví dụ: "apple"
+                if (seeMoreText) seeMoreText.textContent = name;
+
+                // TODO: Khi có trang danh mục thật, set đúng URL tại đây
+                if (seeMoreLink && key) seeMoreLink.href = '#' + key;
+            }
+
+            // Khởi tạo trạng thái ban đầu theo tab .active
+            (function init() {
+                var current = document.querySelector('.promo-tabs .tab-item.active');
+                if (current) {
+                    showPanel(current.getAttribute('data-tab'));
+                    updateSeeMore(current);
+                }
+            })();
+
+            // Lắng nghe click trên danh sách tabs
+            if (tabsRoot) {
+                tabsRoot.addEventListener('click', function (ev) {
+                    var tab = ev.target.closest('.tab-item');
+                    if (!tab) return;
+
+                    // Đổi active trên tab
+                    document.querySelectorAll('.promo-tabs .tab-item').forEach(function (x) {
+                        x.classList.remove('active');
+                    });
+                    tab.classList.add('active');
+
+                    // Đổi panel + link "xem thêm"
+                    showPanel(tab.getAttribute('data-tab'));
+                    updateSeeMore(tab);
+                });
+            }
+        })();
+    </script>
+}

@@ -147,6 +147,7 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\footer-style.css" />
     <Content Include="Content\header-style.css" />
+    <Content Include="Content\home-promo.css" />
     <Content Include="Content\login-tgdd.css" />
     <Content Include="Content\modal-tgdd.css" />
     <Content Include="Content\register-tgdd.css" />
