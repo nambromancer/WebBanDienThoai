@@ -327,3 +327,56 @@
 .promo-section.compact-60{ --scale:.6; --font-scale:.75; }
 .promo-section.compact-55{ --scale:.55; --font-scale:.7; }
 */
+
+/* ===========================
+   Tag cloud chips – compact, rounded, neutral palette
+   (Tách từ Index.cshtml để tái sử dụng và dễ bảo trì)
+   =========================== */
+:root {
+    --chip-bg: #f6f8fb;
+    --chip-bg-hover: #eef3fb;
+    --chip-border: #e6ebf2;
+    --chip-border-hover: #d7dfec;
+    --chip-text: #2b2f36;
+}
+
+/* Container: wrap + consistent gaps between chips */
+.search-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 12px;           /* row x column spacing */
+    padding: 8px 0 4px;
+}
+
+/* Chip: small pill, no link underline, neutral color */
+.search-chip {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;             /* nhỏ gọn như hình mẫu */
+    padding: 0 12px;
+    border-radius: 999px;
+    background: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+    color: var(--chip-text) !important;        /* ép màu link */
+    text-decoration: none !important;          /* bỏ gạch chân */
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    box-shadow: 0 1px 0 #fff inset, 0 1px 2px rgba(16,24,40,.04);
+    transition: background .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease, transform .05s ease;
+}
+
+.search-chip:hover {
+    background: var(--chip-bg-hover);
+    border-color: var(--chip-border-hover);
+    color: #111 !important;
+}
+
+.search-chip:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0,102,255,.15);
+}
+
+.search-chip:active {
+    transform: translateY(.5px);
+}

@@ -3,15 +3,17 @@
     ViewBag.Title = "Đăng ký";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<!-- CSS riêng cho trang đăng ký -->
 <link href="~/Content/register-tgdd.css" rel="stylesheet" />
 
 <div class="register-wrap">
     <h1 class="register-title">Đăng ký trở thành thành viên thegioididong</h1>
 
-    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "register-form", role = "form" }))
+    @* Form POST đến Account/Register, bật unobtrusive validation *@
+    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "register-form", role = "form", novalidate = "novalidate" }))
     {
-        @Html.AntiForgeryToken()
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.AntiForgeryToken() <!-- Chống CSRF -->
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" }) <!-- Tổng hợp lỗi -->
 
         <fieldset class="section">
             <legend class="section-title">Thông tin cá nhân</legend>
@@ -20,14 +22,29 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(m => m.FullName)
-                        @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", placeholder = "Nhập họ và tên" })
+                        @Html.TextBoxFor(
+                                 m => m.FullName,
+                                 new
+                                 {
+                                     @class = "form-control",
+                                     placeholder = "Nhập họ và tên",
+                                     autocomplete = "name"
+                                 })
                         @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(m => m.BirthDate)
-                        @Html.TextBoxFor(m => m.BirthDate, new { @class = "form-control", type = "date", placeholder = "dd/mm/yyyy" })
+                        @Html.TextBoxFor(
+                                 m => m.BirthDate,
+                                 new
+                                 {
+                                     @class = "form-control",
+                                     type = "date",
+                                     placeholder = "dd/mm/yyyy",
+                                     autocomplete = "bday"
+                                 })
                         @Html.ValidationMessageFor(m => m.BirthDate, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -37,15 +54,35 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(m => m.PhoneNumber)
-                        @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "Nhập số điện thoại" })
+                        @Html.TextBoxFor(
+                                 m => m.PhoneNumber,
+                                 new
+                                 {
+                                     @class = "form-control",
+                                     placeholder = "Nhập số điện thoại",
+                                     type = "tel",
+                                     autocomplete = "tel"
+                                 })
                         @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(m => m.Email)
-                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Nhập email" })
-                        <small class="help-inline text-muted">Hóa đơn VAT khi mua hàng sẽ được gửi qua email này.</small>
+                        @* Email không bắt buộc theo model *@
+                        @Html.TextBoxFor(
+                                 m => m.Email,
+                                 new
+                                 {
+                                     @class = "form-control",
+                                     placeholder = "Nhập email (không bắt buộc)",
+                                     type = "email",
+                                     autocomplete = "email",
+                                     aria_describedby = "emailHelp"
+                                 })
+                        <small id="emailHelp" class="help-inline text-muted">
+                            Hóa đơn VAT khi mua hàng sẽ được gửi qua email này.
+                        </small>
                         @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -59,21 +96,38 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(m => m.Password)
-                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Nhập mật khẩu của bạn" })
-                        <small class="help-inline text-muted">Mật khẩu tối thiểu 6 ký tự, có ít nhất 1 chữ cái và 1 chữ số.</small>
+                        @Html.PasswordFor(
+                                 m => m.Password,
+                                 new
+                                 {
+                                     @class = "form-control",
+                                     placeholder = "Nhập mật khẩu của bạn",
+                                     autocomplete = "new-password"
+                                 })
+                        <small class="help-inline text-muted">
+                            Mật khẩu tối thiểu 6 ký tự, có ít nhất 1 chữ cái và 1 chữ số.
+                        </small>
                         @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(m => m.ConfirmPassword)
-                        @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Nhập lại mật khẩu của bạn" })
+                        @Html.PasswordFor(
+                                 m => m.ConfirmPassword,
+                                 new
+                                 {
+                                     @class = "form-control",
+                                     placeholder = "Nhập lại mật khẩu của bạn",
+                                     autocomplete = "new-password"
+                                 })
                         @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
                     </div>
                 </div>
             </div>
 
             <div class="form-group">
+                @* Tùy chọn nhận tin khuyến mãi *@
                 <div class="checkbox">
                     <label>
                         @Html.CheckBoxFor(m => m.SubscribePromotions)
@@ -81,25 +135,26 @@
                     </label>
                 </div>
             </div>
-            </fieldset>
+        </fieldset>
 
-            <p class="terms-note">
-                Bằng việc Đăng ký, bạn đã đọc và đồng ý với <a href="#">Điều khoản sử dụng</a> và
-                <a href="#">Chính sách bảo mật</a> của thegioididong.
-            </p>
+        <p class="terms-note">
+            Bằng việc Đăng ký, bạn đã đọc và đồng ý với
+            <a href="#">Điều khoản sử dụng</a> và <a href="#">Chính sách bảo mật</a> của thegioididong.
+        </p>
 
-            <div class="actions">
-                <a href="@Url.Action("Login","Account")" class="btn btn-outline-tgdd">Quay lại đăng nhập</a>
-                <button type="submit" class="btn btn-tgdd">Hoàn tất đăng ký</button>
-            </div>
-            } <!-- end using -->
-            
-            @if (ViewBag.Message != null)
-            {
-                <p class="text-success" style="margin-top:12px">@ViewBag.Message</p>
-            }
-    </div>
-
-    @section scripts {
-        @Scripts.Render("~/bundles/jqueryval")
+        <div class="actions">
+            <a href="@Url.Action("Login","Account")" class="btn btn-outline-tgdd">Quay lại đăng nhập</a>
+            <button type="submit" class="btn btn-tgdd">Hoàn tất đăng ký</button>
+        </div>
+    } <!-- end using (Html.BeginForm) -->
+    @* Hiển thị thông báo thành công nếu có *@
+    @if (ViewBag.Message != null)
+    {
+        <p class="text-success" style="margin-top:12px">@ViewBag.Message</p>
     }
+</div>
+
+@section scripts {
+    @* Bật jQuery Validate + Unobtrusive *@
+    @Scripts.Render("~/bundles/jqueryval")
+}

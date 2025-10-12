@@ -1,63 +1,158 @@
-﻿/* Footer (compact, aligned) */
-.site-footer{
-    background:#f5f5f5;color:#333;margin-top:16px;border-top:1px solid #eee
-}
-.footer-container{max-width:720px;margin:0 auto;padding:0 8px}
-.footer-top{padding:12px 0} /* compact */
-
-/* 4 columns, first/last rộng hơn chút để không xuống dòng */
-.footer-columns{
-    display:grid;
-    grid-template-columns:1.15fr 1fr 1fr 1.25fr;
-    gap:12px;
+﻿/* Footer site - bố cục gọn, 4 cột, dùng biến màu */
+:root {
+    --footer-bg: #f5f5f5;
+    --footer-border: #eee;
+    --footer-bottom-bg: #efefef;
+    --footer-text: #333;
+    --link: #0062cc;
+    --muted: #666;
 }
 
-.footer-col h4{font-size:12px;margin-bottom:6px;color:#111}
-.footer-col ul{list-style:none;padding-left:0;margin:0}
-
-/* Items nhỏ gọn, line-height thấp hơn */
-.footer-col li{
-    margin:4px 0;
-    font-size:11px;
-    line-height:1.35;
+/* Nền + viền trên cùng */
+.site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-text);
+    margin-top: 16px;
+    border-top: 1px solid var(--footer-border);
 }
 
-/* Nhấn mạnh số điện thoại */
-.footer-col li a{color:#0062cc;text-decoration:none;font-weight:600}
-.footer-col li a:hover{text-decoration:underline}
-
-/* GIỮ 1 DÒNG cho cột "Tổng đài hỗ trợ" */
-.footer-columns .footer-col:nth-child(1) li{
-    display:flex;align-items:center;gap:6px;
-    white-space:nowrap;           /* không xuống dòng */
-    overflow:hidden;text-overflow:ellipsis;
+/* Container cố định bề rộng */
+.footer-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 8px;
 }
 
-/* Badges + socials (nhỏ gọn) */
-.partner-badges{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 6px}
-.badge{
-    background:#fff;border:1px solid #ddd;border-radius:12px;
-    padding:3px 7px;font-size:10px;color:#333;text-decoration:none
+.footer-top {
+    padding: 12px 0;
 }
-.badge:hover{background:#fafafa}
 
-.socials{display:flex;gap:6px}
-.social{font-size:11px;color:#0062cc;text-decoration:none}
-.social:hover{text-decoration:underline}
-
-.footer-bottom{border-top:1px solid #e6e6e6;background:#efefef}
-.footer-bottom p{margin:8px 0;font-size:10px;color:#666}
-
-/* Page content container (để trống cho nội dung sau) */
-.page-container{max-width:720px;margin:12px auto;min-height:300px;padding:0 8px}
-
-/* Responsive */
-@media (max-width:768px){
-    .footer-container{max-width:560px}
-    .footer-columns{grid-template-columns:repeat(2,1fr)}
+/* Lưới 4 cột (cột 1 và 4 rộng hơn nhẹ) */
+.footer-columns {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr 1fr 1.25fr;
+    gap: 12px;
 }
-@media (max-width:480px){
-    .footer-container{max-width:100%}
-    .footer-columns{grid-template-columns:1fr}
-    .page-container{max-width:100%}
+
+/* Tiêu đề cột */
+.footer-col h4 {
+    font-size: 12px;
+    margin-bottom: 6px;
+    color: #111;
+}
+
+.footer-col ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+/* Mục danh sách gọn, line-height thấp */
+.footer-col li {
+    margin: 4px 0;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+    /* Link nhấn mạnh, hover gạch chân */
+    .footer-col li a {
+        color: var(--link);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .footer-col li a:hover {
+            text-decoration: underline;
+        }
+
+/* Cột "Tổng đài": giữ trên 1 dòng, ellipsis nếu dài */
+.footer-columns .footer-col:nth-child(1) li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Badge thương hiệu + mạng xã hội */
+.partner-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 2px 0 6px;
+}
+
+.badge {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 3px 7px;
+    font-size: 10px;
+    color: #333;
+    text-decoration: none;
+}
+
+    .badge:hover {
+        background: #fafafa;
+    }
+
+.socials {
+    display: flex;
+    gap: 6px;
+}
+
+.social {
+    font-size: 11px;
+    color: var(--link);
+    text-decoration: none;
+}
+
+    .social:hover {
+        text-decoration: underline;
+    }
+
+/* Dòng bản quyền cuối trang */
+.footer-bottom {
+    border-top: 1px solid #e6e6e6;
+    background: var(--footer-bottom-bg);
+}
+
+    .footer-bottom p {
+        margin: 8px 0;
+        font-size: 10px;
+        color: var(--muted);
+    }
+
+/* Container trang (nếu cần dùng) */
+.page-container {
+    max-width: 720px;
+    margin: 12px auto;
+    min-height: 300px;
+    padding: 0 8px;
+}
+
+/* Responsive: 2 cột -> 1 cột khi hẹp */
+@media (max-width: 768px) {
+    .footer-container {
+        max-width: 560px;
+    }
+
+    .footer-columns {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-container {
+        max-width: 100%;
+    }
+
+    .footer-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .page-container {
+        max-width: 100%;
+    }
 }

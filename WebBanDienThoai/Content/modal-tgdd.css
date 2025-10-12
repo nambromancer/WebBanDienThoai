@@ -1,4 +1,11 @@
-﻿/* Yellow theme for login modal */
+﻿/* Modal đăng nhập - giao diện nhẹ, nhấn màu thương hiệu */
+:root {
+    --tgdd-yellow: #FFD400;
+    --tgdd-yellow-dark: #e6c200;
+    --text: #111;
+}
+
+/* Khung modal */
 .tgdd-modal .modal-content {
     position: relative;
     border: 0;
@@ -7,7 +14,7 @@
     padding-top: 8px;
 }
 
-/* Small, plain "x" close button */
+/* Nút đóng "x" nhỏ gọn, dễ click */
 .tgdd-modal .tgdd-close {
     position: absolute;
     right: 10px;
@@ -17,28 +24,73 @@
     height: auto;
     line-height: 1;
     text-align: center;
-    font-size: 16px;        /* small 'x' */
+    font-size: 16px;
     font-weight: 600;
     color: #666;
     background: transparent;
-    border: none;           /* remove gray border */
+    border: none;
     border-radius: 0;
     box-shadow: none;
     cursor: pointer;
-    z-index: 2;             /* ensure clickable above content */
+    z-index: 2;
 }
-.tgdd-modal .tgdd-close:hover { color: #000; }
 
-/* Title, text and buttons (unchanged) */
+    .tgdd-modal .tgdd-close:hover {
+        color: #000;
+    }
+
+    .tgdd-modal .tgdd-close:focus {
+        outline: 2px solid rgba(255,212,0,.6);
+        outline-offset: 2px;
+    }
+
+/* Tiêu đề/nội dung/nút */
 .tgdd-modal .tgdd-title {
     margin: 8px 0 12px;
     font-weight: 700;
-    color: #FFD400;
+    color: var(--tgdd-yellow);
 }
-.tgdd-modal .tgdd-desc { color: #333; margin: 0 16px 20px; }
-.tgdd-modal .tgdd-actions { display: flex; justify-content: center; align-items: center; gap: 12px; }
-.tgdd-modal .tgdd-actions .btn { min-width: 120px; padding: 10px 18px; border-radius: 12px; font-weight: 600; }
-.btn-tgdd { background-color: #FFD400; border: 2px solid #FFD400; color: #000; }
-.btn-tgdd:hover, .btn-tgdd:focus { background-color: #e6c200; border-color: #e6c200; color: #000; }
-.btn-outline-tgdd { background-color: #fff; border: 2px solid #FFD400; color: #111; }
-.btn-outline-tgdd:hover, .btn-outline-tgdd:focus { background-color: #fff7b3; border-color: #e6c200; color: #111; }
+
+.tgdd-modal .tgdd-desc {
+    color: #333;
+    margin: 0 16px 20px;
+}
+
+.tgdd-modal .tgdd-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+    .tgdd-modal .tgdd-actions .btn {
+        min-width: 120px;
+        padding: 10px 18px;
+        border-radius: 12px;
+        font-weight: 600;
+    }
+
+/* Button màu thương hiệu (đồng bộ với các trang) */
+.btn-tgdd {
+    background-color: var(--tgdd-yellow);
+    border: 2px solid var(--tgdd-yellow);
+    color: #000;
+}
+
+    .btn-tgdd:hover, .btn-tgdd:focus {
+        background-color: var(--tgdd-yellow-dark);
+        border-color: var(--tgdd-yellow-dark);
+        color: #000;
+    }
+
+.btn-outline-tgdd {
+    background-color: #fff;
+    border: 2px solid var(--tgdd-yellow);
+    color: var(--text);
+}
+
+    .btn-outline-tgdd:hover, .btn-outline-tgdd:focus {
+        background-color: #fff7b3;
+        border-color: var(--tgdd-yellow-dark);
+        color: var(--text);
+    }

@@ -8,21 +8,30 @@
 <div class="login-wrap">
     <h1 class="login-title">Đăng nhập thegioididong</h1>
 
-    @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "login-form", role = "form" }))
+    @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "login-form", role = "form", novalidate = "novalidate" }))
     {
         @Html.AntiForgeryToken()
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
         <div class="form-group">
-            @Html.LabelFor(m => m.Email, "Email")
-            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Nhập email của bạn" })
-            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+            @Html.LabelFor(m => m.PhoneNumber) <!-- Nhãn: Số điện thoại -->
+            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "Nhập số điện thoại của bạn", type = "tel", autocomplete = "tel", autofocus = "autofocus" })
+            @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
         </div>
 
         <div class="form-group">
             @Html.LabelFor(m => m.Password)
-            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Nhập mật khẩu của bạn" })
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Nhập mật khẩu của bạn", autocomplete = "current-password" })
             @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+        </div>
+
+        <!-- Nhóm checkbox nhớ đăng nhập: hiển thị inline, checkbox nhỏ -->
+        <div class="form-group remember-row">
+            <label class="checkbox-inline remember-inline">
+                <!-- Đặt layout inline cho nhãn + input -->
+                @Html.CheckBoxFor(m => m.RememberMe) <!-- Checkbox: sẽ được thu nhỏ bằng CSS -->
+                @Html.DisplayNameFor(m => m.RememberMe)
+            </label>
         </div>
 
         <div class="actions">
@@ -38,7 +47,6 @@
             <a href="@Url.Action("Register","Account")" class="signup-link">Đăng ký ngay</a>
         </div>
     }
-
 </div>
 
 @section scripts {

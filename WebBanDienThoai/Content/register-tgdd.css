@@ -1,17 +1,28 @@
-﻿/* Centered, yellow-themed registration page */
+﻿/* Trang Đăng ký - style nhất quán với Login, có nhóm field rõ ràng */
+:root {
+    --tgdd-yellow: #FFD400;
+    --tgdd-yellow-dark: #e6c200;
+    --text: #111;
+    --muted: #666;
+    --border: #ddd;
+}
+
+/* Khung ngoài: rộng hơn để chứa 2 cột */
 .register-wrap {
     max-width: 880px;
     margin: 40px auto;
     padding: 0 16px 24px;
 }
 
+/* Tiêu đề */
 .register-title {
     text-align: center;
-    color: #FFD400;
+    color: var(--tgdd-yellow);
     font-weight: 800;
     margin-bottom: 16px;
 }
 
+/* Nhóm section theo fieldset/legend */
 .section {
     border: 0;
     margin: 12px 0 6px;
@@ -25,7 +36,7 @@
     color: #333;
 }
 
-/* Inputs */
+/* Nhãn và input */
 .register-form .form-group label {
     font-weight: 600;
 }
@@ -33,20 +44,23 @@
 .register-form .form-control {
     border-radius: 10px;
     height: 40px;
+    border: 1px solid var(--border);
 }
 
     .register-form .form-control:focus {
-        border-color: #FFD400;
+        border-color: var(--tgdd-yellow);
         box-shadow: 0 0 0 2px rgba(255, 212, 0, .25);
+        outline: none;
     }
 
-/* Help text */
+/* Text trợ giúp nằm dưới input */
 .help-inline {
     display: block;
     margin-top: 4px;
+    color: var(--muted);
 }
 
-/* Actions */
+/* Khu vực hành động */
 .actions {
     display: flex;
     gap: 12px;
@@ -54,40 +68,41 @@
     margin-top: 16px;
 }
 
+/* Nút chính/phụ nhất quán với Login */
 .btn-tgdd {
-    background-color: #FFD400;
-    border: 2px solid #FFD400;
+    background-color: var(--tgdd-yellow);
+    border: 2px solid var(--tgdd-yellow);
     color: #000;
     font-weight: 700;
     border-radius: 12px;
     padding: 10px 18px;
     min-width: 180px;
+    cursor: pointer;
 }
 
-    .btn-tgdd:hover,
-    .btn-tgdd:focus {
-        background-color: #e6c200;
-        border-color: #e6c200;
+    .btn-tgdd:hover, .btn-tgdd:focus {
+        background-color: var(--tgdd-yellow-dark);
+        border-color: var(--tgdd-yellow-dark);
         color: #000;
     }
 
 .btn-outline-tgdd {
     background-color: #fff;
-    border: 2px solid #FFD400;
-    color: #111;
+    border: 2px solid var(--tgdd-yellow);
+    color: var(--text);
     font-weight: 700;
     border-radius: 12px;
     padding: 10px 18px;
     min-width: 180px;
+    cursor: pointer;
 }
 
-    .btn-outline-tgdd:hover,
-    .btn-outline-tgdd:focus {
+    .btn-outline-tgdd:hover, .btn-outline-tgdd:focus {
         background-color: #fff7b3;
-        border-color: #e6c200;
+        border-color: var(--tgdd-yellow-dark);
     }
 
-/* Validation */
+/* Validation message spacing */
 .text-danger {
     margin-top: 4px;
 }

@@ -4,15 +4,15 @@ using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
 
-
 namespace WebBanDienThoai.Models
 {
     public class LoginViewModel
     {
-        [Required(ErrorMessage = "Vui lòng nhập email.")]
-        [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        // Đổi sang đăng nhập bằng số điện thoại
+        [Required(ErrorMessage = "Vui lòng nhập số điện thoại.")]
+        [Phone(ErrorMessage = "Số điện thoại không hợp lệ.")]
+        [Display(Name = "Số điện thoại")]
+        public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập mật khẩu.")]
         [DataType(DataType.Password)]

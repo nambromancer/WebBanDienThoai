@@ -1,10 +1,14 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
+    <!-- Viewport để responsive trên mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Tiêu đề trang: phần sau dấu gạch sẽ cố định -->
     <title>@ViewBag.Title - Thế Giới Di Động</title>
+
     @Styles.Render("~/Content/css")
+    <!-- CSS header/footer/modal tách riêng để dễ bảo trì -->
     <link href="~/Content/header-style.css" rel="stylesheet" />
     <link href="~/Content/footer-style.css" rel="stylesheet" />
     <link href="~/Content/modal-tgdd.css" rel="stylesheet" />
@@ -12,12 +16,12 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <!-- Header Section - Thay thế navbar cũ -->
-    <header class="main-header">
+    <!-- Header chính của site -->
+    <header class="main-header" role="banner">
         <div class="header-container">
-            <!-- Logo -->
+            <!-- Khu vực logo (về trang chủ) -->
             <div class="logo-section">
-                <a href="@Url.Action("Index", "Home")" class="logo-link">
+                <a href="@Url.Action("Index", "Home")" class="logo-link" aria-label="Về trang chủ">
                     <div class="logo-circle">
                         <span class="logo-icon">📱</span>
                     </div>
@@ -25,19 +29,21 @@
                 </a>
             </div>
 
-            <!-- Search Bar -->
-            <div class="search-section">
+            <!-- Thanh tìm kiếm (chỉ là UI demo, chưa submit form) -->
+            <div class="search-section" role="search" aria-label="Tìm kiếm">
                 <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Laptop nhập học...">
-                    <button class="search-btn">
+                    <!-- aria-label để screen reader hiểu mục đích -->
+                    <input type="text" class="search-input" placeholder="Laptop nhập học..." aria-label="Từ khóa tìm kiếm">
+                    <!-- type="button" tránh submit form mặc định -->
+                    <button class="search-btn" type="button" aria-label="Tìm kiếm">
                         <span class="search-icon">🔍</span>
                     </button>
                 </div>
             </div>
 
-            <!-- User Actions -->
-            <div class="user-actions">
-                <!-- Make sure this is the button you click -->
+            <!-- Hành động người dùng -->
+            <div class="user-actions" aria-label="Tác vụ người dùng">
+                <!-- Dùng cả data-* của BS3/4/5 để tương thích tối đa -->
                 <a id="loginLink"
                    href="javascript:void(0)"
                    class="user-login"
@@ -46,19 +52,19 @@
                     <span class="user-icon">👤</span>
                     <span>Đăng nhập</span>
                 </a>
-                <a href="#" class="cart-link">
+                <a href="#" class="cart-link" aria-label="Xem giỏ hàng">
                     <span class="cart-icon">🛒</span>
                     <span>Giỏ hàng</span>
                 </a>
-                <div class="location">
+                <div class="location" aria-label="Vị trí hiện tại">
                     <span class="location-icon">📍</span>
                     <span>Hồ Chí Minh</span>
                 </div>
             </div>
         </div>
 
-        <!-- Navigation Menu -->
-        <nav class="main-navigation">
+        <!-- Menu điều hướng chính -->
+        <nav class="main-navigation" aria-label="Danh mục chính">
             <div class="nav-container">
                 <ul class="nav-menu">
                     <li class="nav-item">
@@ -108,16 +114,22 @@
         </nav>
     </header>
 
-    <!-- Login Modal -->
-    <div class="modal fade tgdd-modal" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel">
+    <!-- Modal đăng nhập (tương thích BS3/4/5) -->
+    <div class="modal fade tgdd-modal"
+         id="loginModal"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="loginModalLabel"
+         aria-modal="true"
+         aria-hidden="true">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
-                <!-- Keep Bootstrap 'close' class and data-* so BS3/4/5 can hook it -->
+                <!-- Nút đóng: giữ class/data-* để Bootstrap hook -->
                 <button type="button"
                         class="close tgdd-close"
                         data-dismiss="modal"
                         data-bs-dismiss="modal"
-                        aria-label="Close">
+                        aria-label="Đóng">
                     x
                 </button>
                 <div class="modal-body text-center">
@@ -126,6 +138,7 @@
                         Vui lòng đăng nhập tài khoản thegioididong để xem ưu đãi và thanh toán dễ dàng hơn.
                     </p>
                     <div class="tgdd-actions">
+                        <!-- Dùng Url.Action để dẫn đến trang tài khoản -->
                         <a href="@Url.Action("Register", "Account")" class="btn btn-outline-tgdd">Đăng ký</a>
                         <a href="@Url.Action("Login", "Account")" class="btn btn-tgdd">Đăng nhập</a>
                     </div>
@@ -134,11 +147,14 @@
         </div>
     </div>
 
+    <!-- Khu vực nội dung chính -->
     <div class="container body-content">
-        @RenderBody()
+        @RenderBody() <!-- Nơi inject View con -->
         <hr />
     </div>
-    <footer>
+
+    <!-- Footer của site -->
+    <footer role="contentinfo">
         <div class="footer-top">
             <div class="footer-container">
                 <div class="footer-columns">
@@ -187,72 +203,85 @@
         </div>
         <div class="footer-bottom">
             <div class="footer-container">
+                <!-- Năm hiện tại lấy từ server -->
                 <p>© @DateTime.Now.Year - Thế Giới Di Động. Nội dung mang tính minh họa cho bài thực hành.</p>
             </div>
         </div>
     </footer>
+
+    <!-- Bundle script: jQuery trước Bootstrap để đảm bảo phụ thuộc -->
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    <!-- Cho phép View con chèn script riêng -->
     @RenderSection("scripts", required: false)
 
-    <!-- Open/Close fallbacks that work with Bootstrap 3/4/5 -->
-<script>
-    (function () {
-        function showLoginModal(e) {
-            if (e) e.preventDefault();
-            var modalEl = document.getElementById('loginModal');
-            if (!modalEl) return;
+    <!-- JS mở/đóng modal: fallback cho cả BS3/4/5 và không Bootstrap -->
+    <script>
+        (function () {
+            'use strict';
 
-            if (window.jQuery && typeof jQuery.fn.modal === 'function') {
-                jQuery(modalEl).modal('show');
-                return;
-            }
-            if (window.bootstrap && typeof bootstrap.Modal === 'function') {
-                (bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl)).show();
-                return;
-            }
-            console.warn('Bootstrap JS not loaded.');
-        }
+            // Mở modal đăng nhập
+            function showLoginModal(e) {
+                if (e) e.preventDefault();
+                var modalEl = document.getElementById('loginModal');
+                if (!modalEl) return;
 
-        function hideLoginModal(e) {
-            if (e) e.preventDefault();
-            var modalEl = document.getElementById('loginModal');
-            if (!modalEl) return;
-
-            if (window.jQuery && typeof jQuery.fn.modal === 'function') {
-                jQuery(modalEl).modal('hide');
-                return;
-            }
-            if (window.bootstrap && typeof bootstrap.Modal === 'function') {
-                (bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl)).hide();
-                return;
-            }
-            // Hard fallback
-            modalEl.classList.remove('in', 'show');
-            modalEl.style.display = 'none';
-            document.body.classList.remove('modal-open');
-            var backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) backdrop.parentNode.removeChild(backdrop);
-        }
-
-        // Open handler (works even if data attributes don't)
-        document.addEventListener('click', function (ev) {
-            if (ev.target.closest && ev.target.closest('#loginLink')) {
-                showLoginModal(ev);
-            }
-        });
-
-        // Close handler with jQuery delegation if available, else vanilla
-        if (window.jQuery) {
-            jQuery(document).on('click', '#loginModal .tgdd-close', hideLoginModal);
-        } else {
-            document.addEventListener('click', function (ev) {
-                if (ev.target.closest && ev.target.closest('#loginModal .tgdd-close')) {
-                    hideLoginModal(ev);
+                // Ưu tiên jQuery (BS3/4)
+                if (window.jQuery && typeof jQuery.fn.modal === 'function') {
+                    jQuery(modalEl).modal('show');
+                    return;
                 }
+                // BS5 (không cần jQuery)
+                if (window.bootstrap && typeof bootstrap.Modal === 'function') {
+                    (bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl)).show();
+                    return;
+                }
+                // Fallback đơn giản nếu không có Bootstrap
+                modalEl.classList.add('in', 'show');
+                modalEl.style.display = 'block';
+                modalEl.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('modal-open');
+            }
+
+            // Đóng modal đăng nhập
+            function hideLoginModal(e) {
+                if (e) e.preventDefault();
+                var modalEl = document.getElementById('loginModal');
+                if (!modalEl) return;
+
+                if (window.jQuery && typeof jQuery.fn.modal === 'function') {
+                    jQuery(modalEl).modal('hide');
+                    return;
+                }
+                if (window.bootstrap && typeof bootstrap.Modal === 'function') {
+                    (bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl)).hide();
+                    return;
+                }
+                // Fallback: ẩn thủ công và dọn backdrop
+                modalEl.classList.remove('in', 'show');
+                modalEl.style.display = 'none';
+                modalEl.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('modal-open');
+                var backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop && backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
+            }
+
+            // Mở modal khi click nút đăng nhập (dù data-* có hoạt động hay không)
+            document.addEventListener('click', function (ev) {
+                var trigger = ev.target && ev.target.closest ? ev.target.closest('#loginLink') : null;
+                if (trigger) showLoginModal(ev);
             });
-        }
-    })();
-</script>
+
+            // Đóng modal khi click nút close (ưu tiên jQuery delegation nếu có)
+            if (window.jQuery) {
+                jQuery(document).on('click', '#loginModal .tgdd-close', hideLoginModal);
+            } else {
+                document.addEventListener('click', function (ev) {
+                    var closeBtn = ev.target && ev.target.closest ? ev.target.closest('#loginModal .tgdd-close') : null;
+                    if (closeBtn) hideLoginModal(ev);
+                });
+            }
+        })();
+    </script>
 </body>
 </html>

@@ -153,6 +153,222 @@
     </div>
 </section>
 
+<!--
+    Khối "Gợi ý cho bạn"
+    - Tái sử dụng layout/kích thước của khối khuyến mãi để đồng nhất UI.
+    - Hiển thị 1 grid 12 sản phẩm đa dạng (điện thoại, laptop, tablet, smartwatch...).
+    - Phần "Xem thêm" hiển thị "Xem thêm xx sản phẩm" (xx = số thẻ .product-card trong grid).
+-->
+<section class="promo-section compact-50 narrow-70" aria-label="Gợi ý cho bạn">
+    <div class="promo-scale">
+
+        <div class="promo-header">
+            <h2 class="promo-title">Gợi ý cho bạn</h2>
+        </div>
+
+        <!-- Grid gợi ý (12 sản phẩm demo, đa dạng chủng loại) -->
+        <div id="suggestGrid" class="product-grid active">
+            <!-- 1. Laptop -->
+            <article class="product-card">
+                <div class="card-topline"><span class="pill mint">Trả góp 0%</span></div>
+                <div class="product-thumb" aria-label="Laptop"></div>
+                <h3 class="product-name">Dell Inspiron 15 i5</h3>
+                <div class="product-variant">RAM 16GB • SSD 512GB</div>
+                <div class="price-line">
+                    <span class="price">17.490.000₫</span>
+                    <span class="price-old">19.590.000₫</span>
+                    <span class="discount">-10%</span>
+                </div>
+                <div class="benefit">Quà 500.000₫</div>
+                <div class="rating-line">★ 4.8 • 2.7k đánh giá</div>
+            </article>
+
+            <!-- 2. Đồng hồ trẻ em -->
+            <article class="product-card">
+                <div class="card-topline"><span class="pill orange">Giá sốc bất ngờ</span></div>
+                <div class="product-thumb" aria-label="Smartwatch kid"></div>
+                <h3 class="product-name">Masstel Smart Hero 6</h3>
+                <div class="product-variant">Dây silicone</div>
+                <div class="price-line">
+                    <span class="price">1.210.000₫</span>
+                    <span class="price-old">1.360.000₫</span>
+                    <span class="discount">-11%</span>
+                </div>
+                <div class="benefit">Quà 100.000₫</div>
+                <div class="rating-line">★ 4.9 • 12.9k đánh giá</div>
+            </article>
+
+            <!-- 3. Điện thoại Android -->
+            <article class="product-card">
+                <div class="card-topline"><span class="pill mint">Trả góp 0%</span></div>
+                <div class="product-thumb" aria-label="Phone"></div>
+                <h3 class="product-name">Samsung Galaxy A07 6GB/128GB</h3>
+                <div class="product-variant">HD+ • 6.7"</div>
+                <div class="price-line">
+                    <span class="price">3.190.000₫</span>
+                    <span class="price-old">3.690.000₫</span>
+                    <span class="discount">-13%</span>
+                </div>
+                <div class="benefit">Quà 600.000₫</div>
+                <div class="rating-line">★ 4.8 • 13.2k đánh giá</div>
+            </article>
+
+            <!-- 4. Đồng hồ thông minh -->
+            <article class="product-card">
+                <div class="card-topline"><span class="pill orange">Giá tốt</span></div>
+                <div class="product-thumb" aria-label="Smartwatch"></div>
+                <h3 class="product-name">imoo Z1 41mm</h3>
+                <div class="product-variant">Dây TPU</div>
+                <div class="price-line">
+                    <span class="price">1.990.000₫</span>
+                    <span class="price-old">2.940.000₫</span>
+                    <span class="discount">-32%</span>
+                </div>
+                <div class="benefit">Freeship</div>
+                <div class="rating-line">★ 4.9 • 6.9k đánh giá</div>
+            </article>
+
+            <!-- 5. Xiaomi Band -->
+            <article class="product-card">
+                <div class="card-topline"><span class="pill mint">Trả góp 0%</span></div>
+                <div class="product-thumb" aria-label="Band"></div>
+                <h3 class="product-name">Xiaomi Mi Band 10</h3>
+                <div class="product-variant">Dây TPU</div>
+                <div class="price-line">
+                    <span class="price">1.070.000₫</span>
+                    <span class="price-old">1.470.000₫</span>
+                    <span class="discount">-27%</span>
+                </div>
+                <div class="benefit">★ Bán 9.1k</div>
+                <div class="rating-line">★ 4.8 • 9.1k đánh giá</div>
+            </article>
+
+            <!-- 6. iPad WiFi -->
+            <article class="product-card">
+                <div class="card-topline"><span class="pill mint">Trả góp 0%</span></div>
+                <div class="product-thumb" aria-label="Tablet"></div>
+                <h3 class="product-name">iPad A16 WiFi 128GB</h3>
+                <div class="product-variant">Retina IPS</div>
+                <div class="price-line">
+                    <span class="price">8.890.000₫</span>
+                    <span class="price-old">9.790.000₫</span>
+                    <span class="discount">-9%</span>
+                </div>
+                <div class="benefit">Quà 200.000₫</div>
+                <div class="rating-line">★ 4.9 • 8.4k đánh giá</div>
+            </article>
+
+            <!-- 7. Laptop mỏng nhẹ -->
+            <article class="product-card">
+                <div class="card-topline"><span class="pill orange">Online giá rẻ</span></div>
+                <div class="product-thumb" aria-label="Laptop"></div>
+                <h3 class="product-name">Acer Aspire 15 i5 12th</h3>
+                <div class="product-variant">RAM 16GB • SSD 512GB</div>
+                <div class="price-line">
+                    <span class="price">13.490.000₫</span>
+                    <span class="price-old">16.590.000₫</span>
+                    <span class="discount">-19%</span>
+                </div>
+                <div class="benefit">Quà 2.490.000₫</div>
+                <div class="rating-line">★ 4.8 • 2k đánh giá</div>
+            </article>
+
+            <!-- 8. Lenovo Slim 3 -->
+            <article class="product-card">
+                <div class="card-topline"><span class="pill mint">Trả góp 0%</span></div>
+                <div class="product-thumb" aria-label="Laptop"></div>
+                <h3 class="product-name">Lenovo IdeaPad Slim 3</h3>
+                <div class="product-variant">i5 • 16GB • 512GB</div>
+                <div class="price-line">
+                    <span class="price">15.690.000₫</span>
+                    <span class="price-old">17.290.000₫</span>
+                    <span class="discount">-9%</span>
+                </div>
+                <div class="benefit">Quà 2.590.000₫</div>
+                <div class="rating-line">★ 4.9 • 4.8k đánh giá</div>
+            </article>
+
+            <!-- 9. Redmi Pad 2 -->
+            <article class="product-card">
+                <div class="card-topline"><span class="pill orange">Flash sale</span></div>
+                <div class="product-thumb" aria-label="Tablet"></div>
+                <h3 class="product-name">Xiaomi Redmi Pad 2 8GB/256GB</h3>
+                <div class="product-variant">IPS LCD 11"</div>
+                <div class="price-line">
+                    <span class="price">6.380.000₫</span>
+                    <span class="price-old">6.980.000₫</span>
+                    <span class="discount">-9%</span>
+                </div>
+                <div class="benefit">Quà 500.000₫</div>
+                <div class="rating-line">★ 4.9 • 2.8k đánh giá</div>
+            </article>
+
+            <!-- 10. Asus Vivobook -->
+            <article class="product-card">
+                <div class="card-topline"><span class="pill mint">Trả góp 0%</span></div>
+                <div class="product-thumb" aria-label="Laptop"></div>
+                <h3 class="product-name">Asus Vivobook 15</h3>
+                <div class="product-variant">RAM 8GB • SSD 512GB</div>
+                <div class="price-line">
+                    <span class="price">11.290.000₫</span>
+                    <span class="price-old">12.490.000₫</span>
+                    <span class="discount">-9%</span>
+                </div>
+                <div class="benefit">Quà 2.590.000₫</div>
+                <div class="rating-line">★ 4.8 • 4.5k đánh giá</div>
+            </article>
+
+            <!-- 11. Huawei Watch Fit -->
+            <article class="product-card">
+                <div class="card-topline"><span class="pill mint">Trả góp 0%</span></div>
+                <div class="product-thumb" aria-label="Smartwatch"></div>
+                <h3 class="product-name">Huawei Watch Fit 4</h3>
+                <div class="product-variant">43mm • silicone</div>
+                <div class="price-line">
+                    <span class="price">2.740.000₫</span>
+                    <span class="price-old">3.090.000₫</span>
+                    <span class="discount">-11%</span>
+                </div>
+                <div class="benefit">Quà 200.000₫</div>
+                <div class="rating-line">★ 4.9 • 9k đánh giá</div>
+            </article>
+
+            <!-- 12. Kidcare S1 -->
+            <article class="product-card">
+                <div class="card-topline"><span class="pill orange">Giá tốt</span></div>
+                <div class="product-thumb" aria-label="Smartwatch kid"></div>
+                <h3 class="product-name">Kidcare Sight S1 47.5mm</h3>
+                <div class="product-variant">Dây silicone</div>
+                <div class="price-line">
+                    <span class="price">2.050.000₫</span>
+                    <span class="price-old">2.230.000₫</span>
+                    <span class="discount">-8%</span>
+                </div>
+                <div class="benefit">Quà 150.000₫</div>
+                <div class="rating-line">★ 4.9 • 20.7k đánh giá</div>
+            </article>
+        </div>
+
+        <!-- Link "Xem thêm xx sản phẩm" (đếm từ số thẻ .product-card trong grid) -->
+        <div class="see-more">
+            <a id="seeMoreSuggestLink" href="#goi-y" class="see-more-link">
+                Xem thêm <span id="suggestCount">0</span> sản phẩm <span class="chev">›</span>
+            </a>
+        </div>
+
+    </div>
+</section>
+<!-- Khối "Mọi người cũng tìm kiếm" (tag cloud) -->
+<section class="promo-section compact-50 narrow-70" aria-label="Mọi người cũng tìm kiếm">
+    <div class="promo-scale">
+        <div class="promo-header">
+            <h2 class="promo-title">Mọi người cũng tìm kiếm</h2>
+        </div>
+        <div id="searchCloud" class="search-cloud" aria-label="Từ khóa phổ biến"><!-- Tags được render bằng JS --></div>
+        <div class="see-more" style="display:none"></div> <!-- Giữ cấu trúc đồng bộ, không dùng link -->
+    </div>
+</section>
+
 @section scripts {
     <script>
         // JS đơn giản cho tabs + cập nhật link "Xem thêm ..."
@@ -165,8 +381,9 @@
             var seeMoreText = document.getElementById('seeMoreText');
 
             // Hiển thị panel theo "key" (giá trị data-tab / data-tab-panel)
+            // Sửa: chỉ toggle các grid có data-tab-panel để KHÔNG ảnh hưởng grid "Gợi ý cho bạn"
             function showPanel(key) {
-                document.querySelectorAll('.product-grid').forEach(function (panel) {
+                document.querySelectorAll('.product-grid[data-tab-panel]').forEach(function (panel) {
                     panel.classList.toggle('active', panel.getAttribute('data-tab-panel') === key);
                 });
             }
@@ -208,6 +425,57 @@
                     updateSeeMore(tab);
                 });
             }
+        })();
+        // Cập nhật "Xem thêm xx sản phẩm" cho khối gợi ý
+        (function () {
+            'use strict';
+            var grid = document.getElementById('suggestGrid');
+            var countSpan = document.getElementById('suggestCount');
+            var link = document.getElementById('seeMoreSuggestLink');
+
+            if (!grid || !countSpan) return;
+
+            var count = grid.querySelectorAll('.product-card').length;
+            countSpan.textContent = count;
+            // TODO: Khi có trang "Gợi ý" thật, thay href bằng URL phù hợp
+            if (link) link.href = '#goi-y-' + count; // Ví dụ: #goi-y-12
+        })();
+
+        // Khối "Mọi người cũng tìm kiếm": render danh sách tag ngẫu nhiên
+        (function () {
+            'use strict';
+            // Danh sách từ khóa (có dấu, đa dạng như ảnh minh họa)
+            var tags = [
+                'iPhone 17', 'iPhone 17 Pro', 'iPhone 17 Pro Max', 'iPhone Air', 'iphone 16 pro',
+                'iphone 16', 'iphone 15', 'iphone 15 plus', 'airpods 4', 'airpods 4 anc',
+                'tai nghe airpods', 'airtag', 'apple watch series 10', 'apple watch series 9', 'apple watch ultra 2',
+                'Samsung Galaxy Tab S9', 'Lenovo Tab M11', 'asus', 'laptop gaming', 'macbook air',
+                'macbook pro', 'Mac Studio M4', 'MacBook Air M4', 'loa jbl', 'loa marshall',
+                'bàn phím gaming', 'chuột logitech', 'loa harman kardon', 'đồng hồ g shock',
+                'galaxy watch 8', 'galaxy watch ultra 2025', 'galaxy watch 8 classic',
+                'samsung galaxy z series', 'samsung galaxy s25 ultra', 'samsung s25', 'samsung s25 plus',
+                'galaxy z fold 7', 'iphone 16e', 'iphone 14'
+            ];
+
+            // Trộn mảng (Fisher–Yates) để random thứ tự
+            for (var i = tags.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var tmp = tags[i]; tags[i] = tags[j]; tags[j] = tmp;
+            }
+
+            var cloud = document.getElementById('searchCloud');
+            if (!cloud) return;
+
+            // Tạo thẻ <a> cho từng tag
+            tags.forEach(function (t) {
+                var a = document.createElement('a');
+                a.className = 'search-chip';
+                a.textContent = t;
+                // TODO: thay URL search thật khi có trang tìm kiếm
+                a.href = '/Search?q=' + encodeURIComponent(t);
+                a.setAttribute('aria-label', 'Tìm kiếm ' + t);
+                cloud.appendChild(a);
+            });
         })();
     </script>
 }

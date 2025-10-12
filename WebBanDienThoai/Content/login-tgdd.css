@@ -1,15 +1,20 @@
-﻿/* Centered, yellow-themed login page (clean, aligned) */
+﻿/* Trang Đăng nhập - style gọn gàng, dễ đọc, dùng màu nhận diện */
 :root {
-    --tgdd-yellow: #FFD400;
-    --tgdd-yellow-dark: #e6c200;
+    --tgdd-yellow: #FFD400; /* Màu chính thương hiệu */
+    --tgdd-yellow-dark: #e6c200; /* Màu hover/active */
+    --text: #111; /* Màu chữ chính */
+    --muted: #666; /* Màu chữ phụ/trợ giúp */
+    --border: #ddd; /* Viền control */
 }
 
+/* Khung ngoài: canh giữa nội dung */
 .login-wrap {
-    max-width: 520px;           /* fixed content width */
-    margin: 48px auto;          /* center on page */
+    max-width: 520px;
+    margin: 48px auto;
     padding: 0 16px 24px;
 }
 
+/* Tiêu đề nổi bật theo màu thương hiệu */
 .login-title {
     text-align: center;
     color: var(--tgdd-yellow);
@@ -17,35 +22,81 @@
     margin: 0 0 20px;
 }
 
-/* Form layout */
-.login-form { width: 100%; }
-.login-form .form-group { margin-bottom: 16px; }
-.login-form .form-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-    color: #222;
+/* Form và nhãn */
+.login-form {
+    width: 100%;
 }
 
-/* Ensure inputs fully match container width and override any globals */
-.login-wrap input,
-.login-wrap .form-control {
-    display: block;
-    width: 100% !important;
-    max-width: 100% !important;
-    height: 44px;
-    padding: 10px 12px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-sizing: border-box;
-}
-.login-form .form-control:focus {
-    border-color: var(--tgdd-yellow);
-    box-shadow: 0 0 0 2px rgba(255, 212, 0, .25);
+    .login-form .form-group {
+        margin-bottom: 16px;
+    }
+
+        /* Mặc định label hiển thị dạng block cho field thông thường */
+        .login-form .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+    /* Input dạng text/email/password/tel – KHÔNG áp dụng cho checkbox */
+    .login-form input[type="text"],
+    .login-form input[type="password"],
+    .login-form input[type="email"],
+    .login-form input[type="tel"],
+    .login-form .form-control {
+        display: block;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 44px;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
+
+        .login-form .form-control:focus,
+        .login-form input[type="text"]:focus,
+        .login-form input[type="password"]:focus,
+        .login-form input[type="email"]:focus,
+        .login-form input[type="tel"]:focus {
+            border-color: var(--tgdd-yellow);
+            box-shadow: 0 0 0 2px rgba(255, 212, 0, .25);
+            outline: none;
+        }
+
+    /* === Ghi nhớ tôi (checkbox) === */
+    /* 1) Label hiển thị inline để checkbox nằm cạnh chữ */
+    .login-form .form-group label.remember-inline,
+    .login-form .form-group label.checkbox-inline.remember-inline {
+        display: inline-flex; /* đè lên rule label mặc định */
+        align-items: center;
+        gap: 8px;
+        margin: 0; /* bỏ margin-bottom để không bị xuống dòng */
+        padding: 0;
+    }
+
+    /* 2) Trả checkbox về kích thước chuẩn, tránh kế thừa từ input text */
+    .login-form input[type="checkbox"] {
+        appearance: auto;
+        -webkit-appearance: checkbox;
+        -moz-appearance: checkbox;
+        width: 16px !important;
+        height: 16px !important;
+        min-width: 16px;
+        min-height: 16px;
+        margin: 0; /* sát chữ */
+        padding: 0;
+        border: none;
+        box-shadow: none;
+        vertical-align: middle;
+    }
+
+/* Nút hành động chính: full width để thẳng hàng với input */
+.actions {
+    margin-top: 8px;
 }
 
-/* Primary action button spans full width to align with inputs */
-.actions { margin-top: 8px; }
 .btn-tgdd {
     display: inline-block;
     width: 100%;
@@ -58,26 +109,51 @@
     font-weight: 700;
     border-radius: 12px;
     padding: 0 18px;
-}
-.btn-tgdd:hover, .btn-tgdd:focus {
-    background-color: var(--tgdd-yellow-dark);
-    border-color: var(--tgdd-yellow-dark);
-    color: #000;
+    cursor: pointer;
 }
 
-/* Links under the form */
-.extra-links, .signup { text-align: center; margin-top: 12px; }
-.forgot-link { color: #007bff; text-decoration: none; }
-.forgot-link:hover { text-decoration: underline; }
+    .btn-tgdd:hover, .btn-tgdd:focus {
+        background-color: var(--tgdd-yellow-dark);
+        border-color: var(--tgdd-yellow-dark);
+        color: #000;
+    }
+
+/* Liên kết phụ dưới form */
+.extra-links, .signup {
+    text-align: center;
+    margin-top: 12px;
+}
+
+.forgot-link {
+    color: #007bff;
+    text-decoration: none;
+}
+
+    .forgot-link:hover {
+        text-decoration: underline;
+    }
 
 .signup-link {
-    color: #111; font-weight: 700; text-decoration: none; padding-bottom: 1px;
+    color: var(--text);
+    font-weight: 700;
+    text-decoration: none;
+    padding-bottom: 1px;
     border-bottom: 2px solid var(--tgdd-yellow);
 }
-.signup-link:hover { color: #000; border-color: var(--tgdd-yellow-dark); }
 
-/* Validation spacing */
-.text-danger { margin-top: 4px; }
+    .signup-link:hover {
+        color: #000;
+        border-color: var(--tgdd-yellow-dark);
+    }
 
-/* Responsive */
-@media (max-width: 575px) { .login-wrap { margin: 32px auto; } }
+/* Khoảng cách cho thông báo lỗi */
+.text-danger {
+    margin-top: 4px;
+}
+
+/* Responsive: giảm khoảng cách trên mobile */
+@media (max-width: 575px) {
+    .login-wrap {
+        margin: 32px auto;
+    }
+}
