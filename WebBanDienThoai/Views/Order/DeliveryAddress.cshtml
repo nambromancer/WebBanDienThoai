@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "Địa chỉ giao hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 style="background:#FFD600;padding:12px;border-radius:8px;">Địa chỉ giao hàng</h2>
+
+<div style="width:60%;margin:20px auto;background:#fff;padding:20px;border-radius:10px;font-family:Arial;">
+    <form id="formShip">
+        <label>Họ và tên</label>
+        <input id="name" class="form-control" required />
+
+        <label>Số điện thoại</label>
+        <input id="phone" class="form-control" required />
+
+        <label>Địa chỉ</label>
+        <textarea id="address" rows="3" class="form-control" required></textarea>
+
+        <label>Tỉnh/Thành phố</label>
+        <input id="city" class="form-control" required />
+
+        <label>Quận/Huyện</label>
+        <input id="district" class="form-control" required />
+
+        <div style="margin-top:15px;">
+            <button type="button" class="btn btn-secondary" onclick="location.href='/'">Quay lại</button>
+            <button type="submit" class="btn btn-warning" style="background:#FFD600;">Tiếp tục</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+    document.getElementById("formShip").onsubmit = function (e) {
+            e.preventDefault();
+            let data = {
+                name: name.value,
+                phone: phone.value,
+                address: address.value,
+                city: city.value,
+                district: district.value
+            };
+            localStorage.setItem("shipping", JSON.stringify(data));
+            window.location = "/Order/Payment";
+        }</script>
+}

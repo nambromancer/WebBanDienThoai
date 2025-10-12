@@ -1,0 +1,24 @@
+﻿@{
+    ViewBag.Title = "Xác nhận đơn hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 style="background:#FFD600;padding:12px;border-radius:8px;">Xác nhận đơn hàng</h2>
+
+<div style="width:60%;margin:20px auto;background:#fff;padding:20px;border-radius:10px;font-family:Arial;">
+    <h4>Đặt hàng thành công!</h4>
+    <div id="info" style="background:#fff8cc;padding:15px;border-radius:8px;margin-top:10px;"></div>
+    <button class="btn btn-warning" style="margin-top:15px;background:#FFD600;" onclick="location.href='/'">Về trang chủ</button>
+</div>
+
+@section Scripts {
+    <script>
+    let s = JSON.parse(localStorage.getItem("shipping") || "{}");
+        let p = localStorage.getItem("payment") || "COD";
+        document.getElementById("info").innerHTML =
+            `<p><b>Người nhận:</b> ${s.name}</p>
+         <p><b>SĐT:</b> ${s.phone}</p>
+         <p><b>Địa chỉ:</b> ${s.address}, ${s.district}, ${s.city}</p>
+         <p><b>Thanh toán:</b> ${p}</p>
+         <p>Cảm ơn bạn đã mua hàng tại <b style='color:#FFD600'>Web Bán Điện Thoại</b>!</p>`;</script>
+}
