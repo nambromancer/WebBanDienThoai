@@ -1,0 +1,44 @@
+﻿/* Yellow theme for login modal */
+.tgdd-modal .modal-content {
+    position: relative;
+    border: 0;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.2);
+    padding-top: 8px;
+}
+
+/* Small, plain "x" close button */
+.tgdd-modal .tgdd-close {
+    position: absolute;
+    right: 10px;
+    top: 8px;
+    padding: 0;
+    width: auto;
+    height: auto;
+    line-height: 1;
+    text-align: center;
+    font-size: 16px;        /* small 'x' */
+    font-weight: 600;
+    color: #666;
+    background: transparent;
+    border: none;           /* remove gray border */
+    border-radius: 0;
+    box-shadow: none;
+    cursor: pointer;
+    z-index: 2;             /* ensure clickable above content */
+}
+.tgdd-modal .tgdd-close:hover { color: #000; }
+
+/* Title, text and buttons (unchanged) */
+.tgdd-modal .tgdd-title {
+    margin: 8px 0 12px;
+    font-weight: 700;
+    color: #FFD400;
+}
+.tgdd-modal .tgdd-desc { color: #333; margin: 0 16px 20px; }
+.tgdd-modal .tgdd-actions { display: flex; justify-content: center; align-items: center; gap: 12px; }
+.tgdd-modal .tgdd-actions .btn { min-width: 120px; padding: 10px 18px; border-radius: 12px; font-weight: 600; }
+.btn-tgdd { background-color: #FFD400; border: 2px solid #FFD400; color: #000; }
+.btn-tgdd:hover, .btn-tgdd:focus { background-color: #e6c200; border-color: #e6c200; color: #000; }
+.btn-outline-tgdd { background-color: #fff; border: 2px solid #FFD400; color: #111; }
+.btn-outline-tgdd:hover, .btn-outline-tgdd:focus { background-color: #fff7b3; border-color: #e6c200; color: #111; }

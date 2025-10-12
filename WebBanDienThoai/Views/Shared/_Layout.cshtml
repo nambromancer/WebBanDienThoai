@@ -7,6 +7,7 @@
     @Styles.Render("~/Content/css")
     <link href="~/Content/header-style.css" rel="stylesheet" />
     <link href="~/Content/footer-style.css" rel="stylesheet" />
+    <link href="~/Content/modal-tgdd.css" rel="stylesheet" />
 
     @Scripts.Render("~/bundles/modernizr")
 </head>
@@ -36,7 +37,12 @@
 
             <!-- User Actions -->
             <div class="user-actions">
-                <a href="#" class="user-login">
+                <!-- Make sure this is the button you click -->
+                <a id="loginLink"
+                   href="javascript:void(0)"
+                   class="user-login"
+                   data-toggle="modal" data-target="#loginModal"
+                   data-bs-toggle="modal" data-bs-target="#loginModal">
                     <span class="user-icon">👤</span>
                     <span>Đăng nhập</span>
                 </a>
@@ -102,10 +108,35 @@
         </nav>
     </header>
 
+    <!-- Login Modal -->
+    <div class="modal fade tgdd-modal" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <!-- Keep Bootstrap 'close' class and data-* so BS3/4/5 can hook it -->
+                <button type="button"
+                        class="close tgdd-close"
+                        data-dismiss="modal"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                    x
+                </button>
+                <div class="modal-body text-center">
+                    <h3 id="loginModalLabel" class="tgdd-title">thegioididong</h3>
+                    <p class="tgdd-desc">
+                        Vui lòng đăng nhập tài khoản thegioididong để xem ưu đãi và thanh toán dễ dàng hơn.
+                    </p>
+                    <div class="tgdd-actions">
+                        <a href="@Url.Action("Register", "Account")" class="btn btn-outline-tgdd">Đăng ký</a>
+                        <a href="@Url.Action("Login", "Account")" class="btn btn-tgdd">Đăng nhập</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container body-content">
         @RenderBody()
         <hr />
-
     </div>
     <footer>
         <div class="footer-top">
@@ -163,5 +194,65 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
+    <!-- Open/Close fallbacks that work with Bootstrap 3/4/5 -->
+<script>
+    (function () {
+        function showLoginModal(e) {
+            if (e) e.preventDefault();
+            var modalEl = document.getElementById('loginModal');
+            if (!modalEl) return;
+
+            if (window.jQuery && typeof jQuery.fn.modal === 'function') {
+                jQuery(modalEl).modal('show');
+                return;
+            }
+            if (window.bootstrap && typeof bootstrap.Modal === 'function') {
+                (bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl)).show();
+                return;
+            }
+            console.warn('Bootstrap JS not loaded.');
+        }
+
+        function hideLoginModal(e) {
+            if (e) e.preventDefault();
+            var modalEl = document.getElementById('loginModal');
+            if (!modalEl) return;
+
+            if (window.jQuery && typeof jQuery.fn.modal === 'function') {
+                jQuery(modalEl).modal('hide');
+                return;
+            }
+            if (window.bootstrap && typeof bootstrap.Modal === 'function') {
+                (bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl)).hide();
+                return;
+            }
+            // Hard fallback
+            modalEl.classList.remove('in', 'show');
+            modalEl.style.display = 'none';
+            document.body.classList.remove('modal-open');
+            var backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) backdrop.parentNode.removeChild(backdrop);
+        }
+
+        // Open handler (works even if data attributes don't)
+        document.addEventListener('click', function (ev) {
+            if (ev.target.closest && ev.target.closest('#loginLink')) {
+                showLoginModal(ev);
+            }
+        });
+
+        // Close handler with jQuery delegation if available, else vanilla
+        if (window.jQuery) {
+            jQuery(document).on('click', '#loginModal .tgdd-close', hideLoginModal);
+        } else {
+            document.addEventListener('click', function (ev) {
+                if (ev.target.closest && ev.target.closest('#loginModal .tgdd-close')) {
+                    hideLoginModal(ev);
+                }
+            });
+        }
+    })();
+</script>
 </body>
 </html>

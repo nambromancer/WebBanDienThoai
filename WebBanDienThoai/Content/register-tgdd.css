@@ -1,0 +1,100 @@
+﻿/* Centered, yellow-themed registration page */
+.register-wrap {
+    max-width: 880px;
+    margin: 40px auto;
+    padding: 0 16px 24px;
+}
+
+.register-title {
+    text-align: center;
+    color: #FFD400;
+    font-weight: 800;
+    margin-bottom: 16px;
+}
+
+.section {
+    border: 0;
+    margin: 12px 0 6px;
+    padding: 6px 0 0;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+/* Inputs */
+.register-form .form-group label {
+    font-weight: 600;
+}
+
+.register-form .form-control {
+    border-radius: 10px;
+    height: 40px;
+}
+
+    .register-form .form-control:focus {
+        border-color: #FFD400;
+        box-shadow: 0 0 0 2px rgba(255, 212, 0, .25);
+    }
+
+/* Help text */
+.help-inline {
+    display: block;
+    margin-top: 4px;
+}
+
+/* Actions */
+.actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.btn-tgdd {
+    background-color: #FFD400;
+    border: 2px solid #FFD400;
+    color: #000;
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 10px 18px;
+    min-width: 180px;
+}
+
+    .btn-tgdd:hover,
+    .btn-tgdd:focus {
+        background-color: #e6c200;
+        border-color: #e6c200;
+        color: #000;
+    }
+
+.btn-outline-tgdd {
+    background-color: #fff;
+    border: 2px solid #FFD400;
+    color: #111;
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 10px 18px;
+    min-width: 180px;
+}
+
+    .btn-outline-tgdd:hover,
+    .btn-outline-tgdd:focus {
+        background-color: #fff7b3;
+        border-color: #e6c200;
+    }
+
+/* Validation */
+.text-danger {
+    margin-top: 4px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 767px) {
+    .register-wrap {
+        margin: 24px auto;
+    }
+}

@@ -1,0 +1,83 @@
+﻿/* Centered, yellow-themed login page (clean, aligned) */
+:root {
+    --tgdd-yellow: #FFD400;
+    --tgdd-yellow-dark: #e6c200;
+}
+
+.login-wrap {
+    max-width: 520px;           /* fixed content width */
+    margin: 48px auto;          /* center on page */
+    padding: 0 16px 24px;
+}
+
+.login-title {
+    text-align: center;
+    color: var(--tgdd-yellow);
+    font-weight: 800;
+    margin: 0 0 20px;
+}
+
+/* Form layout */
+.login-form { width: 100%; }
+.login-form .form-group { margin-bottom: 16px; }
+.login-form .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #222;
+}
+
+/* Ensure inputs fully match container width and override any globals */
+.login-wrap input,
+.login-wrap .form-control {
+    display: block;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 44px;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+.login-form .form-control:focus {
+    border-color: var(--tgdd-yellow);
+    box-shadow: 0 0 0 2px rgba(255, 212, 0, .25);
+}
+
+/* Primary action button spans full width to align with inputs */
+.actions { margin-top: 8px; }
+.btn-tgdd {
+    display: inline-block;
+    width: 100%;
+    height: 44px;
+    line-height: 40px;
+    text-align: center;
+    background-color: var(--tgdd-yellow);
+    border: 2px solid var(--tgdd-yellow);
+    color: #000;
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 0 18px;
+}
+.btn-tgdd:hover, .btn-tgdd:focus {
+    background-color: var(--tgdd-yellow-dark);
+    border-color: var(--tgdd-yellow-dark);
+    color: #000;
+}
+
+/* Links under the form */
+.extra-links, .signup { text-align: center; margin-top: 12px; }
+.forgot-link { color: #007bff; text-decoration: none; }
+.forgot-link:hover { text-decoration: underline; }
+
+.signup-link {
+    color: #111; font-weight: 700; text-decoration: none; padding-bottom: 1px;
+    border-bottom: 2px solid var(--tgdd-yellow);
+}
+.signup-link:hover { color: #000; border-color: var(--tgdd-yellow-dark); }
+
+/* Validation spacing */
+.text-danger { margin-top: 4px; }
+
+/* Responsive */
+@media (max-width: 575px) { .login-wrap { margin: 32px auto; } }
