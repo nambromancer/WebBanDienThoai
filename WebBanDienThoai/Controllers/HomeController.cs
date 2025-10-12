@@ -26,5 +26,11 @@ namespace WebBanDienThoai.Controllers
 
             return View();
         }
+        public ActionResult ProductDetail()
+        {
+            ViewBag.Message = "";
+
+            return View();
+        }
     }
 }

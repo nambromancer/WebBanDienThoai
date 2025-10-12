@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.Title = "Chi tiết sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông tin iPhone 17</title>
+    <link href="~/Content/product-detail.css" rel="stylesheet" />
+
+</head>
+<body>
+
+    <div class="container">
+        <h1>Thông tin chi tiết iPhone 17</h1>
+        @*<div class="item">
+            <img src="~/Content/img/ip1.jpg"
+                 class="product-image" onclick="openPopup('/Content/img/rl.jpg')" />*@
+
+        <div class="gallery-container">
+            <div class="main-image">
+                <img id="mainImage" src="~/Content/img/ip1.jpg" alt="Ảnh chính" onclick="openPopup(/Content/img/rl.jpg)" />
+                <button class="prev" onclick="changeImage(-1)">❮</button>
+                <button class="next" onclick="changeImage(1)">❯</button>
+            </div>
+
+            <div class="thumbnails">
+                <img src="~/Content/img/ip1.jpg" onclick="showImage(0)" class="thumbnail active">
+                <img src="~/Content/img/ip2.jpg" onclick="showImage(1)" class="thumbnail">
+                <img src="~/Content/img/ip3.jpg" onclick="showImage(2)" class="thumbnail">
+            </div>
+        </div>
+
+        <p class="product-title">Iphone 17 - 256gb</p>
+
+
+        <p class="product-price">Giá: 40.000.000 ₫</p>
+        <h2 onclick="toggle('camera')">📷 Camera & Màn hình</h2>
+        <div id="camera" class="content">
+            <p><strong>Công nghệ màn hình:</strong> OLED</p>
+            <p><strong>Độ phân giải:</strong> Super Retina XDR (1206 x 2622 Pixels)</p>
+            <p><strong>Màn hình rộng:</strong> 6.3" - Tần số quét 120 Hz</p>
+            <p><strong>Độ sáng tối đa:</strong> 3000 nits</p>
+            <p><strong>Mặt kính cảm ứng:</strong> Ceramic Shield 2</p>
+        </div>
+
+        <h2 onclick="toggle('battery')">🔋 Pin & Sạc</h2>
+        <div id="battery" class="content">
+            <p><strong>Loại pin:</strong> Li-Ion</p>
+            <p><strong>Hỗ trợ sạc tối đa:</strong> 40 W</p>
+            <p><strong>Công nghệ pin:</strong> Tiết kiệm pin, Sạc nhanh, Sạc ngược qua cáp, Sạc không dây MagSafe, Sạc không dây</p>
+        </div>
+
+        <h2 onclick="toggle('utilities')">🛠️ Tiện ích & Kết nối</h2>
+        <div id="utilities" class="content">
+            <p><strong>Kháng nước, bụi:</strong> IP68</p>
+            <p><strong>Ghi âm:</strong> Mặc định, Cuộc gọi</p>
+            <p><strong>Xem phim:</strong> MP4, AV1, HEVC</p>
+            <p><strong>Nghe nhạc:</strong> MP3, FLAC, Apple Lossless, APAC, AAC</p>
+            <p><strong>SIM:</strong> 1 Nano SIM & 1 eSIM</p>
+            <p><strong>Wi-Fi:</strong> Wi-Fi MIMO, Wi-Fi 7</p>
+            <p><strong>GPS:</strong> iBeacon, QZSS, NavIC, GPS, GLONASS, GALILEO, BEIDOU</p>
+            <p><strong>Bluetooth:</strong> v6.0</p>
+            <p><strong>Cổng kết nối/sạc:</strong> Type-C</p>
+            <p><strong>Jack tai nghe:</strong> Type-C</p>
+            <p><strong>Kết nối khác:</strong> NFC</p>
+        </div>
+
+        <h2 onclick="toggle('design')">🎨 Thiết kế & Chất liệu</h2>
+        <div id="design" class="content">
+            <p><strong>Thiết kế:</strong> Nguyên khối</p>
+            <p><strong>Chất liệu:</strong> Khung nhôm & Mặt lưng kính cường lực</p>
+            <p><strong>Kích thước:</strong> 149.6 x 71.5 x 7.95 mm</p>
+            <p><strong>Khối lượng:</strong> 177 g</p>
+            <p><strong>Thời điểm ra mắt:</strong> 09/2025</p>
+            <p><strong>Hãng:</strong> iPhone (Apple)</p>
+        </div>
+    </div>
+
+    <script>
+        function toggle(id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'block' ? 'none' : 'block';
+        }
+        let currentIndex = 0;
+        const images = [
+            '/Content/img/ip1.jpg',
+            '/Content/img/ip2.jpg',
+            '/Content/img/ip3.jpg'
+        ];
+
+        function showImage(index) {
+            currentIndex = index;
+            const mainImage = document.getElementById('mainImage');
+            mainImage.src = images[index];
+            mainImage.onclick = () => OpenPopup(images[index]);
+
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === index);
+            });
+        }
+
+        function changeImage(direction) {
+            currentIndex += direction;
+            if (currentIndex < 0) currentIndex = images.length - 1;
+            if (currentIndex >= images.length) currentIndex = 0;
+            showImage(currentIndex);
+        }
+
+        function OpenPopup(src) {
+            const popup = window.open('', '_blank');
+            popup.document.write(`<img src="${src}" style="width:100%">`);
+        }
+
+        // Khởi tạo ảnh đầu tiên khi trang tải
+        window.onload = () => showImage(currentIndex);
+
+    </script>
+</body>
+</html>

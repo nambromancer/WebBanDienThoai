@@ -148,8 +148,12 @@
     <Content Include="Content\footer-style.css" />
     <Content Include="Content\header-style.css" />
     <Content Include="Content\home-promo.css" />
+    <Content Include="Content\img\ip1.jpg" />
+    <Content Include="Content\img\ip2.jpg" />
+    <Content Include="Content\img\ip3.jpg" />
     <Content Include="Content\login-tgdd.css" />
     <Content Include="Content\modal-tgdd.css" />
+    <Content Include="Content\product-detail.css" />
     <Content Include="Content\register-tgdd.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -187,6 +191,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Home\ProductDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

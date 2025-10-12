@@ -1,0 +1,107 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    padding: 0;
+}
+
+/* Wrap (keep full width helper if used elsewhere) */
+.full-width {
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container: 800 -> 480, paddings/radius reduced */
+.container {
+    max-width: 480px;                 /* 800 * 0.6 */
+    margin: auto;
+    background: #fff;
+    padding: 12px;                    /* 20 * 0.6 */
+    border-radius: 6px;               /* 10 * 0.6 */
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Headings smaller (~60%) */
+.container h1 {
+    font-size: 20px;                  /* ~32 -> 20 */
+    margin: 6px 0 10px;
+}
+h2 {
+    cursor: pointer;
+    background: #eee;
+    padding: 6px;                     /* 10 -> 6 */
+    border-radius: 3px;               /* 5 -> 3 */
+    margin-top: 12px;                 /* 20 -> 12 */
+    font-size: 14px;                  /* ~24 -> 14 */
+}
+
+/* Title/price text smaller */
+.product-title {
+    font-family: Arial, serif;
+    font-weight: bold;
+    font-size: 17px;                  /* 28 -> 17 */
+    display: inline-block;
+    color: darkred;
+    text-align: right;
+}
+.product-price {
+    font-weight: bold;
+    color: #ff5252;
+    margin: 4px 0 9px;
+    font-size: 11px;                  /* 18 -> 11 */
+}
+
+/* Gallery width and controls */
+.gallery-container {
+    text-align: left;
+    max-width: 360px;                 /* 600 -> 360 */
+    margin: auto;
+}
+.main-image { position: relative; }
+.main-image img { width: 100%; border-radius: 6px; }
+
+/* Prev/Next buttons (compact) */
+.main-image .prev,
+.main-image .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,.55);
+    color: #fff;
+    border: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 14px;
+    line-height: 28px;
+    text-align: center;
+    cursor: pointer;
+}
+.main-image .prev { left: 6px; }
+.main-image .next { right: 6px; }
+
+/* Thumbnails smaller with tighter gaps */
+.thumbnails {
+    margin-top: 6px;                  /* 10 -> 6 */
+    display: flex;
+    justify-content: center;
+    gap: 6px;                          /* 10 -> 6 */
+}
+.thumbnail {
+    width: 48px;                      /* 80 -> 48 */
+    opacity: 0.4;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+.thumbnail.active { opacity: 1; outline: 2px solid #FFD400; }
+
+/* Collapsible content font size and spacing reduced */
+.content {
+    display: none;
+    padding: 6px 12px;                /* 10 20 -> 6 12 */
+    border-left: 2px solid #007bff;   /* 3 -> 2 */
+    margin-bottom: 8px;
+    font-size: 12px;                  /* 20 -> 12 */
+}
+.content p { margin: 4px 0; }
