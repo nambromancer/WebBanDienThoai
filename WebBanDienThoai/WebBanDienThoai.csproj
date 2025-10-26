@@ -121,12 +121,16 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CategoryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Controllers\ProductsController.cs" />
+    <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\ProductSearchResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -146,12 +150,31 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\category.css" />
     <Content Include="Content\footer-style.css" />
     <Content Include="Content\header-style.css" />
     <Content Include="Content\home-promo.css" />
+    <Content Include="Content\img\acer-aspire-lite-15-al15-71p-517d-i5-nxj7ksv001-thumb-638804825325953513-600x600.jpg" />
+    <Content Include="Content\img\adapter-sac-type-c-pd-gan-30w-ugreen-robot-uno-cd359-15550-thumb-638943079923012712-600x600.jpg" />
+    <Content Include="Content\img\apple-watch-ultra-lte-49mm-vien-titanium-day-ocean-tb-600x600.jpg" />
+    <Content Include="Content\img\asus-vivobook-15-x1504va-i3-nj1634w-thumb-638760891054481940-600x600.jpg" />
+    <Content Include="Content\img\dell-inspiron-15-3520-i7-1255-71069748-thumb-638897293267474745-600x600.jpg" />
+    <Content Include="Content\img\dong-ho-dien-thoai-thong-minh-dinh-vi-tre-em-imoo-z1-hong-tn-600x600.jpg" />
+    <Content Include="Content\img\huawei-watch-fit-4-den-tb-600x600.jpg" />
     <Content Include="Content\img\ip1.jpg" />
     <Content Include="Content\img\ip2.jpg" />
     <Content Include="Content\img\ip3.jpg" />
+    <Content Include="Content\img\ipad-11-wifi-128gb-060325-102428-839-200x200.jpg" />
+    <Content Include="Content\img\laptop_asus_vivobook_go_14_e1404fa-eb482w_-_2.png" />
+    <Content Include="Content\img\lenovo-ideapad-slim-3-15irh10-i5-83k1000hvn-638775478046964172-600x600.jpg" />
+    <Content Include="Content\img\macbook-air-13-inch-m4-16gb-256gb-sac-70w-thumb1-638903386914459770-600x600.jpg" />
+    <Content Include="Content\img\masstel-smart-hero-6-xanh-tb-1-600x600.jpg" />
+    <Content Include="Content\img\mi-band-10-den-600x600.jpg" />
+    <Content Include="Content\img\mykid-4g-lite-xanh-la-tb-fix-600x600.jpg" />
+    <Content Include="Content\img\samsung-galaxy-a07-black-1-638939760013183136-750x500.jpg" />
+    <Content Include="Content\img\samsung-galaxy-m15-1-750x500.jpg" />
+    <Content Include="Content\img\samsung-galaxy-z-fold7-black-2-638889670470176145-750x500.jpg" />
+    <Content Include="Content\img\xiaomi-redmi-pad-2-wifi-xam-1-638889730853383037-750x500.jpg" />
     <Content Include="Content\login-tgdd.css" />
     <Content Include="Content\modal-tgdd.css" />
     <Content Include="Content\product-detail.css" />
@@ -187,15 +210,19 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
-    <Content Include="Views\Home\ProductDetail.cshtml" />
+    <Content Include="Views\Products\ProductDetail.cshtml" />
     <Content Include="Views\Order\DeliveryAddress.cshtml" />
     <Content Include="Views\Order\Payment.cshtml" />
     <Content Include="Views\Order\OrderConfirmed.cshtml" />
+    <Content Include="Views\Home\Cart.cshtml" />
+    <Content Include="Views\Category\Phone.cshtml" />
+    <Content Include="Views\Category\Laptop.cshtml" />
+    <Content Include="Views\Category\Accessories.cshtml" />
+    <Content Include="Views\Category\Smartwatch.cshtml" />
+    <Content Include="Views\Search\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

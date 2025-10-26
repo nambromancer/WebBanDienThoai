@@ -32,13 +32,12 @@
             <!-- Thanh tìm kiếm (chỉ là UI demo, chưa submit form) -->
             <div class="search-section" role="search" aria-label="Tìm kiếm">
                 <div class="search-container">
-                    <!-- aria-label để screen reader hiểu mục đích -->
                     <input type="text" class="search-input" placeholder="Laptop nhập học..." aria-label="Từ khóa tìm kiếm">
-                    <!-- type="button" tránh submit form mặc định -->
                     <button class="search-btn" type="button" aria-label="Tìm kiếm">
                         <span class="search-icon">🔍</span>
                     </button>
                 </div>
+             
             </div>
 
             <!-- Hành động người dùng -->
@@ -52,7 +51,7 @@
                     <span class="user-icon">👤</span>
                     <span>Đăng nhập</span>
                 </a>
-                <a href="#" class="cart-link" aria-label="Xem giỏ hàng">
+                <a href="@Url.Action("Cart","Home") "class="cart-link" aria-label="Xem giỏ hàng">
                     <span class="cart-icon">🛒</span>
                     <span>Giỏ hàng</span>
                 </a>
@@ -68,25 +67,25 @@
             <div class="nav-container">
                 <ul class="nav-menu">
                     <li class="nav-item">
-                        <a href="@Url.Action("Index", "Home")" class="nav-link">
+                        <a href="@Url.Action("Phone", "Category")" class="nav-link">
                             <span class="nav-icon">📱</span>
                             Điện thoại
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="@Url.Action("Laptop", "Category")" class="nav-link">
                             <span class="nav-icon">💻</span>
                             Laptop
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="@Url.Action("Accessories", "Category")" class="nav-link">
                             <span class="nav-icon">🔌</span>
                             Phụ kiện
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="@Url.Action("Smartwatch", "Category")" class="nav-link">
                             <span class="nav-icon">⌚</span>
                             Smartwatch
                         </a>
@@ -216,7 +215,7 @@
     @RenderSection("scripts", required: false)
 
     <!-- JS mở/đóng modal: fallback cho cả BS3/4/5 và không Bootstrap -->
-    <script>
+<script>
         (function () {
             'use strict';
 
@@ -282,6 +281,24 @@
                 });
             }
         })();
-    </script>
+  (function () {
+    'use strict';
+    var input = document.querySelector('.search-input');
+    var btn = document.querySelector('.search-btn');
+    if (!input) return;
+
+    function gotoSearch() {
+        var q = (input.value || '').trim();
+        var baseUrl = '@Url.Content("~/Search/Index")'; // force /Search/Index
+        var url = baseUrl + (q ? ('?q=' + encodeURIComponent(q)) : '');
+        window.location.href = url;
+    }
+
+    input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); gotoSearch(); }
+    });
+    if (btn) btn.addEventListener('click', gotoSearch);
+})();
+</script>
 </body>
 </html>

@@ -1,0 +1,326 @@
+﻿@{
+    ViewBag.Title = "Accessories";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var categoryDisplayName = "Phụ kiện";
+    var itemNounLower = "Phụ kiện"; // for button text
+}
+<link href="~/Content/home-promo.css" rel="stylesheet" />
+<link href="~/Content/category.css" rel="stylesheet" />
+
+<div class="cat-wrap container">
+    <!-- Breadcrumb -->
+    <nav class="cat-breadcrumb">
+        <a class="home-link" href="@Url.Action("Index","Home")">Trang chủ</a>
+        <span class="sep">›</span>
+        <span><span class="js-total-count">0</span> @categoryDisplayName</span>
+    </nav>
+
+
+
+    <!-- Brand filter (text chips) -->
+    <div class="brand-filter">
+        <button type="button" class="chip active">Apple</button>
+        <button type="button" class="chip">SAMSUNG</button>
+        <button type="button" class="chip">XIAOMI</button>
+        <button type="button" class="chip">Baseus</button>
+        <button type="button" class="chip">Ugreen</button>
+        <button type="button" class="chip">JBL </button>
+        <button type="button" class="chip">Marshall</button>
+    </div>
+    <!-- Sort bar -->
+    <div class="sort-bar">
+        <span class="label">Sắp xếp theo:</span>
+        <button type="button" class="sort-item active" data-sort="noi-bat">Nổi bật</button>
+        <span class="dot">•</span>
+        <button type="button" class="sort-item" data-sort="ban-chay">Bán chạy</button>
+        <span class="dot">•</span>
+        <button type="button" class="sort-item" data-sort="giam-gia">Giảm giá</button>
+        <span class="dot">•</span>
+        <button type="button" class="sort-item" data-sort="moi">Mới</button>
+        <span class="dot">•</span>
+        <div class="sort-item dropdown" data-sort="gia">
+            <button type="button" class="dropdown-toggle">Giá ▾</button>
+            <div class="dropdown-menu">
+                <button type="button" class="dropdown-item" data-sort="gia-cao-thap">Giá cao → thấp</button>
+                <button type="button" class="dropdown-item" data-sort="gia-thap-cao">Giá thấp → cao</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product list container: place your product cards inside -->
+    <div class="product-list js-product-list">
+        @* Ensure each product card has class "js-product-card" (or "product-card") for counting and load-more *@
+        <div class="product-grid" data-tab-panel="phukien">
+            @for (int i = 0; i < 15; i++)
+            {
+                <article class="product-card">
+                    <div class="card-topline">
+                        <span class="pill mint">Trả góp 0%</span>
+                    </div>
+
+                    <div class="product-thumb" aria-label="Placeholder image">
+                        <!-- TODO: Đổi đường dẫn hình đúng cho Phụ kiện -->
+                        <img class="thumb-img"
+                             src="~/Content/img/adapter-sac-type-c-pd-gan-30w-ugreen-robot-uno-cd359-15550-thumb-638943079923012712-600x600.jpg"
+                             alt="Sạc Ugreen Robot Uno CD359 15550"
+                             loading="lazy" decoding="async"
+                             style="width:100%;height:100%;object-fit:contain;display:block;" />
+                    </div>
+
+                    <h3 class="product-name">Sạc Ugreen Robot Uno CD359 15550</h3>
+                    <div class="product-variant">Màu đen</div>
+
+                    <div class="price-line">
+                        <span class="price">299.000₫</span>
+                        <span class="price-old">399.000₫</span>
+                        <span class="discount">-25%</span>
+                    </div>
+
+                    <div class="benefit">Freeship nội thành</div>
+                    <div class="rating-line">★ 4.8 • 2.3k đánh giá</div>
+                </article>
+            }
+        </div>
+    </div>
+
+    <!-- Load more button -->
+    <div class="load-more-wrap">
+        <button type="button" class="load-more-btn js-load-more" data-itemname="@itemNounLower">
+            Xem thêm <span class="js-remaining-count">0</span> @itemNounLower
+        </button>
+    </div>
+</div>
+
+<style>
+    .cat-wrap {
+        margin-top: 12px;
+    }
+
+    .cat-breadcrumb {
+        color: #6b7280;
+        font-size: 14px;
+        margin: 8px 0 12px;
+    }
+
+        .cat-breadcrumb .home-link {
+            color: #6b7280;
+            text-decoration: none;
+        }
+
+            .cat-breadcrumb .home-link:hover {
+                text-decoration: underline;
+            }
+
+        .cat-breadcrumb .sep {
+            margin: 0 6px;
+            color: #9ca3af;
+        }
+
+    .sort-bar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        color: #374151;
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+        .sort-bar .label {
+            color: #6b7280;
+            margin-right: 4px;
+        }
+
+    .sort-item {
+        background: none;
+        border: none;
+        color: #374151;
+        cursor: pointer;
+        padding: 4px 6px;
+        border-radius: 4px;
+    }
+
+        .sort-item:hover {
+            background: #f3f4f6;
+        }
+
+        .sort-item.active {
+            color: #1a73e8;
+            font-weight: 600;
+        }
+
+    .sort-bar .dot {
+        color: #9ca3af;
+    }
+
+    .dropdown {
+        position: relative;
+    }
+
+    .dropdown-toggle {
+        background: none;
+        border: none;
+        color: #374151;
+        cursor: pointer;
+        padding: 4px 6px;
+        border-radius: 4px;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 28px;
+        left: 0;
+        min-width: 180px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        box-shadow: 0 6px 18px rgba(0,0,0,.08);
+        display: none;
+        z-index: 20;
+    }
+
+    .dropdown.open .dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-item {
+        width: 100%;
+        text-align: left;
+        padding: 8px 10px;
+        background: #fff;
+        border: none;
+        cursor: pointer;
+        color: #374151;
+    }
+
+        .dropdown-item:hover {
+            background: #f3f4f6;
+        }
+
+    .brand-filter {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 12px 0 16px;
+    }
+
+    .chip {
+        padding: 8px 12px;
+        background: #f5f7fa;
+        border: 1px solid #eef2f7;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #374151;
+    }
+
+        .chip:hover {
+            background: #eef2f7;
+        }
+
+        .chip.active {
+            border-color: #1a73e8;
+            color: #1a73e8;
+            background: #eef6ff;
+        }
+
+    .product-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+    }
+
+    .is-hidden-loadmore {
+        display: none !important;
+    }
+
+    .load-more-wrap {
+        text-align: center;
+        margin: 18px 0 24px;
+    }
+
+    .load-more-btn {
+        background: #1a73e8;
+        color: #fff;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+        .load-more-btn:hover {
+            background: #1669c1;
+        }
+
+        .load-more-btn.hidden {
+            display: none;
+        }
+</style>
+
+<script>
+    (function () {
+        // Sort UI (highlight only)
+        const sortItems = document.querySelectorAll('.sort-item:not(.dropdown)');
+        sortItems.forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.sort-item').forEach(x => x.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Price dropdown behavior
+        const dropdown = document.querySelector('.dropdown');
+        const toggle = dropdown?.querySelector('.dropdown-toggle');
+        toggle?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('open');
+            // Visual select state on "Giá" when any price option is chosen
+            document.querySelectorAll('.sort-item').forEach(x => x.classList.remove('active'));
+            dropdown.classList.add('active');
+        });
+        dropdown?.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.remove('open');
+            });
+        });
+        document.addEventListener('click', () => dropdown?.classList.remove('open'));
+
+        // Brand chip active state (UI only)
+        document.querySelectorAll('.brand-filter .chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('.brand-filter .chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+            });
+        });
+
+        // Product counting + load more
+        const list = document.querySelector('.js-product-list') || document;
+        const cardSelector = '.js-product-card, .product-card, [data-product-card]';
+        const pageSize = 15;
+
+        const cards = Array.from(list.querySelectorAll(cardSelector));
+        const totalCount = cards.length;
+        const totalCountEl = document.querySelector('.js-total-count');
+        if (totalCountEl) totalCountEl.textContent = String(totalCount);
+
+        // Initialize hidden state for load more
+        cards.forEach((c, i) => {
+            if (i >= pageSize) c.classList.add('is-hidden-loadmore');
+        });
+
+        const btn = document.querySelector('.js-load-more');
+        const remainingEl = document.querySelector('.js-remaining-count');
+        const updateRemaining = () => {
+            const remaining = list.querySelectorAll(cardSelector + '.is-hidden-loadmore').length;
+            if (remainingEl) remainingEl.textContent = String(remaining);
+            if (btn) btn.classList.toggle('hidden', remaining <= 0);
+        };
+        updateRemaining();
+
+        btn?.addEventListener('click', () => {
+            const hidden = Array.from(list.querySelectorAll(cardSelector + '.is-hidden-loadmore')).slice(0, pageSize);
+            hidden.forEach(el => el.classList.remove('is-hidden-loadmore'));
+            updateRemaining();
+        });
+    })();</script>

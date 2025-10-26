@@ -1,0 +1,98 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>View</title>
+</head>
+<body>
+    <div class="checkout-section" style="
+    max-width: 800px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+">
+        <h2 style="margin-bottom: 20px;">🛍️ Giỏ hàng & Thanh toán</h2>
+
+        <div style="margin-bottom: 15px;">
+            <strong>Sản phẩm:</strong> iPhone 17 - 256GB<br>
+            <strong>Màu sắc:</strong> Tím nhạt<br>
+            <strong>Giá:</strong> 24.990.000 ₫<br>
+            <strong>Số lượng:</strong>
+            <input type="number" id="checkoutQuantity" value="1" min="1" style="width: 60px; margin-left: 10px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <strong>Phương thức nhận hàng:</strong><br>
+            <label><input type="radio" name="delivery" value="home" checked> Giao tận nơi</label><br>
+            <label><input type="radio" name="delivery" value="store"> Nhận tại siêu thị</label>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <strong>Địa chỉ giao hàng:</strong><br>
+            <input type="text" id="address" placeholder="Nhập địa chỉ..." style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <strong>Tạm tính:</strong>
+            <span id="subtotal">24.990.000 ₫</span>
+        </div>
+
+        <button onclick="confirmCheckout()" style="
+        background-color: #ff5252;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+    ">
+            ✅ Xác nhận thanh toán
+        </button>
+
+        <p id="checkoutMessage" style="margin-top: 15px; color: green; font-weight: bold;"></p>
+    </div>
+
+    <script>
+        document.getElementById("checkoutQuantity").addEventListener("input", updateSubtotal);
+
+        function updateSubtotal() {
+            const quantity = parseInt(document.getElementById("checkoutQuantity").value);
+            const price = 24990000;
+            const subtotal = quantity * price;
+            document.getElementById("subtotal").innerText = subtotal.toLocaleString('vi-VN') + " ₫";
+        }
+
+        function confirmCheckout() {
+            const quantity = document.getElementById("checkoutQuantity").value;
+            const address = document.getElementById("address").value.trim();
+            const delivery = document.querySelector('input[name="delivery"]:checked').value;
+
+                alert(" Chuyển đến trang thanh toán...");
+                // window.location.href = "/checkout"; // nếu có trang thanh toán
+
+            if (address === "") {
+                alert("❗ Vui lòng nhập địa chỉ giao hàng.");
+                return;
+            }
+
+
+            document.getElementById("checkoutMessage").innerText =
+                `✅ Đã đặt hàng ${quantity} sản phẩm. Phương thức: ${delivery === "home" ? "Giao tận nơi" : "Nhận tại siêu thị"}.`;
+
+            setTimeout(() => {
+                document.getElementById("checkoutMessage").innerText = "";
+            }, 5000);
+        }
+    </script>
+
+</body>
+</html>

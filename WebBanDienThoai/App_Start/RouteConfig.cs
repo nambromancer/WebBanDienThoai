@@ -13,6 +13,13 @@ namespace WebBanDienThoai
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            // Explicit Search route: /Search -> SearchController.Index
+            routes.MapRoute(
+                name: "Search",
+                url: "Search",
+                defaults: new { controller = "Search", action = "Index" }
+            );
+
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",

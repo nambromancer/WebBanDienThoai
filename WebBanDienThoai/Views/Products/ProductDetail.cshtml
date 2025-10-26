@@ -36,7 +36,54 @@
         <p class="product-title">Iphone 17 - 256gb</p>
 
 
-        <p class="product-price">Giá: 40.000.000 ₫</p>
+        <p class="product-price">Price: 40.000.000 ₫</p>
+
+        <div class="purchase-options" style="margin-top: 30px; text-align: center;">
+
+            <button onclick="addToCart()" style="
+        background-color: #ff5252;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        font-size: 16px;
+        border-radius: 8px;
+        margin: 10px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    ">
+                🛒 Thêm vào giỏ
+            </button>
+
+            <button onclick="buyNow()" style="
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        font-size: 16px;
+        border-radius: 8px;
+        margin: 10px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    ">
+                ⚡ Mua ngay
+            </button>
+
+            <button onclick="installment()" style="
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        font-size: 16px;
+        border-radius: 8px;
+        margin: 10px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    ">
+                💳 Mua trả chậm 0%
+            </button>
+
+            <p id="cartMessage" style="margin-top: 10px; color: green; font-weight: bold;"></p>
+        </div>
         <h2 onclick="toggle('camera')">📷 Camera & Màn hình</h2>
         <div id="camera" class="content">
             <p><strong>Công nghệ màn hình:</strong> OLED</p>
@@ -113,6 +160,22 @@
         function OpenPopup(src) {
             const popup = window.open('', '_blank');
             popup.document.write(`<img src="${src}" style="width:100%">`);
+        }
+        function addToCart() {
+            document.getElementById("cartMessage").innerText = "✅ Đã thêm vào giỏ hàng!";
+            setTimeout(() => {
+                document.getElementById("cartMessage").innerText = "";
+            }, 3000);
+        }
+
+        function buyNow() {
+            alert("🛍️ Bạn đã chọn mua ngay. Chuyển đến trang thanh toán...");
+            // window.location.href = "/checkout"; // nếu có trang thanh toán
+        }
+
+        function installment() {
+            alert("💳 Bạn đã chọn mua trả chậm 0%. Vui lòng chọn ngân hàng hỗ trợ.");
+            // window.location.href = "/installment"; // nếu có trang trả góp
         }
 
         // Khởi tạo ảnh đầu tiên khi trang tải

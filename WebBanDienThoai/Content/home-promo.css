@@ -122,8 +122,8 @@
 }
 
 /* ----------------- Lưới sản phẩm ----------------- */
-/* Chỉ hiển thị panel đang active (tránh nhảy layout) */
-.product-grid:not(.active) {
+/* Chỉ ẩn panel không active trong khối promo-section (trang chủ) */
+.promo-section .product-grid:not(.active) {
     display: none !important;
 }
 
@@ -344,7 +344,7 @@
 .search-cloud {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px 12px;           /* row x column spacing */
+    gap: 10px 12px; /* row x column spacing */
     padding: 8px 0 4px;
 }
 
@@ -352,13 +352,13 @@
 .search-chip {
     display: inline-flex;
     align-items: center;
-    height: 28px;             /* nhỏ gọn như hình mẫu */
+    height: 28px; /* nhỏ gọn như hình mẫu */
     padding: 0 12px;
     border-radius: 999px;
     background: var(--chip-bg);
     border: 1px solid var(--chip-border);
-    color: var(--chip-text) !important;        /* ép màu link */
-    text-decoration: none !important;          /* bỏ gạch chân */
+    color: var(--chip-text) !important; /* ép màu link */
+    text-decoration: none !important; /* bỏ gạch chân */
     font-size: 13px;
     font-weight: 600;
     line-height: 1;
@@ -366,17 +366,17 @@
     transition: background .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease, transform .05s ease;
 }
 
-.search-chip:hover {
-    background: var(--chip-bg-hover);
-    border-color: var(--chip-border-hover);
-    color: #111 !important;
-}
+    .search-chip:hover {
+        background: var(--chip-bg-hover);
+        border-color: var(--chip-border-hover);
+        color: #111 !important;
+    }
 
-.search-chip:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(0,102,255,.15);
-}
+    .search-chip:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0,102,255,.15);
+    }
 
-.search-chip:active {
-    transform: translateY(.5px);
-}
+    .search-chip:active {
+        transform: translateY(.5px);
+    }

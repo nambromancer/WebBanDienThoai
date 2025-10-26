@@ -1,0 +1,58 @@
+﻿@model List<WebBanDienThoai.Models.ProductSearchResult>
+@{
+    ViewBag.Title = "Tìm kiếm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var q = (ViewBag.Query as string) ?? "";
+    var total = ViewBag.Total as int? ?? (Model?.Count ?? 0);
+}
+<link href="~/Content/home-promo.css" rel="stylesheet" />
+<link href="~/Content/category.css" rel="stylesheet" />
+
+<div class="cat-wrap container">
+    <nav class="cat-breadcrumb">
+        <a class="home-link" href="@Url.Action("Index","Home")">Trang chủ</a>
+        <span class="sep">›</span>
+        <span>Kết quả cho “@Html.Encode(q)” • <strong>@total</strong> sản phẩm</span>
+    </nav>
+
+    <section class="promo-section narrow-70">
+        <div class="promo-scale">
+            <div class="promo-header">
+                <h2 class="promo-title">Kết quả tìm kiếm</h2>
+            </div>
+
+            <div class="product-grid active">
+                @if (Model != null && Model.Count > 0)
+                {
+                    foreach (var p in Model)
+                    {
+                        var href = !string.IsNullOrEmpty(p.DetailUrl) ? p.DetailUrl : p.CategoryUrl;
+                        <a class="product-card" href="@href" aria-label="@p.Name">
+                            <div class="card-topline">
+                                <span class="pill mint">Gợi ý</span>
+                            </div>
+                            <div class="product-thumb">
+                                <img class="thumb-img" src="@p.ImageUrl" alt="@p.Name"
+                                     loading="lazy" decoding="async"
+                                     style="width:100%;height:100%;object-fit:contain;display:block;" />
+                            </div>
+                            <h3 class="product-name">@p.Name</h3>
+                            <div class="product-variant"></div>
+                            <div class="price-line">
+                                <span class="price">@p.Price</span>
+                            </div>
+                            <div class="benefit"></div>
+                            <div class="rating-line"></div>
+                        </a>
+                    }
+                }
+                else
+                {
+                    <div style="grid-column:1/-1;padding:16px;background:#fff;border:1px solid #eee;border-radius:8px;">
+                        Không tìm thấy sản phẩm phù hợp.
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+</div>
