@@ -1,0 +1,62 @@
+﻿
+@model WebBanDienThoai.Models.Customer
+
+<div class="row mb-3">
+    <div class="col-md-2">
+        <label class="control-label">Họ và tên <span class="text-danger">*</span></label>
+    </div>
+    <div class="col-md-10">
+        @Html.EditorFor(m => m.CustomerName, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập họ và tên khách hàng" } })
+        @Html.ValidationMessageFor(m => m.CustomerName, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-2">
+        <label class="control-label">Email <span class="text-danger">*</span></label>
+    </div>
+    <div class="col-md-10">
+        @Html.EditorFor(m => m.CustomerEmail, new { htmlAttributes = new { @class = "form-control", placeholder = "example@email.com", type = "email" } })
+        @Html.ValidationMessageFor(m => m.CustomerEmail, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-2">
+        <label class="control-label">Số điện thoại <span class="text-danger">*</span></label>
+    </div>
+    <div class="col-md-10">
+        @Html.EditorFor(m => m.PhoneNumber, new { htmlAttributes = new { @class = "form-control", placeholder = "0123456789", type = "tel" } })
+        @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-2">
+        <label class="control-label">Địa chỉ</label>
+    </div>
+    <div class="col-md-10">
+        @Html.TextAreaFor(m => m.CustomerAddress, new { @class = "form-control", rows = "3", placeholder = "Nhập địa chỉ (tùy chọn)" })
+        @Html.ValidationMessageFor(m => m.CustomerAddress, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-2">
+        <label class="control-label">Ngày sinh</label>
+    </div>
+    <div class="col-md-10">
+        @Html.EditorFor(m => m.DateOfBirth, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+        @Html.ValidationMessageFor(m => m.DateOfBirth, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-2">
+        <label class="control-label">Giới tính</label>
+    </div>
+    <div class="col-md-10">
+        @Html.DropDownListFor(m => m.Gender, ViewBag.GenderList as SelectList, "-- Chọn giới tính --", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Gender, "", new { @class = "text-danger" })
+    </div>
+</div>

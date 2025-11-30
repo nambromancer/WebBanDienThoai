@@ -1,58 +1,108 @@
-﻿@model List<WebBanDienThoai.Models.ProductSearchResult>
+﻿@model List<WebBanDienThoai.Models.Product>
 @{
     ViewBag.Title = "Tìm kiếm";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var q = (ViewBag.Query as string) ?? "";
-    var total = ViewBag.Total as int? ?? (Model?.Count ?? 0);
+    var total = (ViewBag.Total as int?) ?? (Model != null ? Model.Count : 0);
 }
-<link href="~/Content/home-promo.css" rel="stylesheet" />
 <link href="~/Content/category.css" rel="stylesheet" />
 
 <div class="cat-wrap container">
     <nav class="cat-breadcrumb">
         <a class="home-link" href="@Url.Action("Index","Home")">Trang chủ</a>
         <span class="sep">›</span>
-        <span>Kết quả cho “@Html.Encode(q)” • <strong>@total</strong> sản phẩm</span>
+        <span>Kết quả cho "@Html.Encode(q)" • <strong>@total</strong> sản phẩm</span>
     </nav>
 
-    <section class="promo-section narrow-70">
-        <div class="promo-scale">
-            <div class="promo-header">
-                <h2 class="promo-title">Kết quả tìm kiếm</h2>
-            </div>
+    <!-- Product list -->
+    <div class="product-list js-product-list">
+        @if (Model != null && Model.Any())
+        {
+            <div class="product-grid">
+                @foreach (var product in Model)
+                {
+                    var firstImage = product.ProductImages != null && product.ProductImages.Any()
+                        ? Url.Content(product.ProductImages.OrderBy(i => i.DisplayOrder ?? int.MaxValue).First().ImageURL)
+                        : !string.IsNullOrWhiteSpace(product.ProductImage)
+                            ? Url.Content(product.ProductImage)
+                            : Url.Content("~/Content/Images/no-image.png");
 
-            <div class="product-grid active">
-                @if (Model != null && Model.Count > 0)
-                {
-                    foreach (var p in Model)
-                    {
-                        var href = !string.IsNullOrEmpty(p.DetailUrl) ? p.DetailUrl : p.CategoryUrl;
-                        <a class="product-card" href="@href" aria-label="@p.Name">
+                    var discount = product.OriginalPrice.HasValue && product.OriginalPrice > product.ProductPrice
+                        ? Math.Round((1 - (product.ProductPrice / product.OriginalPrice.Value)) * 100)
+                        : 0;
+
+                    <article class="product-card">
+                        @if (discount > 0)
+                        {
                             <div class="card-topline">
-                                <span class="pill mint">Gợi ý</span>
+                                <span class="pill mint">Trả góp 0%</span>
+                                <span class="pill flash-sale">Flash Sale</span>
                             </div>
-                            <div class="product-thumb">
-                                <img class="thumb-img" src="@p.ImageUrl" alt="@p.Name"
-                                     loading="lazy" decoding="async"
-                                     style="width:100%;height:100%;object-fit:contain;display:block;" />
-                            </div>
-                            <h3 class="product-name">@p.Name</h3>
-                            <div class="product-variant"></div>
-                            <div class="price-line">
-                                <span class="price">@p.Price</span>
-                            </div>
-                            <div class="benefit"></div>
-                            <div class="rating-line"></div>
+                        }
+
+                        <a href="@Url.Action("ProductDetail", "Products", new { id = product.ProductID })" class="product-thumb" aria-label="@product.ProductName">
+                            <img class="thumb-img"
+                                 src="@firstImage"
+                                 alt="@product.ProductName"
+                                 loading="lazy"
+                                 decoding="async" />
                         </a>
-                    }
-                }
-                else
-                {
-                    <div style="grid-column:1/-1;padding:16px;background:#fff;border:1px solid #eee;border-radius:8px;">
-                        Không tìm thấy sản phẩm phù hợp.
-                    </div>
+
+                        <h3 class="product-name">
+                            <a href="@Url.Action("ProductDetail", "Products", new { id = product.ProductID })">
+                                @product.ProductName
+                            </a>
+                        </h3>
+
+                        <div class="price-line">
+                            <span class="price">@String.Format("{0:N0}₫", product.ProductPrice)</span>
+                            @if (product.OriginalPrice.HasValue && product.OriginalPrice > product.ProductPrice)
+                            {
+                                <span class="price-old">@String.Format("{0:N0}₫", product.OriginalPrice.Value)</span>
+                                <span class="discount">-@discount%</span>
+                            }
+                        </div>
+                    </article>
                 }
             </div>
+        }
+        else
+        {
+            <div class="alert alert-warning text-center" style="grid-column: 1/-1;">
+                <i class="fas fa-exclamation-triangle"></i> Không tìm thấy sản phẩm phù hợp.
+            </div>
+        }
+    </div>
+
+    <!-- Load more button -->
+    @if (Model != null && Model.Count > 15)
+    {
+        <div class="load-more-wrap">
+            <button type="button" class="load-more-btn js-load-more" data-itemname="sản phẩm">
+                Xem thêm <span class="js-remaining-count">0</span> sản phẩm
+            </button>
         </div>
-    </section>
+    }
 </div>
+
+<script>(function () {
+        // Load more
+        var list = document.querySelector('.js-product-list') || document;
+        var cardSelector = '.product-card';
+        var pageSize = 15;
+        var cards = Array.from(list.querySelectorAll(cardSelector));
+        cards.forEach(function (c, i) { if (i >= pageSize) c.classList.add('is-hidden-loadmore'); });
+        var btn = document.querySelector('.js-load-more');
+        var remainingEl = document.querySelector('.js-remaining-count');
+        var updateRemaining = function () {
+            var remaining = list.querySelectorAll(cardSelector + '.is-hidden-loadmore').length;
+            if (remainingEl) remainingEl.textContent = String(remaining);
+            if (btn) btn.classList.toggle('hidden', remaining <= 0);
+        };
+        updateRemaining();
+        btn && btn.addEventListener('click', function () {
+            var hidden = Array.from(list.querySelectorAll(cardSelector + '.is-hidden-loadmore')).slice(0, pageSize);
+            hidden.forEach(function (el) { el.classList.remove('is-hidden-loadmore'); });
+            updateRemaining();
+        });
+    })();</script>

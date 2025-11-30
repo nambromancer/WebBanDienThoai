@@ -1,0 +1,30 @@
+﻿@model WebBanDienThoai.Models.Category
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="bg-success text-white p-2 m-0">XÓA DANH MỤC</h2>
+
+<div class="alert alert-danger mt-2">Bạn có chắc là muốn xóa danh mục này?</div>
+
+@using (Html.BeginForm("Delete", "Categories", FormMethod.Post, new { area = "Admin" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.CategoryID)
+
+    <div class="row mb-3">
+        <label class="col-md-2 col-form-label">Tên danh mục</label>
+        <div class="col-md-10 pt-2">
+            @Html.DisplayFor(m => m.CategoryName)
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="offset-md-2 col-md-10">
+            <input type="submit" value="Xóa" class="btn btn-primary me-2" />
+            @Html.ActionLink("Quay lại danh sách", "Index", "Categories", new { area = "Admin" }, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+}

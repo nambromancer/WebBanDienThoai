@@ -1,0 +1,78 @@
+﻿@model WebBanDienThoai.Models.Customer
+
+@{
+    ViewBag.Title = "Thêm khách hàng mới";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="bg-success" style="padding: 15px; color: white; border-radius: 5px;">
+    <i class="fas fa-user-plus"></i> THÊM KHÁCH HÀNG MỚI
+</h2>
+
+@using (Html.BeginForm("Create", "Customers", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="card">
+            <div class="card-header bg-light">
+                <h4 class="mb-0"><i class="fas fa-info-circle"></i> Thông tin khách hàng</h4>
+            </div>
+            <div class="card-body">
+                @Html.Partial("PartialView_CustomerForm", Model)
+            </div>
+        </div>
+
+        <div class="form-group mt-4">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Lưu
+                </button>
+                @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>$(document).ready(function() {
+            // Validation rules
+            $('form').validate({
+                rules: {
+                    CustomerName: {
+                        required: true,
+                        minlength: 2
+                    },
+                    CustomerEmail: {
+                        required: true,
+                        email: true
+                    },
+                    PhoneNumber: {
+                        required: true,
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 11
+                    }
+                },
+                messages: {
+                    CustomerName: {
+                        required: "Vui lòng nhập họ tên",
+                        minlength: "Họ tên phải có ít nhất 2 ký tự"
+                    },
+                    CustomerEmail: {
+                        required: "Vui lòng nhập email",
+                        email: "Email không hợp lệ"
+                    },
+                    PhoneNumber: {
+                        required: "Vui lòng nhập số điện thoại",
+                        digits: "Số điện thoại chỉ chứa số",
+                        minlength: "Số điện thoại phải có ít nhất 10 số",
+                        maxlength: "Số điện thoại không quá 11 số"
+                    }
+                }
+            });
+        });</script>
+}

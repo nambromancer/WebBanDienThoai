@@ -1,0 +1,131 @@
+﻿@model WebBanDienThoai.Models.SpecificationCategory
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="bg-success">CHI TIẾT DANH MỤC THÔNG SỐ</h2>
+
+<div>
+    <hr />
+    <div class="row mb-3">
+        <label class="col-md-2 col-form-label">Danh mục sản phẩm</label>
+        <div class="col-md-10 pt-2">
+            @if (Model.Category != null)
+            {
+                <span class="badge bg-primary" style="font-size: 14px;">@Model.Category.CategoryName</span>
+            }
+            else
+            {
+                <span class="badge bg-secondary">Chưa gán danh mục</span>
+            }
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <label class="col-md-2 col-form-label">Icon</label>
+        <div class="col-md-10 pt-2">
+            @if (!string.IsNullOrWhiteSpace(Model.SpecCategoryIcon))
+            {
+                <i class="@Model.SpecCategoryIcon" style="font-size: 24px;"></i>
+                <span>@Model.SpecCategoryIcon</span>
+            }
+            else
+            {
+                <text>Không có</text>
+            }
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <label class="col-md-2 col-form-label">Tên danh mục thông số</label>
+        <div class="col-md-10 pt-2">
+            @Html.DisplayFor(m => m.SpecCategoryName)
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <label class="col-md-2 col-form-label">Thứ tự hiển thị</label>
+        <div class="col-md-10 pt-2">
+            @{
+                var displayOrder = Model.DisplayOrder.HasValue ? Model.DisplayOrder.Value.ToString() : "Không xác định";
+            }
+            @displayOrder
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <label class="col-md-2 col-form-label">Danh sách tên thông số mẫu</label>
+        <div class="col-md-10 pt-2">
+            @{
+                var templateSpecs = Model.ProductSpecifications != null
+                    ? Model.ProductSpecifications.Where(ps => ps.ProductID == 0).ToList()
+                    : new List<WebBanDienThoai.Models.ProductSpecification>();
+            }
+            @if (templateSpecs != null && templateSpecs.Any())
+            {
+                <div class="list-group">
+                    @foreach (var spec in templateSpecs.OrderBy(s => s.DisplayOrder ?? int.MaxValue).ThenBy(s => s.SpecName))
+                    {
+                        <div class="list-group-item">
+                            <i class="fas fa-tag text-primary"></i>
+                            <strong>@spec.SpecName</strong>
+                        </div>
+                    }
+                </div>
+                <small class="text-muted d-block mt-2">
+                    <i class="fas fa-info-circle"></i> Đây là danh sách các tên thông số mẫu. Khi tạo sản phẩm, bạn sẽ chọn từ danh sách này và điền giá trị.
+                </small>
+            }
+            else
+            {
+                <span class="badge bg-warning text-dark" style="font-size: 14px;">
+                    <i class="fas fa-exclamation-triangle"></i> Chưa có tên thông số mẫu nào
+                </span>
+                <br />
+                <small class="text-muted">
+                    Bạn có thể thêm tên thông số mẫu bằng cách chỉnh sửa danh mục này.
+                </small>
+            }
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <label class="col-md-2 col-form-label">Số lượng thông số đã sử dụng</label>
+        <div class="col-md-10 pt-2">
+            @{
+                // Đếm số lượng bản ghi thông số (không phải số sản phẩm)
+                var usedSpecsCount = Model.ProductSpecifications != null
+                    ? Model.ProductSpecifications.Where(ps => ps.ProductID != 0).Count()
+                    : 0;
+
+                // Đếm số lượng sản phẩm duy nhất
+                var uniqueProductCount = Model.ProductSpecifications != null
+                    ? Model.ProductSpecifications.Where(ps => ps.ProductID != 0).Select(ps => ps.ProductID).Distinct().Count()
+                    : 0;
+            }
+
+            <span class="badge bg-info" style="font-size: 14px;">@usedSpecsCount thông số</span>
+
+            @if (usedSpecsCount > 0)
+            {
+                <small class="text-muted d-block mt-1">
+                    <i class="fas fa-check-circle text-success"></i>
+                    Đã được sử dụng trong <strong>@uniqueProductCount sản phẩm</strong>
+                    @if (uniqueProductCount > 0)
+                    {
+                        <text> (trung bình @Math.Round((double)usedSpecsCount / uniqueProductCount, 1) thông số/sản phẩm)</text>
+                    }
+                </small>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="offset-md-2 col-md-10">
+        @Html.ActionLink("Cập nhật", "Edit", new { id = Model.SpecCategoryID }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-primary" })
+    </div>
+</div>

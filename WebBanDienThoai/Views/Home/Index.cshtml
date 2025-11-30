@@ -1,661 +1,449 @@
-﻿@{
+﻿@using WebBanDienThoai.Controllers
+@{
     ViewBag.Title = "Trang chủ";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var categories = ViewBag.Categories as List<WebBanDienThoai.Models.Category>;
+    var productsByCategory = ViewBag.ProductsByCategory as Dictionary<int, List<WebBanDienThoai.Models.Product>>;
+    var suggestedProducts = ViewBag.SuggestedProducts as List<WebBanDienThoai.Models.Product>;
+    var searchTerms = ViewBag.SearchTerms as List<SearchTermViewModel>;
 }
-<link href="~/Content/home-promo.css" rel="stylesheet" />
+
+<link href="~/Content/category.css" rel="stylesheet" />
+
+<style>
+    /* Custom styles for home page sections */
+    .home-section {
+        background: #f5f7fb;
+        border-radius: 12px;
+        padding: 16px;
+        margin: 16px auto 32px;
+        max-width: 1200px;
+    }
+
+    .home-section-title {
+        font-size: 20px;
+        font-weight: 800;
+        margin: 0 0 12px 0;
+        color: #333;
+    }
+
+    .home-tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+    }
+
+    .home-tab {
+        background: #fff;
+        border: 1px solid #e6e6e6;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        color: #333;
+        padding: 8px 14px;
+        font-size: 14px;
+        user-select: none;
+    }
+
+        .home-tab.active {
+            border-color: #FFD400;
+            box-shadow: 0 0 0 2px rgba(255,212,0,.15);
+        }
+
+    .home-banner {
+        background: #ffeaa6;
+        border: 1px dashed #FFD400;
+        color: #333;
+        font-weight: 800;
+        text-align: center;
+        padding: 10px 8px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+    }
+
+    .home-grid-container {
+        position: relative;
+        min-height: 300px;
+    }
+
+        .home-grid-container .product-grid {
+            display: none !important;
+        }
+
+            .home-grid-container .product-grid.active {
+                display: grid !important;
+            }
+
+    .home-see-more {
+        text-align: center;
+        margin-top: 14px;
+    }
+
+    .home-see-more-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #1976d2;
+        font-weight: 800;
+        text-decoration: none;
+        background: transparent;
+        border: 0;
+        padding: 8px 16px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+        .home-see-more-link:hover {
+            text-decoration: underline;
+        }
+
+    .search-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 12px;
+        padding: 8px 0 4px;
+    }
+
+    .search-chip {
+        display: inline-flex;
+        align-items: center;
+        height: 28px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: #f6f8fb;
+        border: 1px solid #e6ebf2;
+        color: #2b2f36 !important;
+        text-decoration: none !important;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1;
+        transition: all .15s ease;
+    }
+
+        .search-chip:hover {
+            background: #eef3fb;
+            border-color: #d7dfec;
+            color: #111 !important;
+        }
+</style>
 
 <!--
     Trang chủ - Khối "Khuyến mãi online"
-    - Giao diện dùng CSS biến + scale (xem home-promo.css).
-    - Có 4 tab: Điện thoại, Apple, Laptop, Phụ kiện.
-    - Mỗi tab hiển thị 1 grid sản phẩm (dữ liệu demo), chỉ panel "active" được hiển thị.
-    - Link "Xem thêm ..." đổi theo tab đang chọn.
 -->
-<section class="promo-section compact-50 narrow-70">
-    <div class="promo-scale">
+<section class="home-section">
+    <h2 class="home-section-title">Khuyến mãi online</h2>
 
-        <!-- Tiêu đề khối -->
-        <div class="promo-header">
-            <h2 class="promo-title">Khuyến mãi online</h2>
-        </div>
-
-        <!-- Tabs danh mục (click để chuyển panel) -->
-        <nav class="promo-tabs" aria-label="Danh mục khuyến mãi">
-            <ul class="tab-list" role="tablist">
-                <li class="tab-item active" data-tab="dienthoai">Điện thoại</li>
-                <li class="tab-item" data-tab="smartwatch">Smartwatch</li>
-                <li class="tab-item" data-tab="laptop">Laptop</li>
-                <li class="tab-item" data-tab="phukien">Phụ kiện</li>
-            </ul>
-        </nav>
-
-        <!-- Banner thông điệp -->
-        <div class="promo-banner">
-            <span>ĐIỆN THOẠI GIÁ SỐC - DỊCH VỤ ĐẲNG CẤP</span>
-        </div>
-
-        <!--
-            Panel: Điện thoại
-            - Demo 12 sản phẩm (chừa phần ảnh để tự thêm sau)
-        -->
-        <div class="product-grid" data-tab-panel="dienthoai" id="applePanel" role="link" tabindex="0" aria-label="Đi tới trang chi tiết sản phẩm Apple">
-            @for (int i = 0; i < 15; i++)
+    <!-- Tabs danh mục -->
+    <div class="home-tabs">
+        @if (categories != null && categories.Any())
+        {
+            for (int i = 0; i < categories.Count; i++)
             {
-                <article class="product-card">
-                    <div class="card-topline">
-                        <span class="pill mint">Trả góp 0%</span>
-                        <span class="pill rose">Mẫu mới</span>
-                    </div>
+                var category = categories[i];
+                var tabKey = "category-" + category.CategoryID;
+                var productCount = productsByCategory != null && productsByCategory.ContainsKey(category.CategoryID)
+                    ? productsByCategory[category.CategoryID].Count
+                    : 0;
 
-                    <div class="product-thumb" aria-label="Placeholder image">
-                        <!-- TODO: Đổi đường dẫn hình đúng cho Apple -->
-                        <img class="thumb-img"
-                             src="~/Content/img/ip1.jpg"
-                             alt="Iphone 17"
-                             loading="lazy" decoding="async"
-                             style="width:100%;height:100%;object-fit:contain;display:block;" />
-                    </div>
-
-                    <h3 class="product-name">Iphone 17 256GB</h3>
-                    <div class="product-variant">256GB</div>
-
-                    <div class="price-line">
-                        <span class="price">39.990.990₫</span>
-                        <span class="price-old">42.990.000₫</span>
-                        <span class="discount">-7%</span>
-                    </div>
-
-                    <div class="benefit">Quà 500.000₫</div>
-                    <div class="rating-line">★ 4.8 • 1.2k đánh giá</div>
-                </article>
+                <button class="home-tab @(i == 0 ? "active" : "")"
+                        data-tab="@tabKey"
+                        data-category-id="@category.CategoryID"
+                        data-category-name="@category.CategoryName"
+                        title="@productCount sản phẩm">
+                    @category.CategoryName
+                </button>
             }
-        </div>
+        }
+    </div>
 
-        <!-- Panel: SmartWatch -->
-        <div class="product-grid" data-tab-panel="smartwatch">
-            @for (int i = 0; i < 15; i++)
+    <!-- Banner -->
+    <div class="home-banner">
+        ĐIỆN THOẠI GIÁ SỐC - DỊCH VỤ ĐẲNG CẤP
+    </div>
+
+    <!-- Product grids -->
+    <div class="home-grid-container">
+        @if (categories != null && productsByCategory != null)
+        {
+            for (int i = 0; i < categories.Count; i++)
             {
-                <article class="product-card">
-                    <div class="card-topline">
-                        <span class="pill mint">Trả góp 0%</span>
-                    </div>
+                var category = categories[i];
+                var tabKey = "category-" + category.CategoryID;
+                var products = productsByCategory.ContainsKey(category.CategoryID)
+                    ? productsByCategory[category.CategoryID]
+                    : new List<WebBanDienThoai.Models.Product>();
 
-                    <div class="product-thumb" aria-label="Placeholder image">
-                        <!-- TODO: Đổi đường dẫn hình đúng cho Laptop -->
-                        <img class="thumb-img"
-                             src="~/Content/img/apple-watch-ultra-lte-49mm-vien-titanium-day-ocean-tb-600x600.jpg"
-                             alt="Apple Watch Ultra"
-                             loading="lazy" decoding="async"
-                             style="width:100%;height:100%;object-fit:contain;display:block;" />
-                    </div>
+                <div class="product-grid @(i == 0 ? "active" : "")"
+                     data-tab-panel="@tabKey"
+                     data-category-id="@category.CategoryID">
+                    @if (products != null && products.Any())
+                    {
+                        foreach (var product in products)
+                        {
+                            var firstImage = product.ProductImages != null && product.ProductImages.Any()
+                                ? Url.Content(product.ProductImages.OrderBy(img => img.DisplayOrder ?? int.MaxValue).First().ImageURL)
+                                : !string.IsNullOrWhiteSpace(product.ProductImage)
+                                    ? Url.Content(product.ProductImage)
+                                    : Url.Content("~/Content/Images/no-image.png");
 
-                    <h3 class="product-name">Apple Watch Ultra 2</h3>
-                    <div class="product-variant">49mm • GPS + Cellular</div>
+                            var discount = product.OriginalPrice.HasValue && product.OriginalPrice > product.ProductPrice
+                                ? Math.Round((1 - (product.ProductPrice / product.OriginalPrice.Value)) * 100)
+                                : 0;
 
-                    <div class="price-line">
-                        <span class="price">18.990.000₫</span>
-                        <span class="price-old">20.690.000₫</span>
-                        <span class="discount">-8%</span>
-                    </div>
+                            <article class="product-card" data-product-id="@product.ProductID" data-category-id="@product.CategoryID">
+                                @if (discount > 0)
+                                {
+                                    <div class="card-topline">
+                                        <span class="pill mint">Trả góp 0%</span>
+                                        <span class="pill flash-sale">Flash Sale</span>
+                                    </div>
+                                }
 
-                    <div class="benefit">Quà 300.000₫</div>
-                    <div class="rating-line">★ 4.7 • 689 đánh giá</div>
-                </article>
+                                <a href="@Url.Action("ProductDetail", "Products", new { id = product.ProductID })" class="product-thumb" aria-label="@product.ProductName">
+                                    <img class="thumb-img"
+                                         src="@firstImage"
+                                         alt="@product.ProductName"
+                                         loading="lazy"
+                                         decoding="async" />
+                                </a>
+
+                                <h3 class="product-name">
+                                    <a href="@Url.Action("ProductDetail", "Products", new { id = product.ProductID })">
+                                        @product.ProductName
+                                    </a>
+                                </h3>
+
+                                <div class="price-line">
+                                    <span class="price">@String.Format("{0:N0}₫", product.ProductPrice)</span>
+                                    @if (product.OriginalPrice.HasValue && product.OriginalPrice > product.ProductPrice)
+                                    {
+                                        <span class="price-old">@String.Format("{0:N0}₫", product.OriginalPrice.Value)</span>
+                                        <span class="discount">-@discount%</span>
+                                    }
+                                </div>
+                            </article>
+                        }
+                    }
+                    else
+                    {
+                        <div style="grid-column: 1/-1; text-align: center; padding: 40px 20px; color: #666; background: #fff; border-radius: 8px;">
+                            <p style="font-size: 16px; margin: 0;">Không có sản phẩm nào trong danh mục <strong>@category.CategoryName</strong></p>
+                        </div>
+                    }
+                </div>
             }
-        </div>
+        }
+    </div>
 
-        <!-- Panel: Laptop -->
-        <div class="product-grid" data-tab-panel="laptop">
-            @for (int i = 0; i < 15; i++)
-            {
-                <article class="product-card">
-                    <div class="card-topline">
-                        <span class="pill mint">Trả góp 0%</span>
-                    </div>
-
-                    <div class="product-thumb" aria-label="Placeholder image">
-                        <!-- TODO: Đổi đường dẫn hình đúng cho Laptop -->
-                        <img class="thumb-img"
-                             src="~/Content/img/laptop_asus_vivobook_go_14_e1404fa-eb482w_-_2.png"
-                             alt="Laptop Asus"
-                             loading="lazy" decoding="async"
-                             style="width:100%;height:100%;object-fit:contain;display:block;" />
-                    </div>
-
-                    <h3 class="product-name">Laptop Asus Vivobook 14</h3>
-                    <div class="product-variant">i5 • 16GB • 512GB</div>
-
-                    <div class="price-line">
-                        <span class="price">12.990.000₫</span>
-                        <span class="price-old">14.990.000₫</span>
-                        <span class="discount">-13%</span>
-                    </div>
-
-                    <div class="benefit">Quà 300.000₫</div>
-                    <div class="rating-line">★ 4.7 • 689 đánh giá</div>
-                </article>
-            }
-        </div>
-
-        <!-- Panel: Phụ kiện -->
-        <div class="product-grid" data-tab-panel="phukien">
-            @for (int i = 0; i < 15; i++)
-            {
-                <article class="product-card">
-                    <div class="card-topline">
-                        <span class="pill mint">Trả góp 0%</span>
-                    </div>
-
-                    <div class="product-thumb" aria-label="Placeholder image">
-                        <!-- TODO: Đổi đường dẫn hình đúng cho Phụ kiện -->
-                        <img class="thumb-img"
-                             src="~/Content/img/adapter-sac-type-c-pd-gan-30w-ugreen-robot-uno-cd359-15550-thumb-638943079923012712-600x600.jpg"
-                             alt="Sạc Ugreen Robot Uno CD359 15550"
-                             loading="lazy" decoding="async"
-                             style="width:100%;height:100%;object-fit:contain;display:block;" />
-                    </div>
-
-                    <h3 class="product-name">Sạc Ugreen Robot Uno CD359 15550</h3>
-                    <div class="product-variant">Màu đen</div>
-
-                    <div class="price-line">
-                        <span class="price">299.000₫</span>
-                        <span class="price-old">399.000₫</span>
-                        <span class="discount">-25%</span>
-                    </div>
-
-                    <div class="benefit">Freeship nội thành</div>
-                    <div class="rating-line">★ 4.8 • 2.3k đánh giá</div>
-                </article>
-            }
-        </div>
-
-        <!-- Link "Xem thêm ..." (đổi theo tab đang chọn) -->
-        <div class="see-more">
-            <a id="seeMoreLink" href="@Url.Action("Phone","Category")" class="see-more-link">
-                Xem thêm <span id="seeMoreText">Điện thoại</span> <span class="chev">›</span>
-            </a>
-        </div>
-
+    <!-- Xem thêm -->
+    <div class="home-see-more">
+        <a id="seeMoreLink" href="#" class="home-see-more-link">
+            Xem thêm <span id="seeMoreText">sản phẩm</span> ›
+        </a>
     </div>
 </section>
 
 <!--
     Khối "Gợi ý cho bạn"
-    - Tái sử dụng layout/kích thước của khối khuyến mãi để đồng nhất UI.
-    - Hiển thị 1 grid 12 sản phẩm đa dạng (điện thoại, laptop, tablet, smartwatch...).
-    - Phần "Xem thêm" hiển thị "Xem thêm xx sản phẩm" (xx = số thẻ .product-card trong grid).
 -->
-<section class="promo-section compact-50 narrow-70" aria-label="Gợi ý cho bạn">
-    <div class="promo-scale">
+<section class="home-section">
+    <h2 class="home-section-title">Gợi ý cho bạn</h2>
 
-        <div class="promo-header">
-            <h2 class="promo-title">Gợi ý cho bạn</h2>
-        </div>
+    <div id="suggestGrid" class="product-grid active">
+        @if (suggestedProducts != null && suggestedProducts.Any())
+        {
+            foreach (var product in suggestedProducts)
+            {
+                var firstImage = product.ProductImages != null && product.ProductImages.Any()
+                    ? Url.Content(product.ProductImages.OrderBy(img => img.DisplayOrder ?? int.MaxValue).First().ImageURL)
+                    : !string.IsNullOrWhiteSpace(product.ProductImage)
+                        ? Url.Content(product.ProductImage)
+                        : Url.Content("~/Content/Images/no-image.png");
 
-        <!-- Grid gợi ý (12 sản phẩm demo, đa dạng chủng loại) -->
-        <div id="suggestGrid" class="product-grid active">
-            <!-- 1. Laptop -->
-            <article class="product-card">
-                <div class="card-topline"><span class="pill mint">Trả góp 0%</span></div>
-                <div class="product-thumb" aria-label="Placeholder image">
-                    <img class="thumb-img"
-                         src="~/Content/img/dell-inspiron-15-3520-i7-1255-71069748-thumb-638897293267474745-600x600.jpg"
-                         alt="Laptop Dell"
-                         loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:contain;display:block;" />
-                </div>
-                <h3 class="product-name">Dell Inspiron 15 i5</h3>
-                <div class="product-variant">RAM 16GB • SSD 512GB</div>
-                <div class="price-line">
-                    <span class="price">17.490.000₫</span>
-                    <span class="price-old">19.590.000₫</span>
-                    <span class="discount">-10%</span>
-                </div>
-                <div class="benefit">Quà 500.000₫</div>
-                <div class="rating-line">★ 4.8 • 2.7k đánh giá</div>
-            </article>
+                var discount = product.OriginalPrice.HasValue && product.OriginalPrice > product.ProductPrice
+                    ? Math.Round((1 - (product.ProductPrice / product.OriginalPrice.Value)) * 100)
+                    : 0;
 
-            <!-- 2. Đồng hồ trẻ em -->
-            <article class="product-card">
-                <div class="card-topline"><span class="pill orange">Giá sốc bất ngờ</span></div>
-                <div class="product-thumb" aria-label="Placeholder image">
-                    <img class="thumb-img"
-                         src="~/Content/img/masstel-smart-hero-6-xanh-tb-1-600x600.jpg"
-                         alt="Masstel"
-                         loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:contain;display:block;" />
-                </div>
-                <h3 class="product-name">Masstel Smart Hero 6</h3>
-                <div class="product-variant">Dây silicone</div>
-                <div class="price-line">
-                    <span class="price">1.210.000₫</span>
-                    <span class="price-old">1.360.000₫</span>
-                    <span class="discount">-11%</span>
-                </div>
-                <div class="benefit">Quà 100.000₫</div>
-                <div class="rating-line">★ 4.9 • 12.9k đánh giá</div>
-            </article>
+                <article class="product-card">
+                    @if (discount > 0)
+                    {
+                        <div class="card-topline">
+                            <span class="pill mint">Trả góp 0%</span>
+                            <span class="pill flash-sale">Flash Sale</span>
+                        </div>
+                    }
 
-            <!-- 3. Điện thoại Android -->
-            <article class="product-card">
-                <div class="card-topline"><span class="pill mint">Trả góp 0%</span></div>
-                <div class="product-thumb" aria-label="Placeholder image">
-                    <img class="thumb-img"
-                         src="~/Content/img/samsung-galaxy-a07-black-1-638939760013183136-750x500.jpg"
-                         alt="A07"
-                         loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:contain;display:block;" />
-                </div>
-                <h3 class="product-name">Samsung Galaxy A07 6GB/128GB</h3>
-                <div class="product-variant">HD+ • 6.7"</div>
-                <div class="price-line">
-                    <span class="price">3.190.000₫</span>
-                    <span class="price-old">3.690.000₫</span>
-                    <span class="discount">-13%</span>
-                </div>
-                <div class="benefit">Quà 600.000₫</div>
-                <div class="rating-line">★ 4.8 • 13.2k đánh giá</div>
-            </article>
+                    <a href="@Url.Action("ProductDetail", "Products", new { id = product.ProductID })" class="product-thumb" aria-label="@product.ProductName">
+                        <img class="thumb-img"
+                             src="@firstImage"
+                             alt="@product.ProductName"
+                             loading="lazy"
+                             decoding="async" />
+                    </a>
 
-            <!-- 4. Đồng hồ thông minh -->
-            <article class="product-card">
-                <div class="card-topline"><span class="pill orange">Giá tốt</span></div>
-                <div class="product-thumb" aria-label="Placeholder image">
-                    <img class="thumb-img"
-                         src="~/Content/img/dong-ho-dien-thoai-thong-minh-dinh-vi-tre-em-imoo-z1-hong-tn-600x600.jpg"
-                         alt="IMOO"
-                         loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:contain;display:block;" />
-                </div>
-                <h3 class="product-name">imoo Z1 41mm</h3>
-                <div class="product-variant">Dây TPU</div>
-                <div class="price-line">
-                    <span class="price">1.990.000₫</span>
-                    <span class="price-old">2.940.000₫</span>
-                    <span class="discount">-32%</span>
-                </div>
-                <div class="benefit">Freeship</div>
-                <div class="rating-line">★ 4.9 • 6.9k đánh giá</div>
-            </article>
+                    <h3 class="product-name">
+                        <a href="@Url.Action("ProductDetail", "Products", new { id = product.ProductID })">
+                            @product.ProductName
+                        </a>
+                    </h3>
 
-            <!-- 5. Xiaomi Band -->
-            <article class="product-card">
-                <div class="card-topline"><span class="pill mint">Trả góp 0%</span></div>
-                <div class="product-thumb" aria-label="Placeholder image">
-                    <img class="thumb-img"
-                         src="~/Content/img/mi-band-10-den-600x600.jpg"
-                         alt="Mi Band 10"
-                         loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:contain;display:block;" />
-                </div>
-                <h3 class="product-name">Xiaomi Mi Band 10</h3>
-                <div class="product-variant">Dây TPU</div>
-                <div class="price-line">
-                    <span class="price">1.070.000₫</span>
-                    <span class="price-old">1.470.000₫</span>
-                    <span class="discount">-27%</span>
-                </div>
-                <div class="benefit">★ Bán 9.1k</div>
-                <div class="rating-line">★ 4.8 • 9.1k đánh giá</div>
-            </article>
-
-            <!-- 6. iPad WiFi -->
-            <article class="product-card">
-                <div class="card-topline"><span class="pill mint">Trả góp 0%</span></div>
-                <div class="product-thumb" aria-label="Placeholder image">
-                    <img class="thumb-img"
-                         src="~/Content/img/ipad-11-wifi-128gb-060325-102428-839-200x200.jpg"
-                         alt="IPAD A16"
-                         loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:contain;display:block;" />
-                </div>
-                <h3 class="product-name">iPad A16 WiFi 128GB</h3>
-                <div class="product-variant">Retina IPS</div>
-                <div class="price-line">
-                    <span class="price">8.890.000₫</span>
-                    <span class="price-old">9.790.000₫</span>
-                    <span class="discount">-9%</span>
-                </div>
-                <div class="benefit">Quà 200.000₫</div>
-                <div class="rating-line">★ 4.9 • 8.4k đánh giá</div>
-            </article>
-
-            <!-- 7. Laptop mỏng nhẹ -->
-            <article class="product-card">
-                <div class="card-topline"><span class="pill orange">Online giá rẻ</span></div>
-                <div class="product-thumb" aria-label="Placeholder image">
-                    <img class="thumb-img"
-                         src="~/Content/img/acer-aspire-lite-15-al15-71p-517d-i5-nxj7ksv001-thumb-638804825325953513-600x600.jpg"
-                         alt="ACER ASPIRE 15    "
-                         loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:contain;display:block;" />
-                </div>
-                <h3 class="product-name">Acer Aspire 15 i5 12th</h3>
-                <div class="product-variant">RAM 16GB • SSD 512GB</div>
-                <div class="price-line">
-                    <span class="price">13.490.000₫</span>
-                    <span class="price-old">16.590.000₫</span>
-                    <span class="discount">-19%</span>
-                </div>
-                <div class="benefit">Quà 2.490.000₫</div>
-                <div class="rating-line">★ 4.8 • 2k đánh giá</div>
-            </article>
-
-            <!-- 8. Lenovo Slim 3 -->
-            <article class="product-card">
-                <div class="card-topline"><span class="pill mint">Trả góp 0%</span></div>
-                <div class="product-thumb" aria-label="Placeholder image">
-                    <img class="thumb-img"
-                         src="~/Content/img/lenovo-ideapad-slim-3-15irh10-i5-83k1000hvn-638775478046964172-600x600.jpg"
-                         alt="lenovo ideapad"
-                         loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:contain;display:block;" />
-                </div>                
-                <h3 class="product-name">Lenovo IdeaPad Slim 3</h3>
-                <div class="product-variant">i5 • 16GB • 512GB</div>
-                <div class="price-line">
-                    <span class="price">15.690.000₫</span>
-                    <span class="price-old">17.290.000₫</span>
-                    <span class="discount">-9%</span>
-                </div>
-                <div class="benefit">Quà 2.590.000₫</div>
-                <div class="rating-line">★ 4.9 • 4.8k đánh giá</div>
-            </article>
-
-            <!-- 9. Redmi Pad 2 -->
-            <article class="product-card">
-                <div class="card-topline"><span class="pill orange">Flash sale</span></div>
-                <div class="product-thumb" aria-label="Placeholder image">
-                    <img class="thumb-img"
-                         src="~/Content/img/xiaomi-redmi-pad-2-wifi-xam-1-638889730853383037-750x500.jpg"
-                         alt="XiaoMi Redmi Pad"
-                         loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:contain;display:block;" />
-                </div>                
-                <h3 class="product-name">Xiaomi Redmi Pad 2 8GB/256GB</h3>
-                <div class="product-variant">IPS LCD 11"</div>
-                <div class="price-line">
-                    <span class="price">6.380.000₫</span>
-                    <span class="price-old">6.980.000₫</span>
-                    <span class="discount">-9%</span>
-                </div>
-                <div class="benefit">Quà 500.000₫</div>
-                <div class="rating-line">★ 4.9 • 2.8k đánh giá</div>
-            </article>
-
-            <!-- 10. Asus Vivobook -->
-            <article class="product-card">
-                <div class="card-topline"><span class="pill mint">Trả góp 0%</span></div>
-                <div class="product-thumb" aria-label="Placeholder image">
-                    <img class="thumb-img"
-                         src="~/Content/img/asus-vivobook-15-x1504va-i3-nj1634w-thumb-638760891054481940-600x600.jpg"
-                         alt="ASUS VIVOBOOK 15"
-                         loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:contain;display:block;" />
-                </div>                
-                <h3 class="product-name">Asus Vivobook 15</h3>
-                <div class="product-variant">RAM 8GB • SSD 512GB</div>
-                <div class="price-line">
-                    <span class="price">11.290.000₫</span>
-                    <span class="price-old">12.490.000₫</span>
-                    <span class="discount">-9%</span>
-                </div>
-                <div class="benefit">Quà 2.590.000₫</div>
-                <div class="rating-line">★ 4.8 • 4.5k đánh giá</div>
-            </article>
-
-            <!-- 11. Huawei Watch Fit -->
-            <article class="product-card">
-                <div class="card-topline"><span class="pill mint">Trả góp 0%</span></div>
-                <div class="product-thumb" aria-label="Placeholder image">
-                    <img class="thumb-img"
-                         src="~/Content/img/huawei-watch-fit-4-den-tb-600x600.jpg"
-                         alt="huawei watch fit"
-                         loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:contain;display:block;" />
-                </div>                
-                <h3 class="product-name">Huawei Watch Fit 4</h3>
-                <div class="product-variant">43mm • silicone</div>
-                <div class="price-line">
-                    <span class="price">2.740.000₫</span>
-                    <span class="price-old">3.090.000₫</span>
-                    <span class="discount">-11%</span>
-                </div>
-                <div class="benefit">Quà 200.000₫</div>
-                <div class="rating-line">★ 4.9 • 9k đánh giá</div>
-            </article>
-
-            <!-- 12. Kidcare S1 -->
-            <article class="product-card">
-                <div class="card-topline"><span class="pill orange">Giá tốt</span></div>
-                <div class="product-thumb" aria-label="Placeholder image">
-                    <img class="thumb-img"
-                         src="~/Content/img/mykid-4g-lite-xanh-la-tb-fix-600x600.jpg"
-                         alt="Kidcare"
-                         loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:contain;display:block;" />
-                </div>                
-                <h3 class="product-name">Kidcare Sight S1 47.5mm</h3>
-                <div class="product-variant">Dây silicone</div>
-                <div class="price-line">
-                    <span class="price">2.050.000₫</span>
-                    <span class="price-old">2.230.000₫</span>
-                    <span class="discount">-8%</span>
-                </div>
-                <div class="benefit">Quà 150.000₫</div>
-                <div class="rating-line">★ 4.9 • 20.7k đánh giá</div>
-            </article>
-
-            <!-- 13. Apple Watch Ultra 2 -->
-            <article class="product-card">
-                <div class="card-topline"><span class="pill orange">Giá sốc bất ngờ</span></div>
-                <div class="product-thumb" aria-label="Placeholder image">
-                    <img class="thumb-img"
-                         src="~/Content/img/apple-watch-ultra-lte-49mm-vien-titanium-day-ocean-tb-600x600.jpg"
-                         alt="Apple Watch"
-                         loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:contain;display:block;" />
-                </div>               
-                <h3 class="product-name">Apple Watch Ultra 2</h3>
-                <div class="product-variant">49mm • GPS + Cellular</div>
-                <div class="price-line">
-                    <span class="price">18.990.000₫</span>
-                    <span class="price-old">20.690.000₫</span>
-                    <span class="discount">-8%</span>
-                </div>
-                <div class="benefit">Quà 300.000₫</div>
-                <div class="rating-line">★ 4.8 • 5.2k đánh giá</div>
-            </article>
-
-            <!-- 14. MacBook Air M4 -->
-            <article class="product-card">
-                <div class="card-topline"><span class="pill mint">Trả góp 0%</span></div>
-                <div class="product-thumb" aria-label="Placeholder image">
-                    <img class="thumb-img"
-                         src="~/Content/img/macbook-air-13-inch-m4-16gb-256gb-sac-70w-thumb1-638903386914459770-600x600.jpg"
-                         alt="Macbook Air"
-                         loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:contain;display:block;" />
-                </div>                
-                <h3 class="product-name">MacBook Air M4 13"</h3>
-                <div class="product-variant">16GB • 256GB</div>
-                <div class="price-line">
-                    <span class="price">26.490.000₫</span>
-                    <span class="price-old">28.990.000₫</span>
-                    <span class="discount">-9%</span>
-                </div>
-                <div class="benefit">Quà 1.000.000₫</div>
-                <div class="rating-line">★ 4.9 • 3.1k đánh giá</div>
-            </article>
-
-            <!-- 15. Galaxy Z Fold 7 -->
-            <article class="product-card">
-                <div class="card-topline"><span class="pill orange">Online giá rẻ</span></div>
-                <div class="product-thumb" aria-label="Placeholder image">
-                    <img class="thumb-img"
-                         src="~/Content/img/samsung-galaxy-z-fold7-black-2-638889670470176145-750x500.jpg"
-                         alt="Samsung Galaxy Zfold 7"
-                         loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:contain;display:block;" />
-                </div>               
-                <h3 class="product-name">Samsung Galaxy Z Fold 7</h3>
-                <div class="product-variant">12GB • 256GB</div>
-                <div class="price-line">
-                    <span class="price">39.990.000₫</span>
-                    <span class="price-old">44.990.000₫</span>
-                    <span class="discount">-11%</span>
-                </div>
-                <div class="benefit">Quà 2.000.000₫</div>
-                <div class="rating-line">★ 4.8 • 1.8k đánh giá</div>
-            </article>
-        </div>
-
-        <!-- Link "Xem thêm xx sản phẩm" (đếm từ số thẻ .product-card trong grid) -->
-        <div class="see-more">
-            <a id="seeMoreSuggestLink" href="#goi-y" class="see-more-link">
-                Xem thêm <span id="suggestCount">0</span> sản phẩm <span class="chev">›</span>
-            </a>
-        </div>
-
+                    <div class="price-line">
+                        <span class="price">@String.Format("{0:N0}₫", product.ProductPrice)</span>
+                        @if (product.OriginalPrice.HasValue && product.OriginalPrice > product.ProductPrice)
+                        {
+                            <span class="price-old">@String.Format("{0:N0}₫", product.OriginalPrice.Value)</span>
+                            <span class="discount">-@discount%</span>
+                        }
+                    </div>
+                </article>
+            }
+        }
     </div>
-</section>
-<!-- Khối "Mọi người cũng tìm kiếm" (tag cloud) -->
-<section class="promo-section compact-50 narrow-70" aria-label="Mọi người cũng tìm kiếm">
-    <div class="promo-scale">
-        <div class="promo-header">
-            <h2 class="promo-title">Mọi người cũng tìm kiếm</h2>
+
+    @if (suggestedProducts != null && suggestedProducts.Count > 15)
+    {
+        <div class="home-see-more">
+            <button type="button" id="loadMoreSuggest" class="home-see-more-link">
+                Xem thêm <span id="suggestCount">0</span> sản phẩm ›
+            </button>
         </div>
-        <div id="searchCloud" class="search-cloud" aria-label="Từ khóa phổ biến"><!-- Tags được render bằng JS --></div>
-        <div class="see-more" style="display:none"></div> <!-- Giữ cấu trúc đồng bộ, không dùng link -->
+    }
+</section>
+
+<!-- Khối "Mọi người cũng tìm kiếm" -->
+<section class="home-section">
+    <h2 class="home-section-title">Mọi người cũng tìm kiếm</h2>
+    <div class="search-cloud">
+        @if (searchTerms != null && searchTerms.Any())
+        {
+            foreach (var term in searchTerms)
+            {
+                <a href="@Url.Action("ProductDetail", "Products", new { id = term.ProductID })"
+                   class="search-chip"
+                   aria-label="Xem @term.ProductName">
+                    @term.ProductName
+                </a>
+            }
+        }
+        else
+        {
+            <p style="color: #666;">Chưa có sản phẩm nào</p>
+        }
     </div>
 </section>
 
 @section scripts {
     <script>
-        // JS đơn giản cho tabs + cập nhật link "Xem thêm ..."
-(function () {
-    'use strict';
+        (function () {
+            'use strict';
 
-    // Map tab key -> URL trang category
-    var categoryUrls = {
-        'dienthoai': '@Url.Action("Phone","Category")',
-        'smartwatch': '@Url.Action("Smartwatch","Category")',
-        'laptop': '@Url.Action("Laptop","Category")',
-        'phukien': '@Url.Action("Accessories","Category")'
-    };
+            console.log('=== Home Page Initialized ===');
 
-    var tabsRoot = document.querySelector('.promo-tabs');
-    var seeMoreLink = document.getElementById('seeMoreLink');
-    var seeMoreText = document.getElementById('seeMoreText');
+            // Tab switching
+            var tabs = document.querySelectorAll('.home-tab');
+            var seeMoreLink = document.getElementById('seeMoreLink');
+            var seeMoreText = document.getElementById('seeMoreText');
+            var container = document.querySelector('.home-grid-container');
 
-    function showPanel(key) {
-        document.querySelectorAll('.product-grid[data-tab-panel]').forEach(function (panel) {
-            panel.classList.toggle('active', panel.getAttribute('data-tab-panel') === key);
-        });
-    }
-
-    // Cập nhật text + href của "Xem thêm ..." theo tab
-    function updateSeeMore(tabEl) {
-        if (!tabEl || !seeMoreLink || !seeMoreText) return;
-        var name = (tabEl.textContent || '').trim();
-        var key = tabEl.getAttribute('data-tab');
-        seeMoreText.textContent = name;
-        if (key && categoryUrls[key]) {
-            seeMoreLink.href = categoryUrls[key];
-        }
-    }
-
-    // Khởi tạo theo tab .active
-    (function init() {
-        var current = document.querySelector('.promo-tabs .tab-item.active');
-        if (current) {
-            showPanel(current.getAttribute('data-tab'));
-            updateSeeMore(current);
-        }
-    })();
-
-    // Lắng nghe click trên tabs
-    if (tabsRoot) {
-        tabsRoot.addEventListener('click', function (ev) {
-            var tab = ev.target.closest('.tab-item');
-            if (!tab) return;
-
-            document.querySelectorAll('.promo-tabs .tab-item').forEach(function (x) {
-                x.classList.remove('active');
+            // Log initial state
+            var panels = document.querySelectorAll('[data-tab-panel]');
+            console.log('Total panels:', panels.length);
+            panels.forEach(function(panel) {
+                var tabKey = panel.getAttribute('data-tab-panel');
+                var catId = panel.getAttribute('data-category-id');
+                var productCount = panel.querySelectorAll('.product-card').length;
+                console.log('Panel:', tabKey, 'CategoryID:', catId, 'Products:', productCount);
             });
-            tab.classList.add('active');
 
-            showPanel(tab.getAttribute('data-tab'));
-            updateSeeMore(tab);
-        });
-    }
-})();
-        // Cập nhật "Xem thêm xx sản phẩm" cho khối gợi ý
-        (function () {
-            'use strict';
-            var grid = document.getElementById('suggestGrid');
-            var countSpan = document.getElementById('suggestCount');
-            var link = document.getElementById('seeMoreSuggestLink');
+            tabs.forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    var categoryId = this.getAttribute('data-category-id');
+                    var categoryName = this.getAttribute('data-category-name');
+                    var tabKey = this.getAttribute('data-tab');
 
-            if (!grid || !countSpan) return;
+                    console.log('=== Tab Clicked ===');
+                    console.log('CategoryID:', categoryId);
+                    console.log('CategoryName:', categoryName);
+                    console.log('TabKey:', tabKey);
 
-            var count = grid.querySelectorAll('.product-card').length;
-            countSpan.textContent = count;
-            if (link) link.href = '#goi-y-' + count;
-        })();
+                    // Remove active from all tabs
+                    tabs.forEach(function(t) { t.classList.remove('active'); });
 
-        // Khối "Mọi người cũng tìm kiếm": render danh sách tag ngẫu nhiên
-        (function () {
-            'use strict';
-            // Danh sách từ khóa (có dấu, đa dạng như ảnh minh họa)
-            var tags = [
-                'iPhone 17', 'iPhone 17 Pro', 'iPhone 17 Pro Max', 'iPhone Air', 'iphone 16 pro',
-                'iphone 16', 'iphone 15', 'iphone 15 plus', 'airpods 4', 'airpods 4 anc',
-                'tai nghe airpods', 'airtag', 'apple watch series 10', 'apple watch series 9', 'apple watch ultra 2',
-                'Samsung Galaxy Tab S9', 'Lenovo Tab M11', 'asus', 'laptop gaming', 'macbook air',
-                'macbook pro', 'Mac Studio M4', 'MacBook Air M4', 'loa jbl', 'loa marshall',
-                'bàn phím gaming', 'chuột logitech', 'loa harman kardon', 'đồng hồ g shock',
-                'galaxy watch 8', 'galaxy watch ultra 2025', 'galaxy watch 8 classic',
-                'samsung galaxy z series', 'samsung galaxy s25 ultra', 'samsung s25', 'samsung s25 plus',
-                'galaxy z fold 7', 'iphone 16e', 'iphone 14'
-            ];
+                    // Add active to clicked tab
+                    this.classList.add('active');
 
-            // Trộn mảng (Fisher–Yates) để random thứ tự
-            for (var i = tags.length - 1; i > 0; i--) {
-                var j = Math.floor(Math.random() * (i + 1));
-                var tmp = tags[i]; tags[i] = tags[j]; tags[j] = tmp;
+                    // Hide all panels first
+                    panels.forEach(function(panel) {
+                        panel.classList.remove('active');
+                    });
+
+                    // Show corresponding panel
+                    var targetPanel = container.querySelector('[data-tab-panel="' + tabKey + '"]');
+                    if (targetPanel) {
+                        targetPanel.classList.add('active');
+                        var productCount = targetPanel.querySelectorAll('.product-card').length;
+                        console.log('Showing panel:', tabKey, 'with', productCount, 'products');
+                    } else {
+                        console.error('Target panel not found:', tabKey);
+                    }
+
+                    // Update see more link
+                    if (seeMoreText) seeMoreText.textContent = categoryName;
+                    if (seeMoreLink && categoryId) {
+                        seeMoreLink.href = '@Url.Action("Index", "Products")?categoryId=' + categoryId;
+                    }
+                });
+            });
+
+            // Initialize first tab
+            if (tabs.length > 0) {
+                var firstTab = tabs[0];
+                var categoryName = firstTab.getAttribute('data-category-name');
+                var categoryId = firstTab.getAttribute('data-category-id');
+                if (seeMoreText) seeMoreText.textContent = categoryName;
+                if (seeMoreLink && categoryId) {
+                    seeMoreLink.href = '@Url.Action("Index", "Products")?categoryId=' + categoryId;
+                }
             }
 
-            var cloud = document.getElementById('searchCloud');
-            if (!cloud) return;
+            // Load more for suggestions
+            var suggestGrid = document.getElementById('suggestGrid');
+            var loadMoreBtn = document.getElementById('loadMoreSuggest');
+            var countSpan = document.getElementById('suggestCount');
+            var pageSize = 15;
 
-            // Tạo thẻ <a> cho từng tag
-            tags.forEach(function (t) {
-                var a = document.createElement('a');
-                a.className = 'search-chip';
-                a.textContent = t;
-                // TODO: thay URL search thật khi có trang tìm kiếm
-                a.href = '/Search?q=' + encodeURIComponent(t);
-                a.setAttribute('aria-label', 'Tìm kiếm ' + t);
-                cloud.appendChild(a);
-            });
+            if (suggestGrid && loadMoreBtn) {
+                var cards = Array.from(suggestGrid.querySelectorAll('.product-card'));
+
+                // Hide cards after first 15
+                cards.forEach(function(card, index) {
+                    if (index >= pageSize) {
+                        card.classList.add('is-hidden-loadmore');
+                    }
+                });
+
+                function updateCount() {
+                    var hidden = suggestGrid.querySelectorAll('.product-card.is-hidden-loadmore').length;
+                    if (countSpan) countSpan.textContent = hidden;
+                    if (hidden <= 0 && loadMoreBtn) {
+                        loadMoreBtn.style.display = 'none';
+                    }
+                }
+
+                updateCount();
+
+                loadMoreBtn.addEventListener('click', function() {
+                    var hiddenCards = Array.from(suggestGrid.querySelectorAll('.product-card.is-hidden-loadmore'));
+                    var toShow = hiddenCards.slice(0, pageSize);
+
+                    toShow.forEach(function(card) {
+                        card.classList.remove('is-hidden-loadmore');
+                    });
+
+                    updateCount();
+                });
+            }
         })();
-         // Toàn bộ panel "Apple" trở thành link tới trang ProductDetail
- (function () {
-     'use strict';
-     var applePanel = document.getElementById('applePanel');
-     if (!applePanel) return;
-     applePanel.style.cursor = 'pointer';
-     var targetUrl = '@Url.Action("ProductDetail", "Products")';
-     function go() { window.location.href = targetUrl; }
-     applePanel.addEventListener('click', function () { go(); });
-     applePanel.addEventListener('keydown', function (ev) {
-         if (ev.key === 'Enter' || ev.key === ' ') {
-             ev.preventDefault();
-             go();
-         }
-     });
- })();
     </script>
 }

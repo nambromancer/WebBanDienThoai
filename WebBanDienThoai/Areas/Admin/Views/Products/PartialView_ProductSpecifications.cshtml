@@ -1,0 +1,63 @@
+﻿
+@model WebBanDienThoai.Models.Product
+
+@if (Model.ProductSpecifications != null && Model.ProductSpecifications.Any())
+{
+    <div style="margin-top: 20px;">
+        <h4 style="margin-bottom: 20px;">
+            <i class="fas fa-list-alt"></i> Thông số kỹ thuật
+        </h4>
+
+        @{
+            var specsByCategory = Model.ProductSpecifications
+                .GroupBy(ps => ps.SpecificationCategory)
+                .OrderBy(g => g.Key.DisplayOrder ?? int.MaxValue)
+                .ThenBy(g => g.Key.SpecCategoryName);
+        }
+
+        @foreach (var categoryGroup in specsByCategory)
+        {
+            var category = categoryGroup.Key;
+
+            <div class="spec-category-display" style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 20px; background-color: #f9f9f9;">
+                <div style="display: flex; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #007bff;">
+                    @if (!string.IsNullOrEmpty(category.SpecCategoryIcon))
+                    {
+                        <i class="@category.SpecCategoryIcon" style="font-size: 24px; margin-right: 10px; color: #007bff;"></i>
+                    }
+                    <h5 style="margin: 0; font-weight: bold;">@category.SpecCategoryName</h5>
+                </div>
+
+                <table class="table table-bordered table-striped" style="margin-bottom: 0; background-color: white;">
+                    <tbody>
+                        @foreach (var spec in categoryGroup.OrderBy(s => s.DisplayOrder ?? int.MaxValue).ThenBy(s => s.SpecName))
+                        {
+                            <tr>
+                                <td style="width: 40%; font-weight: bold; background-color: #f8f9fa;">
+                                    @spec.SpecName
+                                </td>
+                                <td style="width: 60%;">
+                                    @if (!string.IsNullOrWhiteSpace(spec.SpecValue))
+                                    {
+                                        @Html.Raw(spec.SpecValue.Replace("\n", "<br/>"))
+                                    }
+                                    else
+                                    {
+                                        <span style="color: #999; font-style: italic;">Chưa có thông tin</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info" style="margin-top: 20px;">
+        <i class="fas fa-info-circle"></i>
+        Sản phẩm này chưa có thông số kỹ thuật.
+    </div>
+}

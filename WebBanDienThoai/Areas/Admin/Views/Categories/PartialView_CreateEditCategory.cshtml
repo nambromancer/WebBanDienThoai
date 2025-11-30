@@ -1,0 +1,18 @@
+﻿@model WebBanDienThoai.Models.Category
+
+@* Partial View dùng chung cho Create/Edit (Bootstrap 5 layout) *@
+
+<div class="row mb-3">
+    <div class="control-label- col-md-2">Tên danh mục</div>
+    <div class="col-md-4">
+        @Html.EditorFor(m => m.CategoryName, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(m => m.CategoryName, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="row">
+    <div class="offset-md-2 col-md-4">
+        <input type="submit" value="Lưu" class="btn btn-primary me-2" />
+        @Html.ActionLink("Quay lại danh sách", "Index", "Categories", new { area = "Admin" }, new { @class = "btn btn-primary" })
+    </div>
+</div>

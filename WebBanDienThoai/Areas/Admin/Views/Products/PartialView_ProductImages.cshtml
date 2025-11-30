@@ -1,0 +1,96 @@
+﻿@model List<WebBanDienThoai.Models.ViewModel.ProductImageInputVM>
+
+<div id="product-images-section" style="border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px; background-color: #f9f9f9;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #28a745;">
+        <div style="display: flex; align-items: center;">
+            <i class="fas fa-images" style="font-size: 24px; margin-right: 10px; color: #28a745;"></i>
+            <h5 style="margin: 0; font-weight: bold;">Thư viện ảnh sản phẩm</h5>
+        </div>
+        <button type="button" class="btn btn-success btn-sm" id="add-image-btn">
+            <i class="fas fa-plus"></i> Thêm ảnh
+        </button>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        <strong>Hướng dẫn:</strong> Nhập URL ảnh từ internet. Đánh dấu ảnh chính để hiển thị làm ảnh đại diện cho sản phẩm.
+    </div>
+
+    <div id="images-container">
+        @if (Model != null && Model.Any())
+        {
+            for (int i = 0; i < Model.Count; i++)
+            {
+                <div class="image-row" data-image-index="@i" style="border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 15px; background-color: white;">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <div style="text-align: center;">
+                                <i class="fas fa-grip-vertical" style="font-size: 20px; color: #999; cursor: move;"></i>
+                                <div style="font-size: 12px; color: #666; margin-top: 5px;">@(i + 1)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text"
+                                   name="ProductImages[@i].ImageURL"
+                                   value="@Model[i].ImageURL"
+                                   class="form-control image-url-input"
+                                   placeholder="Nhập URL ảnh (VD: https://example.com/image.jpg)"
+                                   data-image-index="@i" />
+                            <input type="hidden" name="ProductImages[@i].ImageID" value="@Model[i].ImageID" />
+                            <input type="hidden" name="ProductImages[@i].DisplayOrder" value="@Model[i].DisplayOrder" class="display-order-input" />
+                        </div>
+                        <div class="col-md-3">
+                            <div class="image-preview" id="preview-@i" style="width: 100%; height: 100px; border: 1px solid #ddd; border-radius: 5px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+                                @if (!string.IsNullOrEmpty(Model[i].ImageURL))
+                                {
+                                    <img src="@Url.Content(Model[i].ImageURL)" alt="Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                                }
+                                else
+                                {
+                                    <span style="color: #999;">Xem trước</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox"
+                                           name="ProductImages[@i].IsMainImage"
+                                           value="true"
+                                           class="main-image-checkbox"
+                                           @(Model[i].IsMainImage ? "checked" : "") />
+                                    Ảnh chính
+                                </label>
+                            </div>
+                            <button type="button" class="btn btn-danger btn-sm remove-image-btn" style="margin-top: 10px;">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-warning" id="no-images-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                Chưa có ảnh nào. Nhấn nút "Thêm ảnh" để thêm ảnh cho sản phẩm.
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .image-row {
+        transition: all 0.3s ease;
+    }
+
+        .image-row:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+    .image-url-input:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40,167,69,.25);
+    }
+</style>

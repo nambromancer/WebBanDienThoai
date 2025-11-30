@@ -1,0 +1,81 @@
+﻿@model List<WebBanDienThoai.Models.ViewModel.SpecificationCategoryInputVM>
+
+<style>
+    .spec-category-section {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        background-color: #f9f9f9;
+    }
+
+    .spec-category-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #007bff;
+    }
+
+        .spec-category-header i {
+            font-size: 24px;
+            margin-right: 10px;
+            color: #007bff;
+        }
+
+        .spec-category-header h5 {
+            margin: 0;
+            font-weight: bold;
+        }
+
+    .spec-row {
+        margin-bottom: 10px;
+    }
+
+    .add-spec-btn {
+        margin-top: 10px;
+    }
+</style>
+
+@for (int i = 0; i < Model.Count; i++)
+{
+    <div class="spec-category-section">
+        <div class="spec-category-header">
+            @if (!string.IsNullOrEmpty(Model[i].SpecCategoryIcon))
+            {
+                <i class="@Model[i].SpecCategoryIcon"></i>
+            }
+            <h5>@Model[i].SpecCategoryName</h5>
+        </div>
+
+        @Html.HiddenFor(m => m[i].SpecCategoryID)
+        @Html.HiddenFor(m => m[i].SpecCategoryName)
+        @Html.HiddenFor(m => m[i].SpecCategoryIcon)
+        @Html.HiddenFor(m => m[i].DisplayOrder)
+
+        <div id="spec-container-@i">
+            @if (Model[i].Specifications != null && Model[i].Specifications.Any())
+            {
+                for (int j = 0; j < Model[i].Specifications.Count; j++)
+                {
+                    <div class="spec-row row mb-2">
+                        <div class="col-md-5">
+                            @Html.TextBoxFor(m => m[i].Specifications[j].SpecName, new { @class = "form-control", placeholder = "Tên thông số (VD: Công nghệ màn hình)" })
+                            @Html.HiddenFor(m => m[i].Specifications[j].SpecID)
+                        </div>
+                        <div class="col-md-5">
+                            @Html.TextBoxFor(m => m[i].Specifications[j].SpecValue, new { @class = "form-control", placeholder = "Giá trị (VD: OLED)" })
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger btn-sm remove-spec-btn">Xóa</button>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <button type="button" class="btn btn-success btn-sm add-spec-btn" data-category-index="@i">
+            <i class="fas fa-plus"></i> Thêm thông số
+        </button>
+    </div>
+}

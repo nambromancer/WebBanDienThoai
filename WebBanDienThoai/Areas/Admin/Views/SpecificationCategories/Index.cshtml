@@ -1,0 +1,226 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model IPagedList<WebBanDienThoai.Models.SpecificationCategory>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="bg-success">DANH SÁCH DANH MỤC THÔNG SỐ</h2>
+
+@* Chức năng tìm kiếm và lọc *@
+<div class="row mb-3">
+    <div class="col-md-12">
+        @using (Html.BeginForm("Index", "SpecificationCategories", FormMethod.Get, new { @class = "form-inline" }))
+        {
+            <div class="d-flex gap-2 align-items-end flex-wrap">
+                <div class="form-group">
+                    <label for="categoryFilter" class="form-label me-2">Danh mục sản phẩm:</label>
+                    @Html.DropDownList("categoryFilter", ViewBag.Categories as SelectList, "-- Tất cả --", new { @class = "form-control", id = "categoryFilter" })
+                </div>
+
+                <div class="form-group">
+                    <label for="search" class="form-label me-2">Tìm kiếm:</label>
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Tìm kiếm danh mục thông số..." value="@ViewBag.SearchQuery" style="min-width: 250px;" />
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
+                    <a href="@Url.Action("Index", "SpecificationCategories")" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> Đặt lại
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@* Hiển thị thông tin lọc *@
+@if (ViewBag.CategoryFilter != null || !string.IsNullOrWhiteSpace(ViewBag.SearchQuery as string))
+{
+    <div class="alert alert-info">
+        <i class="fas fa-filter"></i>
+        Đang lọc:
+        @if (ViewBag.CategoryFilter != null)
+        {
+            var categories = ViewBag.Categories as SelectList;
+            var categoryFilterValue = ViewBag.CategoryFilter.ToString();
+            var selectedCategory = categories != null ? categories.FirstOrDefault(x => x.Value == categoryFilterValue) : null;
+            if (selectedCategory != null)
+            {
+                <strong>Danh mục: @selectedCategory.Text</strong>
+            }
+        }
+        @if (!string.IsNullOrWhiteSpace(ViewBag.SearchQuery as string))
+        {
+            if (ViewBag.CategoryFilter != null)
+            {
+                <text> | </text>
+            }
+            <strong>Từ khóa: "@ViewBag.SearchQuery"</strong>
+        }
+        <text> - Tìm thấy @Model.TotalItemCount kết quả</text>
+    </div>
+}
+
+<table class="table bg-info col-md-12">
+    <thead>
+        <tr>
+            <th class="bg-success col-md-1">Thứ tự</th>
+            <th class="bg-success col-md-1">Icon</th>
+            <th class="bg-success col-md-2">Danh mục SP</th>
+            <th class="bg-success col-md-4">Tên danh mục thông số</th>
+            <th class="bg-success col-md-4">Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (item.DisplayOrder.HasValue)
+                        {
+                            @item.DisplayOrder.Value.ToString()
+                        }
+                        else
+                        {
+                            <text>N/A</text>
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(item.SpecCategoryIcon))
+                        {
+                            <i class="@item.SpecCategoryIcon"></i>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Category != null)
+                        {
+                            <span class="badge bg-primary">@item.Category.CategoryName</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Chưa gán</span>
+                        }
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.SpecCategoryName)</td>
+                    <td>
+                        @Html.ActionLink("Cập nhật", "Edit", new { id = item.SpecCategoryID }, new { @class = "btn btn-primary btn-sm" })
+                        @Html.ActionLink("Chi tiết", "Details", new { id = item.SpecCategoryID }, new { @class = "btn btn-primary btn-sm" })
+                        @Html.ActionLink("Xóa", "Delete", new { id = item.SpecCategoryID }, new { @class = "btn btn-primary btn-sm" })
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">
+                    <div class="alert alert-warning mb-0">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Không tìm thấy danh mục thông số nào phù hợp với bộ lọc.
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@* Phân trang *@
+@if (Model.PageCount > 1)
+{
+    <div class="pagination-container text-center">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new
+        {
+            page,
+            search = ViewBag.SearchQuery,
+            categoryFilter = ViewBag.CategoryFilter
+        }), new PagedListRenderOptions
+        {
+            DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+            DisplayLinkToLastPage = PagedListDisplayMode.Always,
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+            LinkToFirstPageFormat = "Đầu",
+            LinkToPreviousPageFormat = "«",
+            LinkToNextPageFormat = "»",
+            LinkToLastPageFormat = "Cuối",
+            MaximumPageNumbersToDisplay = 5
+        })
+
+        <p class="text-muted mt-2">
+            Trang @Model.PageNumber / @Model.PageCount | Tổng @Model.TotalItemCount kết quả
+        </p>
+    </div>
+}
+
+<p>
+    @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary btn-sm" })
+</p>
+
+<style>
+    /* Custom CSS cho phân trang */
+    .pagination-container .pagination {
+        display: inline-flex;
+        padding-left: 0;
+        list-style: none;
+        border-radius: 0.25rem;
+    }
+
+        .pagination-container .pagination li {
+            display: inline;
+        }
+
+            .pagination-container .pagination li a,
+            .pagination-container .pagination li span {
+                position: relative;
+                display: block;
+                padding: 0.5rem 0.75rem;
+                margin-left: -1px;
+                line-height: 1.25;
+                color: #007bff;
+                background-color: #fff;
+                border: 1px solid #dee2e6;
+                text-decoration: none;
+            }
+
+                .pagination-container .pagination li a:hover {
+                    z-index: 2;
+                    color: #0056b3;
+                    background-color: #e9ecef;
+                    border-color: #dee2e6;
+                }
+
+            .pagination-container .pagination li.active span {
+                z-index: 3;
+                color: #fff;
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+
+            .pagination-container .pagination li.disabled span {
+                color: #6c757d;
+                pointer-events: none;
+                cursor: auto;
+                background-color: #fff;
+                border-color: #dee2e6;
+            }
+
+            .pagination-container .pagination li:first-child a,
+            .pagination-container .pagination li:first-child span {
+                margin-left: 0;
+                border-top-left-radius: 0.25rem;
+                border-bottom-left-radius: 0.25rem;
+            }
+
+            .pagination-container .pagination li:last-child a,
+            .pagination-container .pagination li:last-child span {
+                border-top-right-radius: 0.25rem;
+                border-bottom-right-radius: 0.25rem;
+            }
+</style>

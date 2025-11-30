@@ -1,0 +1,84 @@
+﻿/* Override header cho Admin */
+.main-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+
+.logo-text {
+    color: #fff;
+    font-weight: 700;
+}
+
+    .logo-text::after {
+        content: " ADMIN";
+        color: #ffd700;
+        font-size: 0.7em;
+        vertical-align: super;
+    }
+
+.logo-icon {
+    font-size: 24px;
+}
+
+/* ✅ Điều chỉnh header-container khi không có search */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.user-actions {
+    margin-left: auto;
+}
+
+    .user-actions a,
+    .user-actions .location {
+        color: #fff;
+    }
+
+    .user-actions .fa-solid {
+        margin-right: 5px;
+    }
+
+/* Menu admin nằm dưới header */
+.admin-menu {
+    background: #343a40;
+    padding: 0;
+    margin: 0;
+}
+
+    .admin-menu .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .admin-menu ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .admin-menu li {
+        margin: 0;
+    }
+
+    .admin-menu a {
+        display: block;
+        padding: 15px 20px;
+        color: #fff;
+        text-decoration: none;
+        transition: background 0.3s;
+        font-size: 14px;
+    }
+
+        .admin-menu a:hover {
+            background: #495057;
+        }
+
+        .admin-menu a i {
+            margin-right: 8px;
+            width: 20px;
+            text-align: center;
+        }

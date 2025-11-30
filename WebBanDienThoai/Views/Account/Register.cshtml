@@ -3,17 +3,24 @@
     ViewBag.Title = "Đăng ký";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<!-- CSS riêng cho trang đăng ký -->
 <link href="~/Content/register-tgdd.css" rel="stylesheet" />
 
 <div class="register-wrap">
     <h1 class="register-title">Đăng ký trở thành thành viên thegioididong</h1>
 
-    @* Form POST đến Account/Register, bật unobtrusive validation *@
     @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "register-form", role = "form", novalidate = "novalidate" }))
     {
-        @Html.AntiForgeryToken() <!-- Chống CSRF -->
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" }) <!-- Tổng hợp lỗi -->
+        @Html.AntiForgeryToken()
+
+        @* BỎ ValidationSummary để không hiện khung đỏ *@
+        @*@Html.ValidationSummary(true, "", new { @class = "text-danger" })*@
+
+        if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+            </div>
+        }
 
         <fieldset class="section">
             <legend class="section-title">Thông tin cá nhân</legend>
@@ -22,29 +29,27 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(m => m.FullName)
-                        @Html.TextBoxFor(
-                                 m => m.FullName,
-                                 new
-                                 {
-                                     @class = "form-control",
-                                     placeholder = "Nhập họ và tên",
-                                     autocomplete = "name"
-                                 })
+                        <span class="required">*</span>
+                        @Html.TextBoxFor(m => m.FullName, new
+                        {
+                            @class = "form-control",
+                            placeholder = "VD: Nguyễn Văn A",
+                            autocomplete = "name",
+                            maxlength = "100"
+                        })
                         @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(m => m.BirthDate)
-                        @Html.TextBoxFor(
-                                 m => m.BirthDate,
-                                 new
-                                 {
-                                     @class = "form-control",
-                                     type = "date",
-                                     placeholder = "dd/mm/yyyy",
-                                     autocomplete = "bday"
-                                 })
+                        @Html.TextBoxFor(m => m.BirthDate, "{0:yyyy-MM-dd}", new
+                        {
+                            @class = "form-control",
+                            type = "date",
+                            max = DateTime.Now.AddYears(-10).ToString("yyyy-MM-dd"),
+                            min = DateTime.Now.AddYears(-100).ToString("yyyy-MM-dd")
+                        })
                         @Html.ValidationMessageFor(m => m.BirthDate, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -54,107 +59,207 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(m => m.PhoneNumber)
-                        @Html.TextBoxFor(
-                                 m => m.PhoneNumber,
-                                 new
-                                 {
-                                     @class = "form-control",
-                                     placeholder = "Nhập số điện thoại",
-                                     type = "tel",
-                                     autocomplete = "tel"
-                                 })
+                        <span class="required">*</span>
+                        @Html.TextBoxFor(m => m.PhoneNumber, new
+                        {
+                            @class = "form-control",
+                            placeholder = "VD: 0912345678",
+                            type = "tel",
+                            autocomplete = "tel",
+                            maxlength = "10"
+                        })
                         @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
+                        <small class="form-text text-muted">Số điện thoại sẽ dùng để đăng nhập</small>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(m => m.Email)
-                        @* Email không bắt buộc theo model *@
-                        @Html.TextBoxFor(
-                                 m => m.Email,
-                                 new
-                                 {
-                                     @class = "form-control",
-                                     placeholder = "Nhập email (không bắt buộc)",
-                                     type = "email",
-                                     autocomplete = "email",
-                                     aria_describedby = "emailHelp"
-                                 })
-                        <small id="emailHelp" class="help-inline text-muted">
-                            Hóa đơn VAT khi mua hàng sẽ được gửi qua email này.
-                        </small>
+                        @Html.TextBoxFor(m => m.Email, new
+                        {
+                            @class = "form-control",
+                            placeholder = "VD: example@email.com",
+                            type = "email",
+                            autocomplete = "email"
+                        })
                         @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Gender)
+                        <span class="required">*</span>
+                        @Html.DropDownListFor(m => m.Gender, new SelectList(new[] {
+                            new { Value = "", Text = "-- Chọn giới tính --" },
+                            new { Value = "Nam", Text = "Nam" },
+                            new { Value = "Nữ", Text = "Nữ" },
+                            new { Value = "Khác", Text = "Khác" }
+                        }, "Value", "Text"), new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Gender, "", new { @class = "text-danger" })
                     </div>
                 </div>
             </div>
         </fieldset>
 
         <fieldset class="section">
-            <legend class="section-title">Tạo mật khẩu</legend>
+            <legend class="section-title">Mật khẩu</legend>
 
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(m => m.Password)
-                        @Html.PasswordFor(
-                                 m => m.Password,
-                                 new
-                                 {
-                                     @class = "form-control",
-                                     placeholder = "Nhập mật khẩu của bạn",
-                                     autocomplete = "new-password"
-                                 })
-                        <small class="help-inline text-muted">
-                            Mật khẩu tối thiểu 6 ký tự, có ít nhất 1 chữ cái và 1 chữ số.
-                        </small>
+                        <span class="required">*</span>
+                        @Html.PasswordFor(m => m.Password, new
+                        {
+                            @class = "form-control",
+                            placeholder = "Nhập mật khẩu",
+                            autocomplete = "new-password"
+                        })
                         @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                        <small class="form-text text-muted">
+                            Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số
+                        </small>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(m => m.ConfirmPassword)
-                        @Html.PasswordFor(
-                                 m => m.ConfirmPassword,
-                                 new
-                                 {
-                                     @class = "form-control",
-                                     placeholder = "Nhập lại mật khẩu của bạn",
-                                     autocomplete = "new-password"
-                                 })
+                        <span class="required">*</span>
+                        @Html.PasswordFor(m => m.ConfirmPassword, new
+                        {
+                            @class = "form-control",
+                            placeholder = "Nhập lại mật khẩu",
+                            autocomplete = "new-password"
+                        })
                         @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
                     </div>
                 </div>
             </div>
-
-            <div class="form-group">
-                @* Tùy chọn nhận tin khuyến mãi *@
-                <div class="checkbox">
-                    <label>
-                        @Html.CheckBoxFor(m => m.SubscribePromotions)
-                        @Html.DisplayNameFor(m => m.SubscribePromotions)
-                    </label>
-                </div>
-            </div>
         </fieldset>
 
-        <p class="terms-note">
-            Bằng việc Đăng ký, bạn đã đọc và đồng ý với
-            <a href="#">Điều khoản sử dụng</a> và <a href="#">Chính sách bảo mật</a> của thegioididong.
-        </p>
-
         <div class="actions">
-            <a href="@Url.Action("Login","Account")" class="btn btn-outline-tgdd">Quay lại đăng nhập</a>
-            <button type="submit" class="btn btn-tgdd">Hoàn tất đăng ký</button>
+            <button type="submit" class="btn btn-tgdd">
+                <i class="fas fa-user-plus"></i> Đăng ký
+            </button>
+            <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">
+                <i class="fas fa-home"></i> Quay lại
+            </a>
         </div>
-    } <!-- end using (Html.BeginForm) -->
-    @* Hiển thị thông báo thành công nếu có *@
-    @if (ViewBag.Message != null)
-    {
-        <p class="text-success" style="margin-top:12px">@ViewBag.Message</p>
+
+        <div class="signup">
+            <span>Bạn đã có tài khoản?</span>
+            <a href="@Url.Action("Login","Account")" class="signup-link">Đăng nhập ngay</a>
+        </div>
     }
 </div>
 
 @section scripts {
-    @* Bật jQuery Validate + Unobtrusive *@
     @Scripts.Render("~/bundles/jqueryval")
+    <style>
+        .required {
+            color: red;
+            font-weight: bold;
+        }
+
+        .form-text.text-muted {
+            font-size: 12px;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .alert {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-tgdd {
+            background: linear-gradient(to bottom, #fdd835, #f9a825);
+            color: #333;
+        }
+
+            .btn-tgdd:hover {
+                background: linear-gradient(to bottom, #f9a825, #f57f17);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            }
+
+        .signup {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+            .signup span {
+                color: #666;
+                font-size: 14px;
+            }
+
+        .signup-link {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+            .signup-link:hover {
+                text-decoration: underline;
+            }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            // Custom validation để cho phép họ tên có dấu tiếng Việt
+            $.validator.addMethod("vietnamesename", function (value, element) {
+                return this.optional(element) || /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵýỷỹ\s]+$/.test(value);
+            }, "Họ tên chỉ được chứa chữ cái và khoảng trắng");
+
+            $("input[name='FullName']").rules("add", {
+                vietnamesename: true
+            });
+        });
+    </script>
 }

@@ -1,0 +1,158 @@
+﻿@model WebBanDienThoai.Models.ViewModel.SearchProductVM
+
+@{
+    ViewBag.Title = "Search Product";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Search</title>
+    <style>
+        .search-container {
+            padding-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .form-group-inline {
+            display: flex;
+            flex-direction: column;
+            min-width: 200px;
+        }
+
+            .form-group-inline label {
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .order-container {
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+            .order-container a {
+                margin: 0 5px;
+            }
+
+        .filter-info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2 class="bg-success">QUẢN LÝ SẢN PHẨM</h2>
+
+    <!-- Form tìm kiếm và lọc -->
+    @using (Html.BeginForm("Index", "Products", FormMethod.Get))
+    {
+        <div class="search-container">
+            <div class="filter-row">
+                <div class="form-group-inline">
+                    <label>Tìm kiếm</label>
+                    @Html.TextBoxFor(m => m.SearchTerm, new { @class = "form-control", placeholder = "Nhập tên, mô tả sản phẩm" })
+                </div>
+
+                <div class="form-group-inline">
+                    <label>Danh mục</label>
+                    @Html.DropDownList("categoryFilter", ViewBag.Categories as SelectList, "-- Tất cả --", new { @class = "form-control" })
+                </div>
+
+                <div class="form-group-inline">
+                    <label>Giá tối thiểu</label>
+                    @Html.TextBoxFor(m => m.MinPrice, new { @class = "form-control", placeholder = "VNĐ", type = "number" })
+                </div>
+
+                <div class="form-group-inline">
+                    <label>Giá tối đa</label>
+                    @Html.TextBoxFor(m => m.MaxPrice, new { @class = "form-control", placeholder = "VNĐ", type = "number" })
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
+                    <a href="@Url.Action("Index", "Products")" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> Đặt lại
+                    </a>
+                </div>
+            </div>
+
+            @* Hiển thị thông tin lọc *@
+            @if (!string.IsNullOrWhiteSpace(Model.SearchTerm) || Model.MinPrice.HasValue || Model.MaxPrice.HasValue || Model.CategoryFilter.HasValue)
+            {
+                <div class="filter-info">
+                    <i class="fas fa-filter"></i>
+                    <strong>Đang lọc:</strong>
+                    @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+                    {
+                        <span>Từ khóa: "@Model.SearchTerm"</span>
+                    }
+                    @if (Model.CategoryFilter.HasValue)
+                    {
+                        var categories = ViewBag.Categories as SelectList;
+                        var selectedCategory = categories != null ? categories.FirstOrDefault(x => x.Value == Model.CategoryFilter.ToString()) : null;
+                        if (selectedCategory != null)
+                        {
+                            <span>| Danh mục: <strong>@selectedCategory.Text</strong></span>
+                        }
+                    }
+                    @if (Model.MinPrice.HasValue || Model.MaxPrice.HasValue)
+                    {
+                        <span>| Giá: </span>
+                        if (Model.MinPrice.HasValue)
+                        {
+                            <span>Từ <strong>@String.Format("{0:N0}", Model.MinPrice)</strong></span>
+                        }
+                        if (Model.MaxPrice.HasValue)
+                        {
+                            <span>đến <strong>@String.Format("{0:N0}", Model.MaxPrice)</strong> VNĐ</span>
+                        }
+                    }
+                    <span>- Tìm thấy <strong>@Model.Products.TotalItemCount</strong> kết quả</span>
+                </div>
+            }
+        </div>
+
+        <div class="order-container">
+            Sắp xếp theo:
+            @Html.ActionLink("Tên tăng dần", "Index",
+                     new { sortOrder = "name_asc", searchTerm = Model.SearchTerm, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice, categoryFilter = Model.CategoryFilter })
+            |
+            @Html.ActionLink("Tên giảm dần", "Index",
+                     new { sortOrder = "name_desc", searchTerm = Model.SearchTerm, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice, categoryFilter = Model.CategoryFilter })
+            |
+            @Html.ActionLink("Giá tăng dần", "Index",
+                     new { sortOrder = "price_asc", searchTerm = Model.SearchTerm, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice, categoryFilter = Model.CategoryFilter })
+            |
+            @Html.ActionLink("Giá giảm dần", "Index",
+                     new { sortOrder = "price_desc", searchTerm = Model.SearchTerm, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice, categoryFilter = Model.CategoryFilter })
+        </div>
+    }
+
+    <!-- Form kết quả tìm kiếm -->
+    @Html.Partial("PartialView_ListProduct", Model)
+
+</body>
+</html>

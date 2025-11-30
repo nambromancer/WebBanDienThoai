@@ -1,0 +1,102 @@
+﻿@model WebBanDienThoai.Models.User
+
+@{
+    ViewBag.Title = "Chỉnh sửa tài khoản";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="bg-warning" style="padding: 15px; color: white; border-radius: 5px;">
+    <i class="fas fa-user-edit"></i> CHỈNH SỬA TÀI KHOẢN
+</h2>
+
+@using (Html.BeginForm("Edit", "Users", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.PhoneNumber)
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="card">
+            <div class="card-header bg-light">
+                <h4 class="mb-0">
+                    <i class="fas fa-info-circle"></i> Thông tin tài khoản
+                    <span class="badge badge-secondary float-right">SĐT: @Model.PhoneNumber</span>
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="control-label col-md-3">Số điện thoại:</label>
+                    <div class="col-md-9">
+                        <p class="form-control-static"><strong>@Model.PhoneNumber</strong></p>
+                        <small class="form-text text-muted">Số điện thoại không thể thay đổi</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="NewPassword" class="control-label col-md-3">Mật khẩu mới:</label>
+                    <div class="col-md-9">
+                        <input type="password" id="NewPassword" name="NewPassword" class="form-control" placeholder="Để trống nếu không muốn thay đổi" />
+                        <small class="form-text text-muted">Chỉ nhập khi muốn thay đổi mật khẩu</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.UserRole, "Vai trò:", new { @class = "control-label col-md-3" })
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(m => m.UserRole, ViewBag.RoleList as SelectList, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.UserRole, "", new { @class = "text-danger" })
+                        <small class="form-text text-muted">
+                            <strong>Admin (0)</strong>: Quản trị hệ thống |
+                            <strong>Khách hàng (1)</strong>: Người dùng thông thường
+                        </small>
+                    </div>
+                </div>
+
+                @if (Model.CreatedDate.HasValue)
+                {
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Ngày tạo:</label>
+                        <div class="col-md-9">
+                            <p class="form-control-static">@Model.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="form-group mt-4">
+            <div class="col-md-offset-3 col-md-9">
+                <button type="submit" class="btn btn-warning">
+                    <i class="fas fa-save"></i> Cập nhật
+                </button>
+                @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>$(document).ready(function () {
+            // Validation rules
+            $('form').validate({
+                rules: {
+                    NewPassword: {
+                        minlength: 6
+                    },
+                    UserRole: {
+                        required: true
+                    }
+                },
+                messages: {
+                    NewPassword: {
+                        minlength: "Mật khẩu phải có ít nhất 6 ký tự"
+                    },
+                    UserRole: {
+                        required: "Vui lòng chọn vai trò"
+                    }
+                }
+            });
+        });</script>
+}

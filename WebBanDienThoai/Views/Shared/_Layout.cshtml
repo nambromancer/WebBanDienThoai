@@ -1,25 +1,31 @@
-﻿<!DOCTYPE html>
+﻿@{
+    // Lấy danh sách categories từ database
+    var db = new WebBanDienThoai.Models.WebBanDienThoaiDBEntities();
+    var categories = db.Categories.OrderBy(c => c.CategoryID).ToList();
+
+    // Lấy thông tin user từ Session
+    var userName = Session["UserName"] as string;
+    var isLoggedIn = !string.IsNullOrEmpty(userName);
+}
+
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
-    <!-- Viewport để responsive trên mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Tiêu đề trang: phần sau dấu gạch sẽ cố định -->
     <title>@ViewBag.Title - Thế Giới Di Động</title>
 
     @Styles.Render("~/Content/css")
-    <!-- CSS header/footer/modal tách riêng để dễ bảo trì -->
     <link href="~/Content/header-style.css" rel="stylesheet" />
     <link href="~/Content/footer-style.css" rel="stylesheet" />
     <link href="~/Content/modal-tgdd.css" rel="stylesheet" />
+    @RenderSection("Styles", required: false)
 
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <!-- Header chính của site -->
     <header class="main-header" role="banner">
         <div class="header-container">
-            <!-- Khu vực logo (về trang chủ) -->
             <div class="logo-section">
                 <a href="@Url.Action("Index", "Home")" class="logo-link" aria-label="Về trang chủ">
                     <div class="logo-circle">
@@ -29,7 +35,6 @@
                 </a>
             </div>
 
-            <!-- Thanh tìm kiếm (chỉ là UI demo, chưa submit form) -->
             <div class="search-section" role="search" aria-label="Tìm kiếm">
                 <div class="search-container">
                     <input type="text" class="search-input" placeholder="Laptop nhập học..." aria-label="Từ khóa tìm kiếm">
@@ -37,21 +42,46 @@
                         <span class="search-icon">🔍</span>
                     </button>
                 </div>
-             
             </div>
 
-            <!-- Hành động người dùng -->
             <div class="user-actions" aria-label="Tác vụ người dùng">
-                <!-- Dùng cả data-* của BS3/4/5 để tương thích tối đa -->
-                <a id="loginLink"
-                   href="javascript:void(0)"
-                   class="user-login"
-                   data-toggle="modal" data-target="#loginModal"
-                   data-bs-toggle="modal" data-bs-target="#loginModal">
-                    <span class="user-icon">👤</span>
-                    <span>Đăng nhập</span>
-                </a>
-                <a href="@Url.Action("Cart","Home") "class="cart-link" aria-label="Xem giỏ hàng">
+                @if (isLoggedIn)
+                {
+                    <div class="user-dropdown">
+                        <a href="javascript:void(0)" class="user-login user-logged-in">
+                            <span class="user-icon">👤</span>
+                            <span class="user-name">@userName</span>
+                        </a>
+                        <div class="dropdown-menu">
+                            <a href="@Url.Action("PersonalInfo", "Account")" class="dropdown-item">
+                                <span class="dropdown-icon">ℹ️</span>
+                                Thông tin cá nhân
+                            </a>
+                            <a href="@Url.Action("PurchaseHistory", "Account")" class="dropdown-item">
+                                <span class="dropdown-icon">📦</span>
+                                Lịch sử mua hàng
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="@Url.Action("Logout", "Account")" class="dropdown-item logout-item">
+                                <span class="dropdown-icon">🚪</span>
+                                Đăng xuất
+                            </a>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <a id="loginLink"
+                       href="javascript:void(0)"
+                       class="user-login"
+                       data-toggle="modal" data-target="#loginModal"
+                       data-bs-toggle="modal" data-bs-target="#loginModal">
+                        <span class="user-icon">👤</span>
+                        <span>Đăng nhập</span>
+                    </a>
+                }
+
+                <a href="@Url.Action("Cart","Home")" class="cart-link" aria-label="Xem giỏ hàng">
                     <span class="cart-icon">🛒</span>
                     <span>Giỏ hàng</span>
                 </a>
@@ -62,58 +92,49 @@
             </div>
         </div>
 
-        <!-- Menu điều hướng chính -->
+        <!-- Menu điều hướng chính - Dynamic từ database -->
         <nav class="main-navigation" aria-label="Danh mục chính">
             <div class="nav-container">
                 <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="@Url.Action("Phone", "Category")" class="nav-link">
-                            <span class="nav-icon">📱</span>
-                            Điện thoại
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="@Url.Action("Laptop", "Category")" class="nav-link">
-                            <span class="nav-icon">💻</span>
-                            Laptop
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="@Url.Action("Accessories", "Category")" class="nav-link">
-                            <span class="nav-icon">🔌</span>
-                            Phụ kiện
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="@Url.Action("Smartwatch", "Category")" class="nav-link">
-                            <span class="nav-icon">⌚</span>
-                            Smartwatch
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <span class="nav-icon">📱</span>
-                            Tablet
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <span class="nav-icon">♻️</span>
-                            Máy cũ, Thu cũ
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <span class="nav-icon">📶</span>
-                            Sim, thẻ cào
-                        </a>
-                    </li>
+                    @foreach (var category in categories)
+                    {
+                        // Tự động gán icon dựa trên tên category
+                        string icon = "📱"; // Default
+                        var catNameLower = category.CategoryName.ToLower();
+                        if (catNameLower.Contains("điện thoại") || catNameLower.Contains("phone"))
+                        {
+                            icon = "📱";
+                        }
+                        else if (catNameLower.Contains("laptop"))
+                        {
+                            icon = "💻";
+                        }
+                        else if (catNameLower.Contains("phụ kiện") || catNameLower.Contains("accessory"))
+                        {
+                            icon = "🔌";
+                        }
+                        else if (catNameLower.Contains("smartwatch") || catNameLower.Contains("đồng hồ"))
+                        {
+                            icon = "⌚";
+                        }
+                        else if (catNameLower.Contains("tablet"))
+                        {
+                            icon = "📱";
+                        }
+
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index", "Products", new { categoryId = category.CategoryID })" class="nav-link">
+                                <span class="nav-icon">@icon</span>
+                                @category.CategoryName
+                            </a>
+                        </li>
+                    }
                 </ul>
             </div>
         </nav>
     </header>
 
-    <!-- Modal đăng nhập (tương thích BS3/4/5) -->
+    <!-- Modal đăng nhập -->
     <div class="modal fade tgdd-modal"
          id="loginModal"
          tabindex="-1"
@@ -123,7 +144,6 @@
          aria-hidden="true">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
-                <!-- Nút đóng: giữ class/data-* để Bootstrap hook -->
                 <button type="button"
                         class="close tgdd-close"
                         data-dismiss="modal"
@@ -137,7 +157,6 @@
                         Vui lòng đăng nhập tài khoản thegioididong để xem ưu đãi và thanh toán dễ dàng hơn.
                     </p>
                     <div class="tgdd-actions">
-                        <!-- Dùng Url.Action để dẫn đến trang tài khoản -->
                         <a href="@Url.Action("Register", "Account")" class="btn btn-outline-tgdd">Đăng ký</a>
                         <a href="@Url.Action("Login", "Account")" class="btn btn-tgdd">Đăng nhập</a>
                     </div>
@@ -146,13 +165,11 @@
         </div>
     </div>
 
-    <!-- Khu vực nội dung chính -->
     <div class="container body-content">
-        @RenderBody() <!-- Nơi inject View con -->
+        @RenderBody()
         <hr />
     </div>
 
-    <!-- Footer của site -->
     <footer role="contentinfo">
         <div class="footer-top">
             <div class="footer-container">
@@ -202,47 +219,38 @@
         </div>
         <div class="footer-bottom">
             <div class="footer-container">
-                <!-- Năm hiện tại lấy từ server -->
                 <p>© @DateTime.Now.Year - Thế Giới Di Động. Nội dung mang tính minh họa cho bài thực hành.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Bundle script: jQuery trước Bootstrap để đảm bảo phụ thuộc -->
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    <!-- Cho phép View con chèn script riêng -->
     @RenderSection("scripts", required: false)
 
-    <!-- JS mở/đóng modal: fallback cho cả BS3/4/5 và không Bootstrap -->
-<script>
+    <script>
         (function () {
             'use strict';
 
-            // Mở modal đăng nhập
             function showLoginModal(e) {
                 if (e) e.preventDefault();
                 var modalEl = document.getElementById('loginModal');
                 if (!modalEl) return;
 
-                // Ưu tiên jQuery (BS3/4)
                 if (window.jQuery && typeof jQuery.fn.modal === 'function') {
                     jQuery(modalEl).modal('show');
                     return;
                 }
-                // BS5 (không cần jQuery)
                 if (window.bootstrap && typeof bootstrap.Modal === 'function') {
                     (bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl)).show();
                     return;
                 }
-                // Fallback đơn giản nếu không có Bootstrap
                 modalEl.classList.add('in', 'show');
                 modalEl.style.display = 'block';
                 modalEl.setAttribute('aria-hidden', 'false');
                 document.body.classList.add('modal-open');
             }
 
-            // Đóng modal đăng nhập
             function hideLoginModal(e) {
                 if (e) e.preventDefault();
                 var modalEl = document.getElementById('loginModal');
@@ -256,7 +264,6 @@
                     (bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl)).hide();
                     return;
                 }
-                // Fallback: ẩn thủ công và dọn backdrop
                 modalEl.classList.remove('in', 'show');
                 modalEl.style.display = 'none';
                 modalEl.setAttribute('aria-hidden', 'true');
@@ -265,13 +272,11 @@
                 if (backdrop && backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
             }
 
-            // Mở modal khi click nút đăng nhập (dù data-* có hoạt động hay không)
             document.addEventListener('click', function (ev) {
                 var trigger = ev.target && ev.target.closest ? ev.target.closest('#loginLink') : null;
                 if (trigger) showLoginModal(ev);
             });
 
-            // Đóng modal khi click nút close (ưu tiên jQuery delegation nếu có)
             if (window.jQuery) {
                 jQuery(document).on('click', '#loginModal .tgdd-close', hideLoginModal);
             } else {
@@ -281,24 +286,62 @@
                 });
             }
         })();
-  (function () {
-    'use strict';
-    var input = document.querySelector('.search-input');
-    var btn = document.querySelector('.search-btn');
-    if (!input) return;
 
-    function gotoSearch() {
-        var q = (input.value || '').trim();
-        var baseUrl = '@Url.Content("~/Search/Index")'; // force /Search/Index
-        var url = baseUrl + (q ? ('?q=' + encodeURIComponent(q)) : '');
-        window.location.href = url;
-    }
+        (function () {
+            'use strict';
+            var input = document.querySelector('.search-input');
+            var btn = document.querySelector('.search-btn');
+            if (!input) return;
 
-    input.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') { e.preventDefault(); gotoSearch(); }
-    });
-    if (btn) btn.addEventListener('click', gotoSearch);
-})();
-</script>
+            function gotoSearch() {
+                var q = (input.value || '').trim();
+                var baseUrl = '@Url.Content("~/Search/Index")';
+                var url = baseUrl + (q ? ('?q=' + encodeURIComponent(q)) : '');
+                window.location.href = url;
+            }
+
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') { e.preventDefault(); gotoSearch(); }
+            });
+            if (btn) btn.addEventListener('click', gotoSearch);
+        })();
+
+        // User dropdown functionality - SINGLE implementation
+        (function () {
+            'use strict';
+
+            // Toggle dropdown when clicking the username
+            document.addEventListener('click', function (e) {
+                var toggle = e.target.closest('.user-logged-in');
+                if (toggle) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var dropdown = toggle.closest('.user-dropdown');
+                    if (dropdown) {
+                        dropdown.classList.toggle('active');
+                    }
+                    return;
+                }
+
+                // Click outside -> close any open dropdowns
+                var openDropdowns = document.querySelectorAll('.user-dropdown.active');
+                openDropdowns.forEach(function (dropdown) {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.remove('active');
+                    }
+                });
+            });
+
+            // Close dropdown on ESC key
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    var openDropdowns = document.querySelectorAll('.user-dropdown.active');
+                    openDropdowns.forEach(function (dropdown) {
+                        dropdown.classList.remove('active');
+                    });
+                }
+            });
+        })();
+    </script>
 </body>
 </html>

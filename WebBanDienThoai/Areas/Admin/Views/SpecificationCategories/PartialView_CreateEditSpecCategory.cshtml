@@ -1,0 +1,106 @@
+﻿@model WebBanDienThoai.Models.ViewModel.SpecificationCategoryWithNamesVM
+
+<div class="row mb-3">
+    <div class="control-label col-md-2">Danh mục sản phẩm</div>
+    <div class="col-md-10">
+        @Html.DropDownList("SpecificationCategory.CategoryID", ViewBag.CategoryID as SelectList, "-- Chọn danh mục --", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.SpecificationCategory.CategoryID, "", new { @class = "text-danger" })
+        <small class="form-text text-muted">Chọn loại sản phẩm mà thông số kỹ thuật này áp dụng (VD: Điện thoại, Laptop, Tablet, v.v.)</small>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="control-label col-md-2">Tên danh mục thông số</div>
+    <div class="col-md-10">
+        @Html.EditorFor(m => m.SpecificationCategory.SpecCategoryName, new { htmlAttributes = new { @class = "form-control", placeholder = "VD: Camera & Màn hình, Pin & Sạc..." } })
+        @Html.ValidationMessageFor(m => m.SpecificationCategory.SpecCategoryName, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="control-label col-md-2">Icon (Font Awesome)</div>
+    <div class="col-md-10">
+        @Html.EditorFor(m => m.SpecificationCategory.SpecCategoryIcon, new { htmlAttributes = new { @class = "form-control", placeholder = "VD: fas fa-camera, fas fa-battery-full..." } })
+        @Html.ValidationMessageFor(m => m.SpecificationCategory.SpecCategoryIcon, "", new { @class = "text-danger" })
+        <small class="form-text text-muted">
+            Xem danh sách icon tại <a href="https://fontawesome.com/icons" target="_blank">Font Awesome</a>
+        </small>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="control-label col-md-2">Thứ tự hiển thị</div>
+    <div class="col-md-10">
+        @Html.EditorFor(m => m.SpecificationCategory.DisplayOrder, new { htmlAttributes = new { @class = "form-control", type = "number", placeholder = "VD: 1, 2, 3..." } })
+        @Html.ValidationMessageFor(m => m.SpecificationCategory.DisplayOrder, "", new { @class = "text-danger" })
+        <small class="form-text text-muted">Để trống nếu không cần sắp xếp. Số nhỏ sẽ hiển thị trước.</small>
+    </div>
+</div>
+
+<hr />
+
+<div class="row mb-3">
+    <div class="control-label col-md-2">Danh sách tên thông số</div>
+    <div class="col-md-10">
+        <div id="specNamesContainer">
+            @if (Model.SpecNames != null && Model.SpecNames.Any())
+            {
+                for (int i = 0; i < Model.SpecNames.Count; i++)
+                {
+                    <div class="spec-name-item mb-2" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background-color: #f9f9f9;">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label class="form-label">Tên thông số</label>
+                                <input type="text" class="form-control spec-name-input" value="@Model.SpecNames[i]" placeholder="VD: Camera sau, Camera trước..." />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Thứ tự</label>
+                                <input type="number" class="form-control spec-display-order-input" placeholder="VD: 1, 2, 3..." />
+                            </div>
+                            <div class="col-md-1 d-flex align-items-end">
+                                <button type="button" class="btn btn-danger btn-remove-spec-name w-100">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="spec-name-item mb-2" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background-color: #f9f9f9;">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="form-label">Tên thông số</label>
+                            <input type="text" class="form-control spec-name-input" placeholder="VD: Camera sau, Camera trước..." />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Thứ tự</label>
+                            <input type="number" class="form-control spec-display-order-input" placeholder="VD: 1, 2, 3..." />
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end">
+                            <button type="button" class="btn btn-danger btn-remove-spec-name w-100">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <button type="button" class="btn btn-success btn-sm" id="btnAddSpecName">
+            <i class="fas fa-plus"></i> Thêm tên thông số
+        </button>
+        <input type="hidden" id="specNamesJson" name="specNamesJson" />
+        <small class="form-text text-muted d-block mt-2">
+            Thêm các tên thông số phổ biến trong danh mục này (VD: Camera sau, Camera trước, Màn hình chính, Màn hình phụ...).
+            Khi tạo sản phẩm, bạn sẽ chỉ cần chọn tên này và điền giá trị.
+        </small>
+    </div>
+</div>
+
+<div class="row">
+    <div class="offset-md-2 col-md-10">
+        <input type="submit" value="Lưu" class="btn btn-primary me-2" id="btnSubmit" />
+        @Html.ActionLink("Quay lại danh sách", "Index", "SpecificationCategories", new { area = "Admin" }, new { @class = "btn btn-primary" })
+    </div>
+</div>

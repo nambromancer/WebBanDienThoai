@@ -1,0 +1,185 @@
+﻿@model WebBanDienThoai.Models.Product
+
+<head>
+    <style>
+        .product-main-image {
+            height: 250px;
+            max-width: 250px;
+            object-fit: contain;
+        }
+
+        .product-info-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #212529;
+            margin-bottom: 15px;
+        }
+
+        .price-original {
+            text-decoration: line-through;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .price-sale {
+            color: #dc3545;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .discount-badge {
+            background-color: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            @{
+                string imgSrc = null;
+
+                // Ưu tiên ảnh main từ ProductImages
+                if (Model != null && Model.ProductImages != null && Model.ProductImages.Any())
+                {
+                    var mainImage = Model.ProductImages.FirstOrDefault(img => img.IsMainImage == true);
+                    if (mainImage != null && !string.IsNullOrWhiteSpace(mainImage.ImageURL))
+                    {
+                        imgSrc = Url.Content(mainImage.ImageURL);
+                    }
+                    else
+                    {
+                        // Nếu không có ảnh main, lấy ảnh đầu tiên
+                        var firstImage = Model.ProductImages.OrderBy(img => img.DisplayOrder.HasValue ? img.DisplayOrder.Value : int.MaxValue).FirstOrDefault();
+                        if (firstImage != null && !string.IsNullOrWhiteSpace(firstImage.ImageURL))
+                        {
+                            imgSrc = Url.Content(firstImage.ImageURL);
+                        }
+                    }
+                }
+
+                // Fallback về ProductImage (để tương thích ngược với data cũ)
+                if (string.IsNullOrEmpty(imgSrc) && Model != null && !string.IsNullOrWhiteSpace(Model.ProductImage))
+                {
+                    imgSrc = Url.Content(Model.ProductImage);
+                }
+
+                // Fallback cuối cùng
+                if (string.IsNullOrEmpty(imgSrc))
+                {
+                    imgSrc = Url.Content("~/Content/Images/no-image.png");
+                }
+            }
+            <img src="@imgSrc" alt="@(Model != null ? Model.ProductName : "")" class="img-thumbnail product-main-image" />
+        </div>
+
+        <div class="col-md-9 product-info-section">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="info-label">
+                        <i class="fas fa-folder-open"></i> Danh mục
+                    </div>
+                    <div class="info-value">
+                        @Html.DisplayFor(m => m.Category.CategoryName)
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="info-label">
+                        <i class="fas fa-tag"></i> Thương hiệu
+                    </div>
+                    <div class="info-value">
+                        @(Model != null && !string.IsNullOrWhiteSpace(Model.Brand) ? Model.Brand : "Chưa có")
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-label">
+                <i class="fas fa-box"></i> Tên sản phẩm
+            </div>
+            <div class="info-value">
+                <strong style="font-size: 1.2em; color: #007bff;">@Html.DisplayFor(m => m.ProductName)</strong>
+            </div>
+
+            <div class="info-label">
+                <i class="fas fa-align-left"></i> Mô tả
+            </div>
+            <div class="info-value">
+                @Html.DisplayFor(m => m.ProductDescription)
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    @if (Model != null && Model.OriginalPrice.HasValue)
+                    {
+                        <div class="info-label">
+                            <i class="fas fa-money-bill-wave"></i> Giá gốc
+                        </div>
+                        <div class="info-value price-original">
+                            @String.Format("{0:N0} ₫", Model.OriginalPrice.Value)
+                        </div>
+                    }
+
+                    <div class="info-label">
+                        <i class="fas fa-dollar-sign"></i> Giá bán
+                    </div>
+                    <div class="info-value price-sale">
+                        @(Model != null ? String.Format("{0:N0} ₫", Model.ProductPrice) : "")
+                        @if (Model != null && Model.OriginalPrice.HasValue && Model.OriginalPrice > Model.ProductPrice)
+                        {
+                            var discount = Math.Round((1 - (Model.ProductPrice / Model.OriginalPrice.Value)) * 100);
+                            <span class="discount-badge">
+                                <i class="fas fa-percentage"></i> -@discount%
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="info-label">
+                        <i class="fas fa-barcode"></i> Mã sản phẩm
+                    </div>
+                    <div class="info-value">
+                        <code>#@(Model != null ? Model.ProductID.ToString() : "")</code>
+                    </div>
+
+                    @if (Model != null && Model.ProductImages != null && Model.ProductImages.Any())
+                    {
+                        <div class="info-label">
+                            <i class="fas fa-images"></i> Số lượng ảnh
+                        </div>
+                        <div class="info-value">
+                            <span class="badge badge-info">@Model.ProductImages.Count ảnh</span>
+                        </div>
+                    }
+
+                    @if (Model != null && Model.ProductSpecifications != null && Model.ProductSpecifications.Any())
+                    {
+                        <div class="info-label">
+                            <i class="fas fa-list-alt"></i> Thông số kỹ thuật
+                        </div>
+                        <div class="info-value">
+                            <span class="badge badge-success">@Model.ProductSpecifications.Count thông số</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

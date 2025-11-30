@@ -1,0 +1,227 @@
+﻿@model IEnumerable<WebBanDienThoai.Models.Product>
+
+@{
+    ViewBag.Title = ViewBag.CategoryName != null ? ViewBag.CategoryName + " - Danh sách sản phẩm" : "Danh sách sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var categoryDisplayName = ViewBag.CategoryName ?? "Tất cả sản phẩm";
+    var currentSort = (ViewBag.SortOrder as string) ?? "";
+}
+
+<link href="~/Content/category.css" rel="stylesheet" />
+
+<div class="cat-wrap container">
+    <!-- Breadcrumb -->
+    <nav class="cat-breadcrumb">
+        <a class="home-link" href="@Url.Action("Index","Home")">Trang chủ</a>
+        <span class="sep">›</span>
+        <span>
+            <span class="js-total-count">@(Model != null ? Model.Count() : 0)</span> @categoryDisplayName
+        </span>
+    </nav>
+
+    @* Brand filter *@
+    @if (Model != null && Model.Any())
+    {
+        var brands = Model.Where(p => !string.IsNullOrWhiteSpace(p.Brand))
+                          .Select(p => p.Brand)
+                          .Distinct()
+                          .OrderBy(b => b)
+                          .ToList();
+
+        if (brands.Any())
+        {
+            <div class="brand-filter">
+                <button type="button"
+                        class="chip @(string.IsNullOrEmpty(ViewBag.SelectedBrand) ? "active" : "")"
+                        onclick="window.location.href='@Url.Action("Index", "Products", new { categoryId = ViewBag.CurrentCategoryId })'">
+                    Tất cả
+                </button>
+                @foreach (var brand in brands)
+                {
+                    <button type="button"
+                            class="chip @(ViewBag.SelectedBrand == brand ? "active" : "")"
+                            onclick="window.location.href='@Url.Action("Index", "Products", new { categoryId = ViewBag.CurrentCategoryId, brand = brand })'">
+                        @brand
+                    </button>
+                }
+            </div>
+        }
+    }
+
+    <!-- Sort bar - all dropdowns use same markup -->
+    <div class="sort-bar" role="navigation" aria-label="Sắp xếp">
+        <span class="label">Sắp xếp theo:</span>
+
+        <!-- Giảm giá -->
+        <div class="sort-item dropdown @(currentSort == "discount_desc" || currentSort == "discount_asc" ? "active" : "")" aria-haspopup="true">
+            <button type="button" class="dropdown-toggle" aria-expanded="false">Giảm giá ▾</button>
+            <div class="dropdown-menu" role="menu" aria-hidden="true">
+                <a role="menuitem" class="dropdown-item" href="@Url.Action("Index", "Products", new { categoryId = ViewBag.CurrentCategoryId, brand = ViewBag.SelectedBrand, sort = "discount_desc" })">Cao → thấp</a>
+                <a role="menuitem" class="dropdown-item" href="@Url.Action("Index", "Products", new { categoryId = ViewBag.CurrentCategoryId, brand = ViewBag.SelectedBrand, sort = "discount_asc" })">Thấp → cao</a>
+            </div>
+        </div>
+
+        <span class="dot">•</span>
+
+        <!-- Mới -->
+        <div class="sort-item dropdown @(currentSort == "new_desc" || currentSort == "new_asc" ? "active" : "")" aria-haspopup="true">
+            <button type="button" class="dropdown-toggle" aria-expanded="false">Mới ▾</button>
+            <div class="dropdown-menu" role="menu" aria-hidden="true">
+                <a role="menuitem" class="dropdown-item" href="@Url.Action("Index", "Products", new { categoryId = ViewBag.CurrentCategoryId, brand = ViewBag.SelectedBrand, sort = "new_desc" })">Mới → Cũ</a>
+                <a role="menuitem" class="dropdown-item" href="@Url.Action("Index", "Products", new { categoryId = ViewBag.CurrentCategoryId, brand = ViewBag.SelectedBrand, sort = "new_asc" })">Cũ → Mới</a>
+            </div>
+        </div>
+
+        <span class="dot">•</span>
+
+        <!-- Giá -->
+        <div class="sort-item dropdown @(currentSort == "price_desc" || currentSort == "price_asc" ? "active" : "")" aria-haspopup="true">
+            <button type="button" class="dropdown-toggle" aria-expanded="false">Giá ▾</button>
+            <div class="dropdown-menu" role="menu" aria-hidden="true">
+                <a role="menuitem" class="dropdown-item" href="@Url.Action("Index", "Products", new { categoryId = ViewBag.CurrentCategoryId, brand = ViewBag.SelectedBrand, sort = "price_desc" })">Cao → thấp</a>
+                <a role="menuitem" class="dropdown-item" href="@Url.Action("Index", "Products", new { categoryId = ViewBag.CurrentCategoryId, brand = ViewBag.SelectedBrand, sort = "price_asc" })">Thấp → cao</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product list -->
+    <div class="product-list js-product-list">
+        @if (Model != null && Model.Any())
+        {
+            <div class="product-grid">
+                @foreach (var product in Model)
+                {
+                    var firstImage = product.ProductImages != null && product.ProductImages.Any()
+                        ? Url.Content(product.ProductImages.OrderBy(i => i.DisplayOrder ?? int.MaxValue).First().ImageURL)
+                        : !string.IsNullOrWhiteSpace(product.ProductImage)
+                            ? Url.Content(product.ProductImage)
+                            : Url.Content("~/Content/Images/no-image.png");
+
+                    var discount = product.OriginalPrice.HasValue && product.OriginalPrice > product.ProductPrice
+                        ? Math.Round((1 - (product.ProductPrice / product.OriginalPrice.Value)) * 100)
+                        : 0;
+
+                    <article class="product-card" aria-label="@product.ProductName">
+                        @if (discount > 0)
+                        {
+                            <div class="card-topline">
+                                <span class="pill mint">Trả góp 0%</span>
+                                <span class="pill flash-sale">Flash Sale</span>
+                            </div>
+                        }
+
+                        <a href="@Url.Action("ProductDetail", "Products", new { id = product.ProductID })" class="product-thumb" aria-hidden="false">
+                            <img class="thumb-img"
+                                 src="@firstImage"
+                                 alt="@product.ProductName"
+                                 loading="lazy"
+                                 decoding="async" />
+                        </a>
+
+                        <h3 class="product-name">
+                            <a href="@Url.Action("ProductDetail", "Products", new { id = product.ProductID })">
+                                @product.ProductName
+                            </a>
+                        </h3>
+
+                        <div class="price-line">
+                            <span class="price">@String.Format("{0:N0}₫", product.ProductPrice)</span>
+                            @if (product.OriginalPrice.HasValue && product.OriginalPrice > product.ProductPrice)
+                            {
+                                <span class="price-old">@String.Format("{0:N0}₫", product.OriginalPrice.Value)</span>
+                                <span class="discount">-@discount%</span>
+                            }
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning text-center" style="grid-column: 1/-1;">
+                <i class="fas fa-exclamation-triangle"></i> Không tìm thấy sản phẩm nào.
+            </div>
+        }
+    </div>
+
+    <!-- Load more -->
+    @if (Model != null && Model.Count() > 15)
+    {
+        <div class="load-more-wrap">
+            <button type="button" class="load-more-btn js-load-more" data-itemname="sản phẩm">
+                Xem thêm <span class="js-remaining-count">0</span> sản phẩm
+            </button>
+        </div>
+    }
+</div>
+
+<script>
+    (function () {
+        'use strict';
+
+        // Dropdowns for all sort items (Giảm giá, Mới, Giá)
+        var dropdowns = Array.prototype.slice.call(document.querySelectorAll('.sort-item.dropdown'));
+        dropdowns.forEach(function (dropdown) {
+            var toggle = dropdown.querySelector('.dropdown-toggle');
+            var menu = dropdown.querySelector('.dropdown-menu');
+
+            if (!toggle || !menu) return;
+
+            // click toggle
+            toggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                // close others
+                dropdowns.forEach(function (d) { if (d !== dropdown) d.classList.remove('open'); });
+                dropdown.classList.toggle('open');
+                // set ARIA
+                var expanded = dropdown.classList.contains('open');
+                toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                menu.setAttribute('aria-hidden', expanded ? 'false' : 'true');
+            });
+
+            // keyboard support (Enter / Space)
+            toggle.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggle.click();
+                }
+            });
+
+            // prevent clicks inside menu from closing immediately
+            menu.addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+        });
+
+        // close all on outside click or ESC
+        document.addEventListener('click', function () {
+            dropdowns.forEach(function (d) { d.classList.remove('open'); d.querySelector('.dropdown-toggle')?.setAttribute('aria-expanded', 'false'); d.querySelector('.dropdown-menu')?.setAttribute('aria-hidden', 'true'); });
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                dropdowns.forEach(function (d) { d.classList.remove('open'); d.querySelector('.dropdown-toggle')?.setAttribute('aria-expanded', 'false'); d.querySelector('.dropdown-menu')?.setAttribute('aria-hidden', 'true'); });
+            }
+        });
+
+        // Load more
+        var list = document.querySelector('.js-product-list') || document;
+        var cardSelector = '.product-card';
+        var pageSize = 15;
+        var cards = Array.from(list.querySelectorAll(cardSelector));
+        cards.forEach(function (c, i) { if (i >= pageSize) c.classList.add('is-hidden-loadmore'); });
+        var btn = document.querySelector('.js-load-more');
+        var remainingEl = document.querySelector('.js-remaining-count');
+        var updateRemaining = function () {
+            var remaining = list.querySelectorAll(cardSelector + '.is-hidden-loadmore').length;
+            if (remainingEl) remainingEl.textContent = String(remaining);
+            if (btn) btn.classList.toggle('hidden', remaining <= 0);
+        };
+        updateRemaining();
+        btn && btn.addEventListener('click', function () {
+            var hidden = Array.from(list.querySelectorAll(cardSelector + '.is-hidden-loadmore')).slice(0, pageSize);
+            hidden.forEach(function (el) { el.classList.remove('is-hidden-loadmore'); });
+            updateRemaining();
+        });
+    })();
+</script>

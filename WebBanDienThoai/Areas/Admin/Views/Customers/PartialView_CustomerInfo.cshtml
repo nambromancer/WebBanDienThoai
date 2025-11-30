@@ -1,0 +1,102 @@
+﻿@model WebBanDienThoai.Models.Customer
+
+<div class="row mb-3">
+    <div class="col-md-3 font-weight-bold">ID khách hàng:</div>
+    <div class="col-md-9">@Model.CustomerID</div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-3 font-weight-bold">Họ và tên:</div>
+    <div class="col-md-9">
+        <h5 class="text-primary mb-0">@Model.CustomerName</h5>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-3 font-weight-bold">Email:</div>
+    <div class="col-md-9">
+        <i class="fas fa-envelope text-info"></i>
+        <a href="mailto:@Model.CustomerEmail">@Model.CustomerEmail</a>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-3 font-weight-bold">Số điện thoại:</div>
+    <div class="col-md-9">
+        <i class="fas fa-phone text-success"></i>
+        <a href="tel:@Model.PhoneNumber">@Model.PhoneNumber</a>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-3 font-weight-bold">Địa chỉ:</div>
+    <div class="col-md-9">
+        @if (!string.IsNullOrWhiteSpace(Model.CustomerAddress))
+        {
+            <i class="fas fa-map-marker-alt text-danger"></i>
+            @Model.CustomerAddress
+        }
+        else
+        {
+            <span class="text-muted">Chưa cập nhật</span>
+        }
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-3 font-weight-bold">Ngày sinh:</div>
+    <div class="col-md-9">
+        @if (Model.DateOfBirth.HasValue)
+        {
+            <i class="fas fa-birthday-cake text-warning"></i>
+            @Model.DateOfBirth.Value.ToString("dd/MM/yyyy")
+            <span class="text-muted">
+                (Tuổi: @(DateTime.Now.Year - Model.DateOfBirth.Value.Year))
+            </span>
+        }
+        else
+        {
+            <span class="text-muted">Chưa cập nhật</span>
+        }
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-3 font-weight-bold">Giới tính:</div>
+    <div class="col-md-9">
+        @if (!string.IsNullOrWhiteSpace(Model.Gender))
+        {
+            if (Model.Gender == "Nam")
+            {
+                <span class="badge badge-primary"><i class="fas fa-mars"></i> Nam</span>
+            }
+            else if (Model.Gender == "Nữ")
+            {
+                <span class="badge badge-danger"><i class="fas fa-venus"></i> Nữ</span>
+            }
+            else
+            {
+                <span class="badge badge-secondary">@Model.Gender</span>
+            }
+        }
+        else
+        {
+            <span class="text-muted">Chưa cập nhật</span>
+        }
+    </div>
+</div>
+
+@if (Model.User != null)
+{
+    <div class="row mb-3">
+        <div class="col-md-3 font-weight-bold">Tài khoản đăng nhập:</div>
+        <div class="col-md-9">
+            <span class="badge badge-success">
+                <i class="fas fa-check-circle"></i> Đã kích hoạt
+            </span>
+            <small class="text-muted d-block mt-1">
+                Số điện thoại: <strong>@Model.User.PhoneNumber</strong>
+            </small>
+        </div>
+    </div>
+}

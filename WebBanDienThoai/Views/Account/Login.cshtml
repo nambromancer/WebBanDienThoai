@@ -8,28 +8,50 @@
 <div class="login-wrap">
     <h1 class="login-title">Đăng nhập thegioididong</h1>
 
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+        </div>
+    }
+
     @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "login-form", role = "form", novalidate = "novalidate" }))
     {
         @Html.AntiForgeryToken()
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        if (!ViewData.ModelState.IsValid)
+        {
+            @Html.ValidationSummary(false, "", new { @class = "text-danger alert alert-danger" })
+        }
+
 
         <div class="form-group">
-            @Html.LabelFor(m => m.PhoneNumber) <!-- Nhãn: Số điện thoại -->
-            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "Nhập số điện thoại của bạn", type = "tel", autocomplete = "tel", autofocus = "autofocus" })
+            @Html.LabelFor(m => m.PhoneNumber)
+            @Html.TextBoxFor(m => m.PhoneNumber, new
+            {
+                @class = "form-control",
+                placeholder = "VD: 0912345678",
+                type = "tel",
+                autocomplete = "tel",
+                autofocus = "autofocus",
+                maxlength = "10"
+            })
             @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
         </div>
 
         <div class="form-group">
             @Html.LabelFor(m => m.Password)
-            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Nhập mật khẩu của bạn", autocomplete = "current-password" })
+            @Html.PasswordFor(m => m.Password, new
+            {
+                @class = "form-control",
+                placeholder = "Nhập mật khẩu của bạn",
+                autocomplete = "current-password"
+            })
             @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
         </div>
 
-        <!-- Nhóm checkbox nhớ đăng nhập: hiển thị inline, checkbox nhỏ -->
         <div class="form-group remember-row">
             <label class="checkbox-inline remember-inline">
-                <!-- Đặt layout inline cho nhãn + input -->
-                @Html.CheckBoxFor(m => m.RememberMe) <!-- Checkbox: sẽ được thu nhỏ bằng CSS -->
+                @Html.CheckBoxFor(m => m.RememberMe)
                 @Html.DisplayNameFor(m => m.RememberMe)
             </label>
         </div>
@@ -39,7 +61,7 @@
         </div>
 
         <div class="extra-links">
-            <a href="#" class="forgot-link">Quên mật khẩu?</a>
+            <a href="@Url.Action("ForgotPassword", "Account")" class="forgot-link">Quên mật khẩu?</a>
         </div>
 
         <div class="signup">
@@ -51,4 +73,23 @@
 
 @section scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <style>
+        .alert {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+    </style>
 }

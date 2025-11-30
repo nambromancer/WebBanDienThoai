@@ -1,0 +1,69 @@
+﻿@model WebBanDienThoai.Models.ViewModel.ProductWithSpecificationsVM
+
+<head>
+    <style>
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 12px 20px;
+            box-sizing: border-box;
+            border: 3px solid #ccc;
+            border-radius: 4px;
+            background-color: #f8f8f8;
+            font-size: 16px;
+            resize: none;
+        }
+    </style>
+</head>
+
+<div class="form-group">
+    <div class="control-label col-md-2">Danh mục</div>
+    <div class="col-md-10">
+        @Html.DropDownList("Product.CategoryID", ViewBag.CategoryID as SelectList, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Product.CategoryID, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="control-label col-md-2">Thương hiệu</div>
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.Product.Brand, new { htmlAttributes = new { @class = "form-control", placeholder = "VD: Apple, Samsung, Xiaomi..." } })
+        @Html.ValidationMessageFor(model => model.Product.Brand, "", new { @class = "text-danger" })
+        <small class="form-text text-muted">Dùng để lọc sản phẩm và hiển thị breadcrumb</small>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="control-label col-md-2">Tên sản phẩm</div>
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.Product.ProductName, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Product.ProductName, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="control-label col-md-2">Mô tả</div>
+    <div class="col-md-10">
+        @Html.TextAreaFor(model => model.Product.ProductDescription)
+        @Html.ValidationMessageFor(model => model.Product.ProductDescription, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="control-label col-md-2">Giá gốc</div>
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.Product.OriginalPrice, new { htmlAttributes = new { @class = "form-control", type = "number", step = "0.01", placeholder = "VD: 25000000" } })
+        @Html.ValidationMessageFor(model => model.Product.OriginalPrice, "", new { @class = "text-danger" })
+        <small class="form-text text-muted">Để trống nếu không có giá gốc</small>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="control-label col-md-2">Giá bán</div>
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.Product.ProductPrice, new { htmlAttributes = new { @class = "form-control", type = "number", step = "0.01" } })
+        @Html.ValidationMessageFor(model => model.Product.ProductPrice, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+@Html.HiddenFor(model => model.Product.ProductID)

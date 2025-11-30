@@ -1,186 +1,520 @@
-﻿@{
-    ViewBag.Title = "Chi tiết sản phẩm";
+﻿@model WebBanDienThoai.Models.Product
+
+@{
+    ViewBag.Title = Model.ProductName + " - Chi tiết sản phẩm";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var images = Model.ProductImages != null && Model.ProductImages.Any()
+        ? Model.ProductImages.OrderBy(i => i.DisplayOrder ?? int.MaxValue).ToList()
+        : new List<WebBanDienThoai.Models.ProductImage>();
+
+    string firstImage = images.Any()
+        ? Url.Content(images.First().ImageURL)
+        : !string.IsNullOrWhiteSpace(Model.ProductImage)
+            ? Url.Content(Model.ProductImage)
+            : Url.Content("~/Content/Images/no-image.png");
+
+    // Determine category type for promotions (C# 5 compatible)
+    string categoryName = "";
+    if (Model.Category != null && Model.Category.CategoryName != null)
+    {
+        categoryName = Model.Category.CategoryName.ToLower();
+    }
+    bool isPhone = categoryName.Contains("điện thoại") || categoryName.Contains("phone");
+    bool isLaptop = categoryName.Contains("laptop");
+    bool isAccessory = categoryName.Contains("phụ kiện") || categoryName.Contains("accessory");
+    bool isSmartwatch = categoryName.Contains("smartwatch") || categoryName.Contains("đồng hồ");
+
+    // ✅ Kiểm tra có mô tả không
+    bool hasDescription = !string.IsNullOrWhiteSpace(Model.ProductDescription);
+    bool hasSpecs = Model.ProductSpecifications != null && Model.ProductSpecifications.Any();
 }
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Thông tin iPhone 17</title>
+@section Styles {
     <link href="~/Content/product-detail.css" rel="stylesheet" />
+    <link href="~/Content/product-slider.css" rel="stylesheet" />
 
-</head>
-<body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+}
 
-    <div class="container">
-        <h1>Thông tin chi tiết iPhone 17</h1>
-        @*<div class="item">
-            <img src="~/Content/img/ip1.jpg"
-                 class="product-image" onclick="openPopup('/Content/img/rl.jpg')" />*@
+<div class="container">
+    @* Breadcrumb Navigation *@
+    <div class="breadcrumb">
+        <a href="@Url.Action("Index", "Home")">Trang chủ</a>
+        <span class="breadcrumb-separator">›</span>
+        @if (Model.Category != null)
+        {
+            <a href="@Url.Action("Index", "Products", new { categoryId = Model.Category.CategoryID })">@Model.Category.CategoryName</a>
+            <span class="breadcrumb-separator">›</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.Brand))
+        {
+            <a href="@Url.Action("Index", "Products", new { categoryId = Model.CategoryID, brand = Model.Brand })">@Model.Brand</a>
+        }
+    </div>
 
-        <div class="gallery-container">
-            <div class="main-image">
-                <img id="mainImage" src="~/Content/img/ip1.jpg" alt="Ảnh chính" onclick="openPopup(/Content/img/rl.jpg)" />
-                <button class="prev" onclick="changeImage(-1)">❮</button>
-                <button class="next" onclick="changeImage(1)">❯</button>
+    <h1>@Model.ProductName</h1>
+
+    <div class="product-layout">
+        @* Cột trái - Gallery ảnh *@
+        <div class="product-left">
+            <div class="gallery-container">
+                <div class="main-image">
+                    <img id="mainImage" src="@firstImage" alt="@Model.ProductName" />
+
+                    @if (images.Count > 1)
+                    {
+                        <button class="prev" onclick="changeImage(-1)">❮</button>
+                        <button class="next" onclick="changeImage(1)">❯</button>
+                        <div class="image-counter">
+                            <span id="currentImageNumber">1</span>/@images.Count
+                        </div>
+                    }
+                </div>
+
+                @if (images.Any())
+                {
+                    <div class="thumbnails">
+                        @for (int i = 0; i < images.Count; i++)
+                        {
+                            <img src="@Url.Content(images[i].ImageURL)"
+                                 class="thumbnail @(i == 0 ? "active" : "")"
+                                 alt="Ảnh @(i + 1)"
+                                 onclick="showImage(@i)">
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        @* Cột phải - Thông tin giá và mua hàng *@
+        <div class="product-right">
+            <div class="product-price-section">
+                @if (Model.OriginalPrice.HasValue && Model.OriginalPrice > Model.ProductPrice)
+                {
+                    var discount = Math.Round((1 - (Model.ProductPrice / Model.OriginalPrice.Value)) * 100);
+                    <p class="product-price-original">
+                        <del>@String.Format("{0:N0} ₫", Model.OriginalPrice.Value)</del>
+                    </p>
+                    <p class="product-price">
+                        @String.Format("{0:N0} ₫", Model.ProductPrice)
+                        <span class="discount-badge">-@discount%</span>
+                    </p>
+                }
+                else
+                {
+                    <p class="product-price">@String.Format("{0:N0} ₫", Model.ProductPrice)</p>
+                }
             </div>
 
-            <div class="thumbnails">
-                <img src="~/Content/img/ip1.jpg" onclick="showImage(0)" class="thumbnail active">
-                <img src="~/Content/img/ip2.jpg" onclick="showImage(1)" class="thumbnail">
-                <img src="~/Content/img/ip3.jpg" onclick="showImage(2)" class="thumbnail">
+            <div class="purchase-options">
+                <div class="button-group">
+                    <button class="btn-add-cart" onclick="addToCart(@Model.ProductID)">
+                        🛒 Thêm vào giỏ
+                    </button>
+                    <button class="btn-buy-now" onclick="buyNow(@Model.ProductID)">
+                        ⚡ Mua ngay
+                    </button>
+                </div>
+                <p id="cartMessage"></p>
             </div>
-        </div>
 
-        <p class="product-title">Iphone 17 - 256gb</p>
-
-
-        <p class="product-price">Price: 40.000.000 ₫</p>
-
-        <div class="purchase-options" style="margin-top: 30px; text-align: center;">
-
-            <button onclick="addToCart()" style="
-        background-color: #ff5252;
-        color: white;
-        border: none;
-        padding: 12px 30px;
-        font-size: 16px;
-        border-radius: 8px;
-        margin: 10px;
-        cursor: pointer;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    ">
-                🛒 Thêm vào giỏ
-            </button>
-
-            <button onclick="buyNow()" style="
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 12px 30px;
-        font-size: 16px;
-        border-radius: 8px;
-        margin: 10px;
-        cursor: pointer;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    ">
-                ⚡ Mua ngay
-            </button>
-
-            <button onclick="installment()" style="
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        padding: 12px 30px;
-        font-size: 16px;
-        border-radius: 8px;
-        margin: 10px;
-        cursor: pointer;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    ">
-                💳 Mua trả chậm 0%
-            </button>
-
-            <p id="cartMessage" style="margin-top: 10px; color: green; font-weight: bold;"></p>
-        </div>
-        <h2 onclick="toggle('camera')">📷 Camera & Màn hình</h2>
-        <div id="camera" class="content">
-            <p><strong>Công nghệ màn hình:</strong> OLED</p>
-            <p><strong>Độ phân giải:</strong> Super Retina XDR (1206 x 2622 Pixels)</p>
-            <p><strong>Màn hình rộng:</strong> 6.3" - Tần số quét 120 Hz</p>
-            <p><strong>Độ sáng tối đa:</strong> 3000 nits</p>
-            <p><strong>Mặt kính cảm ứng:</strong> Ceramic Shield 2</p>
-        </div>
-
-        <h2 onclick="toggle('battery')">🔋 Pin & Sạc</h2>
-        <div id="battery" class="content">
-            <p><strong>Loại pin:</strong> Li-Ion</p>
-            <p><strong>Hỗ trợ sạc tối đa:</strong> 40 W</p>
-            <p><strong>Công nghệ pin:</strong> Tiết kiệm pin, Sạc nhanh, Sạc ngược qua cáp, Sạc không dây MagSafe, Sạc không dây</p>
-        </div>
-
-        <h2 onclick="toggle('utilities')">🛠️ Tiện ích & Kết nối</h2>
-        <div id="utilities" class="content">
-            <p><strong>Kháng nước, bụi:</strong> IP68</p>
-            <p><strong>Ghi âm:</strong> Mặc định, Cuộc gọi</p>
-            <p><strong>Xem phim:</strong> MP4, AV1, HEVC</p>
-            <p><strong>Nghe nhạc:</strong> MP3, FLAC, Apple Lossless, APAC, AAC</p>
-            <p><strong>SIM:</strong> 1 Nano SIM & 1 eSIM</p>
-            <p><strong>Wi-Fi:</strong> Wi-Fi MIMO, Wi-Fi 7</p>
-            <p><strong>GPS:</strong> iBeacon, QZSS, NavIC, GPS, GLONASS, GALILEO, BEIDOU</p>
-            <p><strong>Bluetooth:</strong> v6.0</p>
-            <p><strong>Cổng kết nối/sạc:</strong> Type-C</p>
-            <p><strong>Jack tai nghe:</strong> Type-C</p>
-            <p><strong>Kết nối khác:</strong> NFC</p>
-        </div>
-
-        <h2 onclick="toggle('design')">🎨 Thiết kế & Chất liệu</h2>
-        <div id="design" class="content">
-            <p><strong>Thiết kế:</strong> Nguyên khối</p>
-            <p><strong>Chất liệu:</strong> Khung nhôm & Mặt lưng kính cường lực</p>
-            <p><strong>Kích thước:</strong> 149.6 x 71.5 x 7.95 mm</p>
-            <p><strong>Khối lượng:</strong> 177 g</p>
-            <p><strong>Thời điểm ra mắt:</strong> 09/2025</p>
-            <p><strong>Hãng:</strong> iPhone (Apple)</p>
+            @* Promotion Section *@
+            <div class="promotion-section">
+                <div class="promotion-header">
+                    <i class="fas fa-gift"></i>
+                    Khuyến mãi
+                </div>
+                <ul class="promotion-list">
+                    @if (isPhone || isLaptop || isSmartwatch)
+                    {
+                        <li class="promotion-item">
+                            <span class="promotion-number">1</span>
+                            <span class="promotion-text">
+                                <strong>Giảm ngay 500.000đ</strong> khi thanh toán qua ví điện tử (áp dụng từ 5 triệu)
+                            </span>
+                        </li>
+                        <li class="promotion-item">
+                            <span class="promotion-number">2</span>
+                            <span class="promotion-text">
+                                Thu cũ đổi mới - <strong>Trợ giá lên đến 2.000.000đ</strong>
+                                <a href="#" class="promotion-link">(Xem chi tiết)</a>
+                            </span>
+                        </li>
+                    }
+                    @if (isPhone)
+                    {
+                        <li class="promotion-item">
+                            <span class="promotion-number">3</span>
+                            <span class="promotion-text">
+                                Tặng thêm <strong>12 tháng bảo hành chính hãng</strong>
+                            </span>
+                        </li>
+                        <li class="promotion-item">
+                            <span class="promotion-number">4</span>
+                            <span class="promotion-text">
+                                Phiếu mua hàng trị giá <strong>1.000.000đ</strong> mua tablet (áp dụng từ 10 triệu)
+                            </span>
+                        </li>
+                    }
+                    @if (isLaptop)
+                    {
+                        <li class="promotion-item">
+                            <span class="promotion-number">3</span>
+                            <span class="promotion-text">
+                                <strong>Miễn phí</strong> gói bảo hành VIP 12 tháng (trị giá 500.000đ)
+                            </span>
+                        </li>
+                        <li class="promotion-item">
+                            <span class="promotion-number">4</span>
+                            <span class="promotion-text">
+                                Tặng <strong>chuột không dây + balo laptop</strong> chính hãng
+                            </span>
+                        </li>
+                    }
+                    @if (isSmartwatch)
+                    {
+                        <li class="promotion-item">
+                            <span class="promotion-number">3</span>
+                            <span class="promotion-text">
+                                Giảm <strong>30%</strong> khi mua dây đeo thay thế chính hãng
+                            </span>
+                        </li>
+                        <li class="promotion-item">
+                            <span class="promotion-number">4</span>
+                            <span class="promotion-text">
+                                <strong>Miễn phí</strong> dán màn hình chống trầy cao cấp
+                            </span>
+                        </li>
+                    }
+                    @if (isAccessory)
+                    {
+                        <li class="promotion-item">
+                            <span class="promotion-number">1</span>
+                            <span class="promotion-text">
+                                Mua 2 giảm <strong>10%</strong>, mua 3 giảm <strong>15%</strong>
+                            </span>
+                        </li>
+                        <li class="promotion-item">
+                            <span class="promotion-number">2</span>
+                            <span class="promotion-text">
+                                <strong>Freeship</strong> toàn quốc cho đơn hàng từ 200.000đ
+                            </span>
+                        </li>
+                    }
+                    <li class="promotion-item">
+                        <span class="promotion-number">@(isAccessory ? "3" : "5")</span>
+                        <span class="promotion-text">
+                            Trả góp <strong>0% lãi suất</strong> qua thẻ tín dụng
+                            <a href="#" class="promotion-link">(Xem chi tiết)</a>
+                        </span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
+    @* ✅ Main Toggle Buttons - CHỈ hiện button có nội dung *@
+    <div class="toggle-sections-container">
+        @if (hasDescription || hasSpecs)
+        {
+            <div class="main-toggle-buttons">
+                @* ✅ CHỈ hiện button "Thông tin sản phẩm" nếu có mô tả *@
+                @if (hasDescription)
+                {
+                    <button class="main-toggle-button @(hasDescription ? "active" : "")" onclick="showMainSection('description', this)">
+                        <i class="fas fa-info-circle"></i>Thông tin sản phẩm
+                    </button>
+                }
+
+                @* ✅ Luôn hiện button "Thông số kỹ thuật" nếu có specs *@
+                @if (hasSpecs)
+                {
+                    <button class="main-toggle-button @(!hasDescription ? "active" : "")" onclick="showMainSection('specifications', this)">
+                        <i class="fas fa-cogs"></i>Thông số kỹ thuật
+                    </button>
+                }
+            </div>
+        }
+
+        @* Description Content - CHỈ hiện nếu có mô tả *@
+        @if (hasDescription)
+        {
+            <div id="descriptionSection" class="main-toggle-content show">
+                <div class="description-wrapper">
+                    <p id="descriptionText" class="description-text">@Model.ProductDescription</p>
+                    <div class="description-toggle">
+                        <button id="btnToggleDescription" class="btn-toggle-description" onclick="toggleDescription()">
+                            Xem thêm <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @* ✅ Specifications Content - Phân biệt phụ kiện và sản phẩm khác *@
+        @if (hasSpecs)
+        {
+            <div id="specificationsSection" class="main-toggle-content @(!hasDescription ? "show" : "")">
+                @{
+                    var specsByCategory = Model.ProductSpecifications
+                        .Where(ps => ps.SpecificationCategory != null)
+                        .GroupBy(ps => ps.SpecificationCategory)
+                        .OrderBy(g => g.Key.DisplayOrder ?? int.MaxValue)
+                        .ThenBy(g => g.Key.SpecCategoryName);
+
+                    foreach (var categoryGroup in specsByCategory)
+                    {
+                        var category = categoryGroup.Key;
+                        var categoryId = "specCat-" + category.SpecCategoryID;
+
+                        <div class="spec-category">
+                            @* ✅ PHỤ KIỆN: Ẩn header, chỉ hiện content *@
+                            @if (isAccessory)
+                            {
+                                @* Không hiển thị header cho phụ kiện *@
+                                <div class="spec-category-content-static spec-no-header">
+                                    @foreach (var spec in categoryGroup.OrderBy(s => s.DisplayOrder ?? int.MaxValue).ThenBy(s => s.SpecName))
+                                    {
+                                        <div class="spec-item">
+                                            <div class="spec-name">@spec.SpecName</div>
+                                            <div class="spec-value">
+                                                @if (!string.IsNullOrWhiteSpace(spec.SpecValue))
+                                                {
+                                                    @Html.Raw(spec.SpecValue.Replace("\n", "<br/>"))
+                                                }
+                                                else
+                                                {
+                                                    <span style="color: #999;">Đang cập nhật</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                @* ✅ SẢN PHẨM KHÁC: Giữ nguyên toggle *@
+                                <div class="spec-category-header" onclick="toggleSpecCategory('@categoryId', this)">
+                                    @if (!string.IsNullOrWhiteSpace(category.SpecCategoryIcon))
+                                    {
+                                        <i class="@category.SpecCategoryIcon" style="margin-right: 8px;"></i>
+                                    }
+                                    @category.SpecCategoryName
+                                    <span class="spec-toggle-icon">▼</span>
+                                </div>
+                                <div id="@categoryId" class="spec-category-content">
+                                    @foreach (var spec in categoryGroup.OrderBy(s => s.DisplayOrder ?? int.MaxValue).ThenBy(s => s.SpecName))
+                                    {
+                                        <div class="spec-item">
+                                            <div class="spec-name">@spec.SpecName</div>
+                                            <div class="spec-value">
+                                                @if (!string.IsNullOrWhiteSpace(spec.SpecValue))
+                                                {
+                                                    @Html.Raw(spec.SpecValue.Replace("\n", "<br/>"))
+                                                }
+                                                else
+                                                {
+                                                    <span style="color: #999;">Đang cập nhật</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        }
+
+        @* Thông báo nếu không có nội dung nào *@
+        @if (!hasDescription && !hasSpecs)
+        {
+            <div class="main-toggle-content show">
+                <p class="empty-message">Thông tin chi tiết đang được cập nhật.</p>
+            </div>
+        }
+    </div>
+    @* Sản phẩm tương tự *@
+    @{
+        var similarProducts = ViewBag.SimilarProducts as List<WebBanDienThoai.Models.Product>;
+        if (similarProducts != null && similarProducts.Any())
+        {
+            ViewBag.SliderTitle = "Sản phẩm tương tự";
+            ViewBag.SliderId = "similarProductsSlider";
+            @Html.Partial("_ProductSlider", similarProducts)
+        }
+    }
+
+    @* Sản phẩm bán chạy *@
+    @{
+        var bestSellers = ViewBag.BestSellers as List<WebBanDienThoai.Models.Product>;
+        if (bestSellers != null && bestSellers.Any())
+        {
+            ViewBag.SliderTitle = "Sản phẩm bán chạy";
+            ViewBag.SliderId = "bestSellersSlider";
+            @Html.Partial("_ProductSlider", bestSellers)
+        }
+    }
+</div>
+
+
+
+
+<script type="text/javascript">
+    var currentIndex = 0;
+    var imageArray = [@Html.Raw(string.Join(",", images.Any() ? images.Select(img => "'" + Url.Content(img.ImageURL) + "'") : new[] { "'" + firstImage + "'" }))];
+
+    function updateImageCounter() {
+        var counter = document.getElementById('currentImageNumber');
+        if (counter) counter.textContent = currentIndex + 1;
+    }
+
+    function showImage(index) {
+        if (!imageArray.length) return;
+        currentIndex = index;
+        document.getElementById('mainImage').src = imageArray[index];
+
+        var thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach(function (thumb, i) {
+            thumb.classList.toggle('active', i === index);
+        });
+        updateImageCounter();
+    }
+
+    function changeImage(direction) {
+        if (!imageArray.length) return;
+        currentIndex = (currentIndex + direction + imageArray.length) % imageArray.length;
+        showImage(currentIndex);
+    }
+
+    function showMainSection(sectionName, button) {
+        // Đóng tất cả spec categories khi chuyển tab (chỉ áp dụng cho non-accessory)
+        document.querySelectorAll('.spec-category-content').forEach(function (content) {
+            content.classList.remove('show');
+        });
+        document.querySelectorAll('.spec-category-header').forEach(function (header) {
+            header.classList.remove('open');
+        });
+
+        // Ẩn tất cả sections
+        document.querySelectorAll('.main-toggle-content').forEach(function (content) {
+            content.classList.remove('show');
+        });
+
+        // Bỏ active tất cả buttons
+        document.querySelectorAll('.main-toggle-button').forEach(function (btn) {
+            btn.classList.remove('active');
+        });
+
+        // Hiển thị section được chọn
+        var targetSection = document.getElementById(sectionName + 'Section');
+        if (targetSection) {
+            targetSection.classList.add('show');
+        }
+
+        // Active button được chọn
+        button.classList.add('active');
+    }
+
+    function toggleSpecCategory(categoryId, header) {
+        var content = document.getElementById(categoryId);
+        if (content) {
+            content.classList.toggle('show');
+            header.classList.toggle('open');
+        }
+    }
+
+    function toggleDescription() {
+        var text = document.getElementById('descriptionText');
+        var btn = document.getElementById('btnToggleDescription');
+
+        if (text && btn) {
+            text.classList.toggle('expanded');
+
+            if (text.classList.contains('expanded')) {
+                btn.innerHTML = 'Thu gọn <i class="fas fa-chevron-up"></i>';
+                btn.classList.add('expanded');
+            } else {
+                btn.innerHTML = 'Xem thêm <i class="fas fa-chevron-down"></i>';
+                btn.classList.remove('expanded');
+            }
+        }
+    }
+
+    function openPopup(src) {
+        var popup = window.open('', '_blank', 'width=800,height=600');
+        popup.document.write('<html><head><title>Xem ảnh</title></head><body style="margin:0;padding:0;display:flex;align-items:center;justify-content:center;background:#000;"><img src="' + src + '" style="max-width:100%;max-height:100%;object-fit:contain;"></body></html>');
+    }
+
+    function addToCart(productId) {
+        var msg = document.getElementById("cartMessage");
+        if (msg) {
+            msg.innerText = "✅ Đã thêm vào giỏ hàng!";
+            setTimeout(function () { msg.innerText = ""; }, 3000);
+        }
+    }
+
+    function buyNow(productId) {
+        alert("🛍️ Bạn đã chọn mua ngay. Chuyển đến trang thanh toán...");
+        // window.location.href = "/Order/Payment?productId=" + productId;
+    }
+
+    var sliderPositions = {};
+
+    function slideProducts(sliderId, direction) {
+        var container = document.getElementById(sliderId);
+        if (!container) return;
+
+        var track = container.querySelector('.product-slider-track');
+        var items = track.querySelectorAll('.product-slider-item');
+
+        if (items.length === 0) return;
+
+        // Initialize position if not exists
+        if (typeof sliderPositions[sliderId] === 'undefined') {
+            sliderPositions[sliderId] = 0;
+        }
+
+        var currentPosition = sliderPositions[sliderId];
+        var visibleItems = 5; // Hiển thị tối đa 5 sản phẩm
+        var maxPosition = Math.max(0, items.length - visibleItems);
+
+        // Update position
+        currentPosition += direction;
+        currentPosition = Math.max(0, Math.min(currentPosition, maxPosition));
+        sliderPositions[sliderId] = currentPosition;
+
+        // Calculate transform
+        var itemWidth = items[0].offsetWidth;
+        var gap = 20;
+        var translateX = -(currentPosition * (itemWidth + gap));
+
+        track.style.transform = 'translateX(' + translateX + 'px)';
+
+        // Update button states
+        var prevBtn = container.querySelector('.slider-btn-prev');
+        var nextBtn = container.querySelector('.slider-btn-next');
+
+        if (prevBtn) prevBtn.disabled = currentPosition === 0;
+        if (nextBtn) nextBtn.disabled = currentPosition >= maxPosition;
+    }
+
+    // Initialize slider button states on page load
+    window.addEventListener('load', function () {
+        var sliders = document.querySelectorAll('.product-slider-container');
+        sliders.forEach(function (slider) {
+            var sliderId = slider.id;
+            slideProducts(sliderId, 0); // Initialize
+        });
+    });
+</script>
+
+@section scripts {
     <script>
-        function toggle(id) {
-            const el = document.getElementById(id);
-            el.style.display = el.style.display === 'block' ? 'none' : 'block';
-        }
-        let currentIndex = 0;
-        const images = [
-            '/Content/img/ip1.jpg',
-            '/Content/img/ip2.jpg',
-            '/Content/img/ip3.jpg'
-        ];
-
-        function showImage(index) {
-            currentIndex = index;
-            const mainImage = document.getElementById('mainImage');
-            mainImage.src = images[index];
-            mainImage.onclick = () => OpenPopup(images[index]);
-
-            const thumbnails = document.querySelectorAll('.thumbnail');
-            thumbnails.forEach((thumb, i) => {
-                thumb.classList.toggle('active', i === index);
-            });
-        }
-
-        function changeImage(direction) {
-            currentIndex += direction;
-            if (currentIndex < 0) currentIndex = images.length - 1;
-            if (currentIndex >= images.length) currentIndex = 0;
-            showImage(currentIndex);
-        }
-
-        function OpenPopup(src) {
-            const popup = window.open('', '_blank');
-            popup.document.write(`<img src="${src}" style="width:100%">`);
-        }
-        function addToCart() {
-            document.getElementById("cartMessage").innerText = "✅ Đã thêm vào giỏ hàng!";
-            setTimeout(() => {
-                document.getElementById("cartMessage").innerText = "";
-            }, 3000);
-        }
-
-        function buyNow() {
-            alert("🛍️ Bạn đã chọn mua ngay. Chuyển đến trang thanh toán...");
-            // window.location.href = "/checkout"; // nếu có trang thanh toán
-        }
-
-        function installment() {
-            alert("💳 Bạn đã chọn mua trả chậm 0%. Vui lòng chọn ngân hàng hỗ trợ.");
-            // window.location.href = "/installment"; // nếu có trang trả góp
-        }
-
-        // Khởi tạo ảnh đầu tiên khi trang tải
-        window.onload = () => showImage(currentIndex);
-
+        $(document).ready(function () {
+            $('#mainImage').click(function () { openPopup(this.src); });
+        });
     </script>
-</body>
-</html>
+}

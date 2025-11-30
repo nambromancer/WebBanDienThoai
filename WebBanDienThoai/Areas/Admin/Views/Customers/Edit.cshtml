@@ -1,0 +1,90 @@
+﻿@model WebBanDienThoai.Models.Customer
+
+@{
+    ViewBag.Title = "Chỉnh sửa thông tin khách hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="bg-warning" style="padding: 15px; color: white; border-radius: 5px;">
+    <i class="fas fa-user-edit"></i> CHỈNH SỬA THÔNG TIN KHÁCH HÀNG
+</h2>
+
+@using (Html.BeginForm("Edit", "Customers", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.CustomerID)
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="card">
+            <div class="card-header bg-light">
+                <h4 class="mb-0">
+                    <i class="fas fa-info-circle"></i> Thông tin khách hàng
+                    <span class="badge badge-secondary float-right">ID: @Model.CustomerID</span>
+                </h4>
+            </div>
+            <div class="card-body">
+                @Html.Partial("PartialView_CustomerForm", Model)
+            </div>
+        </div>
+
+        @if (Model.User != null)
+        {
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-user-shield"></i>
+                <strong>Tài khoản đăng nhập:</strong> Khách hàng này đã có tài khoản đăng nhập hệ thống.
+            </div>
+        }
+
+        <div class="form-group mt-4">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" class="btn btn-warning">
+                    <i class="fas fa-save"></i> Cập nhật
+                </button>
+                @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>$(document).ready(function() {
+            // Validation rules (same as Create)
+            $('form').validate({
+                rules: {
+                    CustomerName: {
+                        required: true,
+                        minlength: 2
+                    },
+                    CustomerEmail: {
+                        required: true,
+                        email: true
+                    },
+                    PhoneNumber: {
+                        required: true,
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 11
+                    }
+                },
+                messages: {
+                    CustomerName: {
+                        required: "Vui lòng nhập họ tên",
+                        minlength: "Họ tên phải có ít nhất 2 ký tự"
+                    },
+                    CustomerEmail: {
+                        required: "Vui lòng nhập email",
+                        email: "Email không hợp lệ"
+                    },
+                    PhoneNumber: {
+                        required: "Vui lòng nhập số điện thoại",
+                        digits: "Số điện thoại chỉ chứa số",
+                        minlength: "Số điện thoại phải có ít nhất 10 số",
+                        maxlength: "Số điện thoại không quá 11 số"
+                    }
+                }
+            });
+        });</script>
+}

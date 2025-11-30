@@ -1,0 +1,87 @@
+﻿@model WebBanDienThoai.Models.ViewModel.SpecificationCategoryWithNamesVM
+
+@{
+    ViewBag.Title = "Cập nhật danh mục thông số";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="bg-success">CẬP NHẬT DANH MỤC THÔNG SỐ</h2>
+
+@using (Html.BeginForm("Edit", "SpecificationCategories", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.HiddenFor(m => m.SpecificationCategory.SpecCategoryID)
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.Partial("PartialView_CreateEditSpecCategory", Model)
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Thêm spec name
+            $('#btnAddSpecName').click(function () {
+                var newItem = `
+                        <div class="spec-name-item mb-2" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background-color: #f9f9f9;">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label class="form-label">Tên thông số</label>
+                                    <input type="text" class="form-control spec-name-input" placeholder="VD: Camera sau, Camera trước..." />
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Thứ tự</label>
+                                    <input type="number" class="form-control spec-display-order-input" placeholder="VD: 1, 2, 3..." />
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button type="button" class="btn btn-danger btn-remove-spec-name w-100">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                $('#specNamesContainer').append(newItem);
+            });
+
+            // Xóa spec name
+            $(document).on('click', '.btn-remove-spec-name', function () {
+                if ($('.spec-name-item').length > 1) {
+                    $(this).closest('.spec-name-item').remove();
+                } else {
+                    alert('Phải có ít nhất 1 trường nhập!');
+                }
+            });
+
+            // Intercept form submit
+            $('form').on('submit', function (e) {
+                e.preventDefault(); // Ngăn submit mặc định
+
+                // Collect spec names và display orders
+                var specNamesData = [];
+                $('.spec-name-item').each(function () {
+                    var specName = $(this).find('.spec-name-input').val().trim();
+                    var displayOrder = $(this).find('.spec-display-order-input').val().trim();
+
+                    if (specName !== '') {
+                        specNamesData.push({
+                            SpecName: specName,
+                            DisplayOrder: displayOrder !== '' ? parseInt(displayOrder) : null
+                        });
+                    }
+                });
+
+                // Set JSON value
+                $('#specNamesJson').val(JSON.stringify(specNamesData));
+
+                // Log để debug
+                console.log('Spec Names Data:', specNamesData);
+                console.log('JSON:', $('#specNamesJson').val());
+
+                // Submit form sau khi đã set xong
+                this.submit();
+            });
+        });
+    </script>
+}

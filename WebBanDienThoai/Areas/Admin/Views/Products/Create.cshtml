@@ -1,0 +1,436 @@
+﻿@model WebBanDienThoai.Models.ViewModel.ProductWithSpecificationsVM
+
+@{
+    ViewBag.Title = "Tạo mới sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Tạo mới sản phẩm</h2>
+
+@using (Html.BeginForm("Create", "Products", FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "productForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.Partial("PartialView_CreateEditProduct", Model)
+
+        <hr />
+
+        @* Thêm Product Images Section *@
+        @Html.Partial("PartialView_ProductImages", Model.ProductImages)
+
+        <hr />
+
+        <div id="specifications-section">
+            <h4>Thông số kỹ thuật</h4>
+            <div class="alert alert-info" id="select-category-message">
+                <i class="fas fa-info-circle"></i>
+                Vui lòng chọn <strong>Danh mục sản phẩm</strong> ở trên để hiển thị các thông số kỹ thuật tương ứng.
+            </div>
+            <div id="specifications-container" style="display: none;">
+                <!-- Spec categories will be loaded here dynamically -->
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Tạo mới" class="btn btn-primary" />
+                @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-default" })
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            // ========================================
+            // PRODUCT IMAGES FUNCTIONALITY
+            // ========================================
+            var imageIndex = $('#images-container .image-row').length;
+
+            $(document).on('click', '#add-image-btn', function (e) {
+                e.preventDefault();
+                $('#no-images-message').remove();
+
+                var newImageRow = `
+                    <div class="image-row" data-image-index="${imageIndex}" style="border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 15px; background-color: white;">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <div style="text-align: center;">
+                                    <i class="fas fa-grip-vertical" style="font-size: 20px; color: #999; cursor: move;"></i>
+                                    <div style="font-size: 12px; color: #666; margin-top: 5px;">${imageIndex + 1}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text"
+                                       name="ProductImages[${imageIndex}].ImageURL"
+                                       class="form-control image-url-input"
+                                       placeholder="Nhập URL ảnh (VD: https://example.com/image.jpg)"
+                                       data-image-index="${imageIndex}" />
+                                <input type="hidden" name="ProductImages[${imageIndex}].DisplayOrder" value="${imageIndex + 1}" class="display-order-input" />
+                            </div>
+                            <div class="col-md-3">
+                                <div class="image-preview" id="preview-${imageIndex}" style="width: 100%; height: 100px; border: 1px solid #ddd; border-radius: 5px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+                                    <span style="color: #999;">Xem trước</span>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox"
+                                               name="ProductImages[${imageIndex}].IsMainImage"
+                                               value="true"
+                                               class="main-image-checkbox" />
+                                        Ảnh chính
+                                    </label>
+                                </div>
+                                <button type="button" class="btn btn-danger btn-sm remove-image-btn" style="margin-top: 10px;">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                $('#images-container').append(newImageRow);
+                imageIndex++;
+                updateImageIndices();
+            });
+
+            $(document).on('click', '.remove-image-btn', function (e) {
+                e.preventDefault();
+                $(this).closest('.image-row').remove();
+                updateImageIndices();
+
+                if ($('#images-container .image-row').length === 0) {
+                    $('#images-container').html(`
+                        <div class="alert alert-warning" id="no-images-message">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Chưa có ảnh nào. Nhấn nút "Thêm ảnh" để thêm ảnh cho sản phẩm.
+                        </div>
+                    `);
+                }
+            });
+
+            $(document).on('blur', '.image-url-input', function () {
+                var index = $(this).data('image-index');
+                var url = $(this).val();
+                var preview = $('#preview-' + index);
+
+                if (url) {
+                    preview.html('<img src="' + url + '" alt="Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.parentElement.innerHTML=\'<span style=color:#dc3545;>Lỗi tải ảnh</span>\'" />');
+                } else {
+                    preview.html('<span style="color: #999;">Xem trước</span>');
+                }
+            });
+
+            $(document).on('change', '.main-image-checkbox', function () {
+                if ($(this).is(':checked')) {
+                    $('.main-image-checkbox').not(this).prop('checked', false);
+                }
+            });
+
+            function updateImageIndices() {
+                $('#images-container .image-row').each(function (index) {
+                    $(this).attr('data-image-index', index);
+                    $(this).find('.col-md-1 div div').text(index + 1);
+                    $(this).find('input[name^="ProductImages"]').each(function () {
+                        var name = $(this).attr('name');
+                        var newName = name.replace(/ProductImages\[\d+\]/, 'ProductImages[' + index + ']');
+                        $(this).attr('name', newName);
+                    });
+                    $(this).find('.image-url-input').attr('data-image-index', index);
+                    $(this).find('.image-preview').attr('id', 'preview-' + index);
+                    $(this).find('.display-order-input').val(index + 1);
+                });
+                imageIndex = $('#images-container .image-row').length;
+            }
+
+            // ========================================
+            // SPECIFICATIONS FUNCTIONALITY
+            // ========================================
+            var currentCategoryId = null;
+            var currentCategoryName = '';
+
+            $('#Product_CategoryID').change(function () {
+                var categoryId = $(this).val();
+                currentCategoryId = categoryId;
+
+                // Lấy tên danh mục
+                currentCategoryName = $('#Product_CategoryID option:selected').text().toLowerCase();
+
+                if (!categoryId || categoryId === '') {
+                    $('#select-category-message').show();
+                    $('#specifications-container').hide().empty();
+                    return;
+                }
+
+                // Kiểm tra nếu là danh mục "Phụ kiện" -> chỉ hiển thị form nhập tự do
+                if (currentCategoryName.includes('phụ kiện') || currentCategoryName.includes('accessory')) {
+                    $('#select-category-message').hide();
+                    renderFreeFormSpecifications();
+                    $('#specifications-container').show();
+                    return;
+                }
+
+                // Các danh mục khác -> load spec categories từ server
+                $.ajax({
+                    url: '@Url.Action("GetSpecificationCategoriesByCategory", "Products")',
+                    type: 'GET',
+                    data: { categoryId: categoryId },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#select-category-message').hide();
+                            renderSpecificationCategories(response.data);
+                            $('#specifications-container').show();
+                        } else {
+                            alert('Lỗi: ' + response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Không thể tải danh sách thông số kỹ thuật!');
+                    }
+                });
+            });
+
+            // Render form nhập tự do cho Phụ kiện
+            function renderFreeFormSpecifications() {
+                var container = $('#specifications-container');
+                container.empty();
+
+                container.html(`
+                    <div class="spec-category-section" style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 20px; background-color: #f9f9f9;">
+                        <div class="spec-category-header" style="display: flex; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #17a2b8;">
+                            <i class="fas fa-tools" style="font-size: 24px; margin-right: 10px; color: #17a2b8;"></i>
+                            <h5 style="margin: 0; font-weight: bold;">Thông số phụ kiện (Nhập tự do)</h5>
+                        </div>
+                        <input type="hidden" name="SpecificationCategories[0].SpecCategoryID" value="0" />
+                        <div class="alert alert-info" style="margin-bottom: 15px;">
+                            <i class="fas fa-info-circle"></i>
+                            Với danh mục <strong>Phụ kiện</strong>, bạn có thể nhập tự do tên và giá trị thông số.
+                            <br>Ví dụ: Chất liệu, Màu sắc, Kích thước, Trọng lượng...
+                        </div>
+                        <div id="spec-container-0">
+                            <!-- Rows will be added here -->
+                        </div>
+                        <button type="button" class="btn btn-success btn-sm add-spec-btn mt-2" data-category-index="0">
+                            <i class="fas fa-plus"></i> Thêm thông số
+                        </button>
+                    </div>
+                `);
+
+                initializeSpecificationHandlers();
+            }
+
+            function renderSpecificationCategories(specCategories) {
+                var container = $('#specifications-container');
+                container.empty();
+
+                if (specCategories.length === 0) {
+                    container.html(`
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Danh mục sản phẩm này chưa có nhóm thông số kỹ thuật.
+                            Bạn có thể thêm thông số trực tiếp bên dưới.
+                        </div>
+                        <div class="spec-category-section" style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 20px; background-color: #f9f9f9;">
+                            <div class="spec-category-header" style="display: flex; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #007bff;">
+                                <i class="fas fa-info-circle" style="font-size: 24px; margin-right: 10px; color: #007bff;"></i>
+                                <h5 style="margin: 0; font-weight: bold;">Thông số kỹ thuật</h5>
+                            </div>
+                            <input type="hidden" name="SpecificationCategories[0].SpecCategoryID" value="0" />
+                            <div id="spec-container-0">
+                                <div class="alert alert-info" style="margin-bottom: 15px;">
+                                    <i class="fas fa-info-circle"></i>
+                                    Nhấn nút "Thêm thông số" bên dưới để thêm thông số kỹ thuật cho sản phẩm.
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-success btn-sm add-spec-btn mt-2" data-category-index="0">
+                                <i class="fas fa-plus"></i> Thêm thông số
+                            </button>
+                        </div>
+                    `);
+                    initializeSpecificationHandlers();
+                    return;
+                }
+
+                specCategories.forEach(function (specCat, index) {
+                    var html = `
+                        <div class="spec-category-section" style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 20px; background-color: #f9f9f9;">
+                            <div class="spec-category-header" style="display: flex; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #007bff;">
+                                ${specCat.specCategoryIcon ? '<i class="' + specCat.specCategoryIcon + '" style="font-size: 24px; margin-right: 10px; color: #007bff;"></i>' : ''}
+                                <h5 style="margin: 0; font-weight: bold;">${specCat.specCategoryName}</h5>
+                            </div>
+                            <input type="hidden" name="SpecificationCategories[${index}].SpecCategoryID" value="${specCat.specCategoryID}" />
+                            <input type="hidden" name="SpecificationCategories[${index}].SpecCategoryName" value="${specCat.specCategoryName}" />
+                            <input type="hidden" name="SpecificationCategories[${index}].SpecCategoryIcon" value="${specCat.specCategoryIcon || ''}" />
+                            <input type="hidden" name="SpecificationCategories[${index}].DisplayOrder" value="${specCat.displayOrder || ''}" />
+                            <div id="spec-container-${index}">
+                    `;
+
+                    if (specCat.templateSpecs && specCat.templateSpecs.length > 0) {
+                        specCat.templateSpecs.forEach(function (template, specIndex) {
+                            html += `
+                                <div class="spec-row row mb-2">
+                                    <div class="col-md-4">
+                                        <input type="text"
+                                               name="SpecificationCategories[${index}].Specifications[${specIndex}].SpecName"
+                                               class="form-control spec-name-input"
+                                               value="${template.specName}"
+                                               readonly
+                                               style="background-color: #e9ecef;" />
+                                        <input type="hidden"
+                                               name="SpecificationCategories[${index}].Specifications[${specIndex}].DisplayOrder"
+                                               value="${template.displayOrder || ''}" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <textarea
+                                               name="SpecificationCategories[${index}].Specifications[${specIndex}].SpecValue"
+                                               class="form-control spec-value-input"
+                                               rows="2"
+                                               placeholder="Nhập giá trị (có thể nhập nhiều dòng, VD: OLED, 6.7 inch...)"></textarea>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-danger btn-sm remove-spec-btn">
+                                            <i class="fas fa-times"></i> Xóa
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        html += `
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i>
+                                Danh mục này chưa có tên thông số mẫu. Bạn có thể tự thêm bằng nút bên dưới.
+                            </div>
+                        `;
+                    }
+
+                    html += `
+                            </div>
+                            <button type="button" class="btn btn-success btn-sm add-spec-btn mt-2" data-category-index="${index}">
+                                <i class="fas fa-plus"></i> Thêm thông số tùy chỉnh
+                            </button>
+                        </div>
+                    `;
+                    container.append(html);
+                });
+
+                initializeSpecificationHandlers();
+            }
+
+            function initializeSpecificationHandlers() {
+                $('.add-spec-btn').off('click').on('click', function () {
+                    var categoryIndex = $(this).data('category-index');
+                    var container = $('#spec-container-' + categoryIndex);
+                    var currentCount = container.find('.spec-row').length;
+
+                    // ✅ Tự động set DisplayOrder = currentCount + 1
+                    var newRow = `
+                        <div class="spec-row row mb-2">
+                            <div class="col-md-4">
+                                <input type="text"
+                                       name="SpecificationCategories[${categoryIndex}].Specifications[${currentCount}].SpecName"
+                                       class="form-control spec-name-input"
+                                       placeholder="Tên thông số (VD: Chất liệu, Màu sắc...)" />
+                                <input type="hidden"
+                                       name="SpecificationCategories[${categoryIndex}].Specifications[${currentCount}].DisplayOrder"
+                                       value="${currentCount + 1}" />
+                            </div>
+                            <div class="col-md-6">
+                                <textarea
+                                       name="SpecificationCategories[${categoryIndex}].Specifications[${currentCount}].SpecValue"
+                                       class="form-control spec-value-input"
+                                       rows="2"
+                                       placeholder="Nhập giá trị (có thể nhập nhiều dòng)"></textarea>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-danger btn-sm remove-spec-btn">
+                                    <i class="fas fa-times"></i> Xóa
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    container.append(newRow);
+                });
+
+                // ✅ Khi xóa spec, cập nhật lại index và DisplayOrder
+                $(document).off('click', '.remove-spec-btn').on('click', '.remove-spec-btn', function () {
+                    var row = $(this).closest('.spec-row');
+                    var container = row.closest('[id^="spec-container-"]');
+                    row.remove();
+
+                    // Cập nhật lại index và DisplayOrder
+                    updateSpecificationIndices(container);
+                });
+            }
+
+            // ✅ Hàm cập nhật lại index và DisplayOrder sau khi xóa
+            function updateSpecificationIndices(container) {
+                var categoryIndex = container.attr('id').replace('spec-container-', '');
+                container.find('.spec-row').each(function (index) {
+                    // Cập nhật name attributes
+                    $(this).find('input[name*=".SpecName"]').attr('name', `SpecificationCategories[${categoryIndex}].Specifications[${index}].SpecName`);
+                    $(this).find('textarea[name*=".SpecValue"]').attr('name', `SpecificationCategories[${categoryIndex}].Specifications[${index}].SpecValue`);
+
+                    // Cập nhật DisplayOrder
+                    var displayOrderInput = $(this).find('input[name*=".DisplayOrder"]');
+                    displayOrderInput.attr('name', `SpecificationCategories[${categoryIndex}].Specifications[${index}].DisplayOrder`);
+                    displayOrderInput.val(index + 1);
+                });
+            }
+
+            var selectedCategoryId = $('#Product_CategoryID').val();
+            if (selectedCategoryId) {
+                $('#Product_CategoryID').trigger('change');
+            }
+        });
+    </script>
+
+    <style>
+        .spec-name-input[readonly] {
+            cursor: not-allowed;
+        }
+
+        .spec-value-input {
+            border: 2px solid #007bff;
+            resize: vertical;
+            min-height: 50px;
+        }
+
+            .spec-value-input:focus {
+                border-color: #0056b3;
+                box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+            }
+
+        .mb-2 {
+            margin-bottom: 10px;
+        }
+
+        .mt-2 {
+            margin-top: 10px;
+        }
+
+        .spec-category-section {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .spec-category-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #007bff;
+        }
+    </style>
+}

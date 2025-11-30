@@ -1,0 +1,30 @@
+﻿@model WebBanDienThoai.Models.Product
+
+@{
+    ViewBag.Title = "Chi tiết sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="bg-success">CHI TIẾT SẢN PHẨM</h2>
+
+<div class="container-fluid">
+    @* Thông tin cơ bản *@
+    @Html.Partial("PartialView_ProductInfo", Model)
+
+    <hr />
+
+    @* Thư viện ảnh *@
+    @Html.Partial("PartialView_ProductImagesDisplay", Model)
+
+    <hr />
+
+    @* Thông số kỹ thuật *@
+    @Html.Partial("PartialView_ProductSpecifications", Model)
+</div>
+
+<div class="form-group" style="margin-top: 20px;">
+    <div class="col-md-offset-3 col-md-9">
+        @Html.ActionLink("Cập nhật", "Edit", new { id = Model.ProductID }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-default" })
+    </div>
+</div>

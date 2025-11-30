@@ -1,0 +1,74 @@
+﻿
+@model IEnumerable<WebBanDienThoai.Models.Product>
+
+@{
+    var sliderTitle = ViewBag.SliderTitle as string ?? "Sản phẩm";
+    var sliderId = ViewBag.SliderId as string ?? "productSlider";
+    var products = Model != null ? Model.ToList() : new List<WebBanDienThoai.Models.Product>();
+}
+
+@if (products.Any())
+{
+    <div class="product-slider-section">
+        <h2 class="slider-title">
+            <i class="fas fa-fire"></i> @sliderTitle
+        </h2>
+
+        <div class="product-slider-container" id="@sliderId">
+            <button class="slider-btn slider-btn-prev" onclick="slideProducts('@sliderId', -1)" aria-label="Previous">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="product-slider-wrapper">
+                <div class="product-slider-track">
+                    @foreach (var product in products)
+                    {
+                        var firstImage = "";
+                        if (product.ProductImages != null && product.ProductImages.Any())
+                        {
+                            var orderedImages = product.ProductImages.OrderBy(i => i.DisplayOrder ?? int.MaxValue);
+                            firstImage = Url.Content(orderedImages.First().ImageURL);
+                        }
+                        else if (!string.IsNullOrWhiteSpace(product.ProductImage))
+                        {
+                            firstImage = Url.Content(product.ProductImage);
+                        }
+                        else
+                        {
+                            firstImage = Url.Content("~/Content/Images/no-image.png");
+                        }
+
+                        var hasDiscount = product.OriginalPrice.HasValue && product.OriginalPrice > product.ProductPrice;
+                        var discountPercent = hasDiscount ? Math.Round((1 - (product.ProductPrice / product.OriginalPrice.Value)) * 100) : 0;
+
+                        <div class="product-slider-item">
+                            <a href="@Url.Action("ProductDetail", "Products", new { id = product.ProductID })" class="product-slider-link">
+                                <div class="product-slider-image">
+                                    <img src="@firstImage" alt="@product.ProductName" />
+                                    @if (hasDiscount)
+                                    {
+                                        <span class="product-slider-badge">-@discountPercent%</span>
+                                    }
+                                </div>
+                                <div class="product-slider-info">
+                                    <h3 class="product-slider-name">@product.ProductName</h3>
+                                    <div class="product-slider-price">
+                                        <span class="price-current">@String.Format("{0:N0} ₫", product.ProductPrice)</span>
+                                        @if (hasDiscount)
+                                        {
+                                            <span class="price-original">@String.Format("{0:N0} ₫", product.OriginalPrice.Value)</span>
+                                        }
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <button class="slider-btn slider-btn-next" onclick="slideProducts('@sliderId', 1)" aria-label="Next">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+}

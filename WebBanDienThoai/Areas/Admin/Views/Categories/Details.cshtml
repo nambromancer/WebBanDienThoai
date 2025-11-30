@@ -1,0 +1,24 @@
+﻿@model WebBanDienThoai.Models.Category
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="bg-success">Chi tiết danh mục</h2>
+
+<div>
+    <hr />
+    <div class="row mb-3">
+        <label class="col-md-2 col-form-label">Tên danh mục</label>
+        <div class="col-md-10 pt-2">
+            @Html.DisplayFor(m => m.CategoryName)
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="offset-md-2 col-md-10">
+        @Html.ActionLink("Cập nhật", "Edit", new { id = Model.CategoryID }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-primary" })
+    </div>
+</div>

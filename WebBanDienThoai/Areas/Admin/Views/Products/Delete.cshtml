@@ -1,0 +1,40 @@
+﻿@model WebBanDienThoai.Models.Product
+
+@{
+    ViewBag.Title = "Xóa sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="bg-danger text-white" style="padding: 10px;">XÓA SẢN PHẨM</h2>
+<h4 class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i>
+    Bạn thực sự muốn xóa sản phẩm này? Hành động này không thể hoàn tác!
+</h4>
+
+<div class="container-fluid">
+    @* Thông tin cơ bản *@
+    @Html.Partial("PartialView_ProductInfo", Model)
+
+    <hr />
+
+    @* Thư viện ảnh *@
+    @Html.Partial("PartialView_ProductImagesDisplay", Model)
+
+    <hr />
+
+    @* Thông số kỹ thuật *@
+    @Html.Partial("PartialView_ProductSpecifications", Model)
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.ProductID)
+
+    <div class="form-actions no-color" style="margin-top: 20px;">
+        <div class="col-md-offset-3 col-md-9">
+            <input type="submit" value="Xóa sản phẩm" class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');" />
+            @Html.ActionLink("Hủy bỏ", "Index", null, new { @class = "btn btn-default" })
+        </div>
+    </div>
+}

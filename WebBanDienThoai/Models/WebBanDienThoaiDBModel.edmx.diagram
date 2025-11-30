@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="8f0efeaecb7145ec9b5250af8a6699cb" Name="Diagram1">
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.Category" Width="1.5" PointX="0.75" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.Customer" Width="1.5" PointX="0.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.Order" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.OrderDetail" Width="1.5" PointX="5.25" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.Product" Width="1.5" PointX="3" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.ProductImage" Width="1.5" PointX="5.25" PointY="8.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.ProductSpecification" Width="1.5" PointX="8.25" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.SpecificationCategory" Width="1.5" PointX="6" PointY="2.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.User" Width="1.5" PointX="1.5" PointY="13.125" IsExpanded="true" />
+        <AssociationConnector Association="WebBanDienThoaiDBModel.FK_Pro_Category" ManuallyRouted="false" />
+        <AssociationConnector Association="WebBanDienThoaiDBModel.FK_Order_Customer" ManuallyRouted="false" />
+        <AssociationConnector Association="WebBanDienThoaiDBModel.FK_User_Customer" ManuallyRouted="false" />
+        <AssociationConnector Association="WebBanDienThoaiDBModel.FK_OrderDetail_Order" ManuallyRouted="false" />
+        <AssociationConnector Association="WebBanDienThoaiDBModel.FK_OrderDetail_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="WebBanDienThoaiDBModel.FK_ProductImage_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="WebBanDienThoaiDBModel.FK_ProductSpec_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="WebBanDienThoaiDBModel.FK_ProductSpec_SpecCategory" ManuallyRouted="false" />
+        <AssociationConnector Association="WebBanDienThoaiDBModel.FK_SpecificationCategory_Category" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
