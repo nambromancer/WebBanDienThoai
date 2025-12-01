@@ -1,0 +1,150 @@
+﻿@{
+    ViewBag.Title = "Thống kê đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+
+    // ✅ Khởi tạo giá trị mặc định để tránh null
+    int todayOrders = ViewBag.TodayOrders ?? 0;
+    decimal todayRevenue = ViewBag.TodayRevenue ?? 0m;
+    int monthOrders = ViewBag.MonthOrders ?? 0;
+    decimal monthRevenue = ViewBag.MonthRevenue ?? 0m;
+    int yearOrders = ViewBag.YearOrders ?? 0;
+    decimal yearRevenue = ViewBag.YearRevenue ?? 0m;
+
+    int pendingOrders = ViewBag.PendingOrders ?? 0;
+    int processingOrders = ViewBag.ProcessingOrders ?? 0;
+    int shippingOrders = ViewBag.ShippingOrders ?? 0;
+    int completedOrders = ViewBag.CompletedOrders ?? 0;
+    int cancelledOrders = ViewBag.CancelledOrders ?? 0;
+}
+
+<h2><i class="fas fa-chart-bar"></i> Thống kê đơn hàng</h2>
+
+<div class="mb-3">
+    <a href="@Url.Action("Index")" class="btn btn-secondary">
+        Quay lại danh sách
+    </a>
+</div>
+
+<!-- Statistics Cards Row 1 -->
+<div class="row">
+    <!-- Today Stats -->
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-header bg-light">
+                <strong>Hôm nay</strong>
+            </div>
+            <div class="card-body">
+                <h3 class="mb-1">@todayOrders</h3>
+                <p class="text-muted mb-2">đơn hàng</p>
+                <hr />
+                <h5 class="mb-0">@String.Format("{0:N0} ₫", todayRevenue)</h5>
+                <small class="text-muted">Doanh thu (Đã giao)</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Month Stats -->
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-header bg-light">
+                <strong>Tháng này</strong>
+            </div>
+            <div class="card-body">
+                <h3 class="mb-1">@monthOrders</h3>
+                <p class="text-muted mb-2">đơn hàng</p>
+                <hr />
+                <h5 class="mb-0">@String.Format("{0:N0} ₫", monthRevenue)</h5>
+                <small class="text-muted">Doanh thu (Đã giao)</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Year Stats -->
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-header bg-light">
+                <strong>Năm nay</strong>
+            </div>
+            <div class="card-body">
+                <h3 class="mb-1">@yearOrders</h3>
+                <p class="text-muted mb-2">đơn hàng</p>
+                <hr />
+                <h5 class="mb-0">@String.Format("{0:N0} ₫", yearRevenue)</h5>
+                <small class="text-muted">Doanh thu (Đã giao)</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Status Statistics -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <strong>Thống kê theo trạng thái đơn hàng</strong>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th width="20%">Trạng thái</th>
+                            <th width="16%" class="text-center">Chờ xử lý</th>
+                            <th width="16%" class="text-center">Đang xử lý</th>
+                            <th width="16%" class="text-center">Đang giao hàng</th>
+                            <th width="16%" class="text-center">Đã giao hàng</th>
+                            <th width="16%" class="text-center">Đã hủy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Số lượng</strong></td>
+                            <td class="text-center"><h4>@pendingOrders</h4></td>
+                            <td class="text-center"><h4>@processingOrders</h4></td>
+                            <td class="text-center"><h4>@shippingOrders</h4></td>
+                            <td class="text-center"><h4>@completedOrders</h4></td>
+                            <td class="text-center"><h4>@cancelledOrders</h4></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Info -->
+<div class="row mt-3">
+    <div class="col-md-12">
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            <strong>Lưu ý:</strong> Doanh thu chỉ được tính từ các đơn hàng có trạng thái "Đã giao hàng".
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border: 1px solid #dee2e6;
+    }
+
+    .card-header {
+        border-bottom: 1px solid #dee2e6;
+        padding: 10px 15px;
+        font-weight: 600;
+    }
+
+    .card-body h3,
+    .card-body h5 {
+        color: #333;
+    }
+
+    .table td,
+    .table th {
+        vertical-align: middle;
+    }
+
+    .table h4 {
+        margin: 0;
+        color: #333;
+    }
+</style>

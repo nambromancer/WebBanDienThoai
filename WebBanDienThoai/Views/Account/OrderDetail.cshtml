@@ -1,0 +1,361 @@
+﻿@model WebBanDienThoai.Models.Order
+
+@{
+    ViewBag.Title = "Chi tiết đơn hàng";
+    Layout = "~/Views/Account/_AccountLayout.cshtml";
+
+    // Tính toán phí ship và tổng sản phẩm
+    decimal productTotal = 0;
+    if (Model.OrderDetails != null && Model.OrderDetails.Any())
+    {
+        productTotal = Model.OrderDetails.Sum(od => od.TotalPrice.HasValue ? od.TotalPrice.Value : (od.UnitPrice * od.Quantity));
+    }
+
+    decimal shippingFee = 0;
+    if (Model.DeliveryMethod == "Giao hàng nhanh")
+    {
+        shippingFee = 30000;
+    }
+}
+
+<h2 class="content-title">Chi tiết đơn hàng #@Model.OrderID</h2>
+
+<div class="order-detail-container">
+    <!-- Order Status Banner -->
+    <div class="status-banner status-@Model.OrderStatus.ToLower()">
+        <i class="fas fa-info-circle"></i>
+        <span>
+            Trạng thái: <strong>@Model.OrderStatus</strong>
+        </span>
+    </div>
+
+    <!-- Order Information -->
+    <div class="detail-section">
+        <h3 class="section-title">Thông tin đơn hàng</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="label">Mã đơn hàng:</span>
+                <span class="value">#@Model.OrderID</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Ngày đặt:</span>
+                <span class="value">
+                    @if (Model.OrderDate.HasValue)
+                    {
+                        @Model.OrderDate.Value.ToString("dd/MM/yyyy HH:mm")
+                    }
+                </span>
+            </div>
+            <div class="info-item">
+                <span class="label">Tên khách hàng:</span>
+                <span class="value">@Model.Customer.CustomerName</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Số điện thoại:</span>
+                <span class="value">@Model.Customer.PhoneNumber</span>
+            </div>
+            <div class="info-item full-width">
+                <span class="label">Địa chỉ giao hàng:</span>
+                <span class="value">@Model.AddressDelivery</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Phương thức giao hàng:</span>
+                <span class="value">@Model.DeliveryMethod</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Phương thức thanh toán:</span>
+                <span class="value">@Model.PaymentMethod</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Products -->
+    <div class="detail-section">
+        <h3 class="section-title">Sản phẩm đã đặt</h3>
+        <div class="products-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Đơn giá</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var detail in Model.OrderDetails)
+                    {
+                        var productImage = detail.Product.ProductImages != null && detail.Product.ProductImages.Any()
+                            ? Url.Content(detail.Product.ProductImages.OrderBy(i => i.DisplayOrder.HasValue ? i.DisplayOrder.Value : int.MaxValue).First().ImageURL)
+                            : Url.Content(detail.Product.ProductImage ?? "~/Content/Images/no-image.png");
+
+                        <tr>
+                            <td>
+                                <div class="product-info">
+                                    <img src="@productImage" alt="@detail.Product.ProductName" />
+                                    <span>@detail.Product.ProductName</span>
+                                </div>
+                            </td>
+                            <td>@String.Format("{0:N0} ₫", detail.UnitPrice)</td>
+                            <td>@detail.Quantity</td>
+                            <td class="subtotal">@String.Format("{0:N0} ₫", detail.TotalPrice.HasValue ? detail.TotalPrice.Value : (detail.UnitPrice * detail.Quantity))</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="subtotal-row">
+                        <td colspan="3">Tạm tính:</td>
+                        <td>@String.Format("{0:N0} ₫", productTotal)</td>
+                    </tr>
+                    <tr class="shipping-row">
+                        <td colspan="3">Phí vận chuyển:</td>
+                        <td class="shipping-fee">
+                            @if (shippingFee > 0)
+                            {
+                                @String.Format("{0:N0} ₫", shippingFee)
+                            }
+                            else
+                            {
+                                <text>Miễn phí</text>
+                            }
+                        </td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="3"><strong>Tổng cộng:</strong></td>
+                        <td class="total-amount"><strong>@String.Format("{0:N0} ₫", Model.TotalAmount)</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="action-section">
+        <a href="@Url.Action("PurchaseHistory", "Account")" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Quay lại lịch sử mua hàng
+        </a>
+        @if (Model.OrderStatus == "Chờ xử lý" || Model.OrderStatus == "Đang xử lý")
+        {
+            <button type="button" class="btn-cancel" onclick="cancelOrder(@Model.OrderID)">
+                <i class="fas fa-times-circle"></i> Hủy đơn hàng
+            </button>
+        }
+    </div>
+</div>
+
+<style>
+    .order-detail-container {
+        max-width: 900px;
+    }
+
+    .status-banner {
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 16px;
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+    }
+
+        .status-banner i {
+            font-size: 20px;
+        }
+
+    .detail-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+    }
+
+        .info-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .info-item .label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .info-item .value {
+            color: #2c3e50;
+        }
+
+    .products-table {
+        overflow-x: auto;
+    }
+
+        .products-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .products-table table th {
+                background: #dee2e6;
+                padding: 12px;
+                text-align: left;
+                font-weight: 600;
+                color: #2c3e50;
+            }
+
+            .products-table table td {
+                padding: 15px 12px;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            .products-table table tbody tr:last-child td {
+                border-bottom: none;
+            }
+
+    .product-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+        .product-info img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+    .subtotal {
+        font-weight: 600;
+        color: #e74c3c;
+    }
+
+    .subtotal-row td,
+    .shipping-row td {
+        padding: 10px 12px !important;
+        font-size: 14px;
+    }
+
+    .shipping-fee {
+        color: #27ae60;
+        font-weight: 600;
+    }
+
+    .total-row {
+        background: #f8f9fa;
+    }
+
+        .total-row td {
+            padding: 15px 12px !important;
+            border-top: 2px solid #dee2e6 !important;
+        }
+
+    .total-amount {
+        font-size: 18px;
+        color: #e74c3c !important;
+    }
+
+    .action-section {
+        display: flex;
+        gap: 15px;
+        justify-content: space-between;
+        margin-top: 30px;
+    }
+
+    .btn-back,
+    .btn-cancel {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        text-decoration: none;
+    }
+
+    .btn-back {
+        background: #95a5a6;
+        color: white;
+    }
+
+        .btn-back:hover {
+            background: #7f8c8d;
+            text-decoration: none;
+            color: white;
+        }
+
+    .btn-cancel {
+        background: #e74c3c;
+        color: white;
+    }
+
+        .btn-cancel:hover {
+            background: #c0392b;
+        }
+
+    @@media (max-width: 768px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-section {
+            flex-direction: column;
+        }
+
+        .products-table table th:nth-child(2),
+        .products-table table td:nth-child(2) {
+            display: none;
+        }
+    }
+</style>
+
+@section scripts {
+    <script>
+        function cancelOrder(orderId) {
+            if (!confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("CancelOrder", "Account")',
+                type: 'POST',
+                data: { orderId: orderId },
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Có lỗi xảy ra. Vui lòng thử lại!');
+                }
+            });
+        }
+    </script>
+}

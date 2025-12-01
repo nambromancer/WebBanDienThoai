@@ -38,15 +38,13 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script>
-        $(document).ready(function () {
-            // ✅ ĐỒNG BỘ VỚI CUSTOMER REGISTRATION
+    <script>$(document).ready(function() {
+            // Validation rules
             $('form').validate({
                 rules: {
                     CustomerName: {
                         required: true,
-                        minlength: 2,
-                        maxlength: 100
+                        minlength: 2
                     },
                     CustomerEmail: {
                         required: true,
@@ -54,15 +52,15 @@
                     },
                     PhoneNumber: {
                         required: true,
-                        // ✅ Pattern giống Customer Registration
-                        pattern: /^(0[3|5|7|8|9])+([0-9]{8})$/
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 11
                     }
                 },
                 messages: {
                     CustomerName: {
                         required: "Vui lòng nhập họ tên",
-                        minlength: "Họ tên phải có ít nhất 2 ký tự",
-                        maxlength: "Họ tên không quá 100 ký tự"
+                        minlength: "Họ tên phải có ít nhất 2 ký tự"
                     },
                     CustomerEmail: {
                         required: "Vui lòng nhập email",
@@ -70,15 +68,11 @@
                     },
                     PhoneNumber: {
                         required: "Vui lòng nhập số điện thoại",
-                        pattern: "Số điện thoại phải bắt đầu bằng 03, 05, 07, 08, 09 và có 10 chữ số"
+                        digits: "Số điện thoại chỉ chứa số",
+                        minlength: "Số điện thoại phải có ít nhất 10 số",
+                        maxlength: "Số điện thoại không quá 11 số"
                     }
                 }
             });
-
-            // ✅ Custom pattern validator
-            $.validator.addMethod("pattern", function (value, element, param) {
-                return this.optional(element) || param.test(value);
-            }, "Format không hợp lệ");
-        });
-    </script>
+        });</script>
 }

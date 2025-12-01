@@ -9,15 +9,14 @@ namespace WebBanDienThoai.Controllers
     {
         private WebBanDienThoaiDBEntities db = new WebBanDienThoaiDBEntities();
 
-        // GET: /Search?q=iphone
         public ActionResult Index(string q)
         {
             var productsQuery = db.Products
                 .Include("Category")
                 .Include("ProductImages")
-                .Where(p => p.ProductID != 0); // Ẩn dummy product
+                .Where(p => p.ProductID != 0);
 
-            // Tìm kiếm CHỈ theo ProductName, yêu cầu tất cả từ (tokenized)
+            // Tìm kiếm theo từng từ khóa trong tên sản phẩm
             if (!string.IsNullOrWhiteSpace(q))
             {
                 var terms = q.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);

@@ -448,18 +448,24 @@
         popup.document.write('<html><head><title>Xem ảnh</title></head><body style="margin:0;padding:0;display:flex;align-items:center;justify-content:center;background:#000;"><img src="' + src + '" style="max-width:100%;max-height:100%;object-fit:contain;"></body></html>');
     }
 
-    function addToCart(productId) {
-        var msg = document.getElementById("cartMessage");
-        if (msg) {
-            msg.innerText = "✅ Đã thêm vào giỏ hàng!";
-            setTimeout(function () { msg.innerText = ""; }, 3000);
-        }
-    }
+ function buyNow(productId) {
+    var isLoggedIn = '@(Session["UserPhone"] != null ? "true" : "false")' === 'true';
 
-    function buyNow(productId) {
-        alert("🛍️ Bạn đã chọn mua ngay. Chuyển đến trang thanh toán...");
-        // window.location.href = "/Order/Payment?productId=" + productId;
+    if (!isLoggedIn) {
+        // Show login modal
+        if (typeof jQuery !== 'undefined' && jQuery.fn.modal) {
+            $('#loginModal').modal('show');
+        } else if (typeof bootstrap !== 'undefined') {
+            var modal = new bootstrap.Modal(document.getElementById('loginModal'));
+            modal.show();
+        } else {
+            // Fallback to redirect
+            window.location.href = '@Url.Action("Login", "Account", new { returnUrl = Url.Action("BuyNow", "Order", new { productId = "' + productId + '" }) })';
+        }
+    } else {
+        window.location.href = '@Url.Action("BuyNow", "Order")?productId=' + productId + '&quantity=1';
     }
+}
 
     var sliderPositions = {};
 
@@ -509,6 +515,36 @@
             slideProducts(sliderId, 0); // Initialize
         });
     });
+    function addToCart(productId) {
+    $.ajax({
+        url: '@Url.Action("AddToCart", "Home")',
+        type: 'POST',
+        data: { productId: productId, quantity: 1 },
+        success: function(response) {
+            if (response.success) {
+                var msg = document.getElementById("cartMessage");
+                if (msg) {
+                    msg.innerText = "✅ " + response.message;
+                    msg.style.color = "#27ae60";
+                    setTimeout(function () { msg.innerText = ""; }, 3000);
+                }
+
+                // Update cart badge in header
+                if (typeof updateCartBadge === 'function') {
+                    updateCartBadge(response.cartCount);
+                }
+            }
+        },
+        error: function() {
+            var msg = document.getElementById("cartMessage");
+            if (msg) {
+                msg.innerText = "❌ Có lỗi xảy ra!";
+                msg.style.color = "#e74c3c";
+            }
+        }
+    });
+}
+
 </script>
 
 @section scripts {

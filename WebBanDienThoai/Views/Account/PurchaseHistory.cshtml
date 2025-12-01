@@ -1,0 +1,422 @@
+﻿@model List<WebBanDienThoai.Models.Order>
+
+@{
+    ViewBag.Title = "Lịch sử mua hàng";
+    Layout = "~/Views/Account/_AccountLayout.cshtml";
+}
+
+<h2 class="content-title">Lịch sử mua hàng</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="empty-orders">
+        <i class="fas fa-shopping-bag"></i>
+        <h3>Chưa có đơn hàng nào</h3>
+        <p>Bạn chưa có đơn hàng nào. Hãy mua sắm ngay!</p>
+        <a href="@Url.Action("Index", "Home")" class="btn-shop-now">
+            <i class="fas fa-shopping-cart"></i> Mua sắm ngay
+        </a>
+    </div>
+}
+else
+{
+    <div class="orders-list">
+        @foreach (var order in Model)
+        {
+            var statusClass = "";
+            var canCancel = false;
+
+            // ✅ SỬ DỤNG TIẾNG VIỆT ĐỂ ĐỒNG BỘ VỚI DATABASE VÀ ADMIN
+            switch (order.OrderStatus)
+            {
+                case "Chờ xử lý":
+                    statusClass = "status-pending";
+                    canCancel = true;
+                    break;
+                case "Đang xử lý":
+                    statusClass = "status-processing";
+                    canCancel = true;
+                    break;
+                case "Đang giao hàng":
+                    statusClass = "status-shipping";
+                    break;
+                case "Đã giao hàng":
+                    statusClass = "status-delivered";
+                    break;
+                case "Đã hủy":
+                    statusClass = "status-cancelled";
+                    break;
+                default:
+                    statusClass = "status-pending";
+                    break;
+            }
+
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-info-row">
+                        <div class="order-id">
+                            <strong>Đơn hàng #@order.OrderID</strong>
+                        </div>
+                        <div class="order-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            @if (order.OrderDate.HasValue)
+                            {
+                                @order.OrderDate.Value.ToString("dd/MM/yyyy HH:mm")
+                            }
+                        </div>
+                        <div class="order-status @statusClass">
+                            @order.OrderStatus
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-body">
+                    <div class="order-products">
+                        @foreach (var detail in order.OrderDetails.Take(3))
+                        {
+                            var productImage = detail.Product.ProductImages != null && detail.Product.ProductImages.Any()
+                                ? Url.Content(detail.Product.ProductImages.OrderBy(i => i.DisplayOrder.HasValue ? i.DisplayOrder.Value : int.MaxValue).First().ImageURL)
+                                : Url.Content(detail.Product.ProductImage ?? "~/Content/Images/no-image.png");
+
+                            <div class="product-item">
+                                <img src="@productImage" alt="@detail.Product.ProductName" />
+                                <div class="product-info">
+                                    <div class="product-name">@detail.Product.ProductName</div>
+                                    <div class="product-quantity">SL: @detail.Quantity</div>
+                                </div>
+                                <div class="product-price">
+                                    @String.Format("{0:N0} ₫", detail.UnitPrice)
+                                </div>
+                            </div>
+                        }
+                        @if (order.OrderDetails.Count > 3)
+                        {
+                            <div class="more-products">
+                                Và @(order.OrderDetails.Count - 3) sản phẩm khác...
+                            </div>
+                        }
+                    </div>
+
+                    <div class="order-summary">
+                        <div class="summary-item">
+                            <span>Địa chỉ giao hàng:</span>
+                            <span>@order.AddressDelivery</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Phương thức thanh toán:</span>
+                            <span>@order.PaymentMethod</span>
+                        </div>
+                        <div class="summary-item total">
+                            <span>Tổng tiền:</span>
+                            <span class="total-amount">@String.Format("{0:N0} ₫", order.TotalAmount)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-footer">
+                    <a href="@Url.Action("OrderDetail", "Account", new { orderId = order.OrderID })" class="btn-view-detail">
+                        <i class="fas fa-eye"></i> Xem chi tiết
+                    </a>
+                    @if (canCancel)
+                    {
+                        <button class="btn-cancel" onclick="cancelOrder(@order.OrderID)">
+                            <i class="fas fa-times-circle"></i> Hủy đơn hàng
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<style>
+    .empty-orders {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+        .empty-orders i {
+            font-size: 80px;
+            color: #bdc3c7;
+            margin-bottom: 20px;
+        }
+
+        .empty-orders h3 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .empty-orders p {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+    .btn-shop-now {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 30px;
+        background: #e74c3c;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+        .btn-shop-now:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            text-decoration: none;
+            color: white;
+        }
+
+    .orders-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .order-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #dee2e6;
+    }
+
+    .order-header {
+        background: white;
+        padding: 15px 20px;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .order-info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .order-id {
+        font-size: 16px;
+        color: #2c3e50;
+    }
+
+    .order-date {
+        color: #7f8c8d;
+        font-size: 14px;
+    }
+
+        .order-date i {
+            margin-right: 5px;
+        }
+
+    .order-status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-processing {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .status-shipping {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-delivered {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-cancelled {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .order-body {
+        padding: 20px;
+    }
+
+    .order-products {
+        margin-bottom: 20px;
+    }
+
+    .product-item {
+        display: grid;
+        grid-template-columns: 60px 1fr auto;
+        gap: 15px;
+        align-items: center;
+        padding: 12px;
+        background: white;
+        border-radius: 6px;
+        margin-bottom: 10px;
+    }
+
+        .product-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+    .product-name {
+        font-weight: 500;
+        color: #2c3e50;
+        font-size: 14px;
+    }
+
+    .product-quantity {
+        color: #7f8c8d;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    .product-price {
+        font-weight: 600;
+        color: #e74c3c;
+        font-size: 14px;
+    }
+
+    .more-products {
+        text-align: center;
+        color: #7f8c8d;
+        font-style: italic;
+        padding: 10px;
+    }
+
+    .order-summary {
+        background: white;
+        padding: 15px;
+        border-radius: 6px;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        font-size: 14px;
+        color: #555;
+    }
+
+        .summary-item.total {
+            border-top: 2px solid #dee2e6;
+            margin-top: 10px;
+            padding-top: 15px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+    .total-amount {
+        color: #e74c3c;
+        font-size: 18px;
+    }
+
+    .order-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 15px 20px;
+        background: white;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .btn-view-detail,
+    .btn-cancel {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        text-decoration: none;
+    }
+
+    .btn-view-detail {
+        background: #3498db;
+        color: white;
+    }
+
+        .btn-view-detail:hover {
+            background: #2980b9;
+            text-decoration: none;
+            color: white;
+        }
+
+    .btn-cancel {
+        background: #e74c3c;
+        color: white;
+    }
+
+        .btn-cancel:hover {
+            background: #c0392b;
+        }
+
+    @@media (max-width: 768px) {
+        .order-info-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .product-item {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+            .product-item img {
+                margin: 0 auto;
+            }
+
+        .order-footer {
+            flex-direction: column;
+        }
+
+        .btn-view-detail,
+        .btn-cancel {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+@section scripts {
+    <script>
+        function cancelOrder(orderId) {
+            if (!confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("CancelOrder", "Account")',
+                type: 'POST',
+                data: { orderId: orderId },
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Có lỗi xảy ra. Vui lòng thử lại!');
+                }
+            });
+        }
+    </script>
+}

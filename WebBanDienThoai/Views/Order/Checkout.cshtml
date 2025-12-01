@@ -1,0 +1,262 @@
+﻿@model WebBanDienThoai.Models.ViewModel.CheckoutViewModel
+
+@{
+    ViewBag.Title = "Đặt hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link href="~/Content/checkout-style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+}
+
+<div class="container checkout-container">
+    <div class="checkout-header">
+        <h1><i class="fas fa-shopping-bag"></i> ĐẶT HÀNG</h1>
+        <a href="@Url.Action("Cart", "Home")" class="btn-back-cart">
+            <i class="fas fa-arrow-left"></i> Quay lại giỏ hàng
+        </a>
+    </div>
+
+    @Html.AntiForgeryToken()
+
+    <div class="checkout-layout">
+        <!-- Left Column: Order Info -->
+        <div class="checkout-left">
+            <!-- Thông tin đơn hàng -->
+            <div class="checkout-section">
+                <h3 class="section-title"><i class="fas fa-box"></i> Thông tin đơn hàng</h3>
+                <div class="order-items-compact">
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <div class="order-item-compact">
+                            <img src="@Url.Content(item.ProductImage)" alt="@item.ProductName" class="item-img" />
+                            <div class="item-details">
+                                <span class="item-name-compact">@item.ProductName</span>
+                                <div class="item-price-qty">
+                                    <span class="qty-badge">SL: @item.Quantity</span>
+                                    <span class="price-text">@String.Format("{0:N0} ₫", item.Price)</span>
+                                </div>
+                            </div>
+                            <div class="item-total-compact">
+                                @String.Format("{0:N0} ₫", item.TotalPrice)
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Thông tin khách hàng -->
+            <div class="checkout-section">
+                <h3 class="section-title"><i class="fas fa-user"></i> Thông tin khách hàng</h3>
+                <div class="info-compact">
+                    <div class="info-row-compact">
+                        <i class="fas fa-user-circle"></i>
+                        <span>@Model.CustomerInfo.CustomerName</span>
+                    </div>
+                    <div class="info-row-compact">
+                        <i class="fas fa-phone"></i>
+                        <span>@Model.CustomerInfo.PhoneNumber</span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.CustomerInfo.Email))
+                    {
+                        <div class="info-row-compact">
+                            <i class="fas fa-envelope"></i>
+                            <span>@Model.CustomerInfo.Email</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Thông tin giao hàng -->
+            <div class="checkout-section">
+                <h3 class="section-title"><i class="fas fa-map-marker-alt"></i> Địa chỉ giao hàng</h3>
+
+                @if (!string.IsNullOrEmpty(Model.CustomerInfo.Address))
+                {
+                    <div class="address-options">
+                        <label class="radio-compact">
+                            <input type="radio" name="addressChoice" value="saved" checked onchange="toggleAddressInput(false)" />
+                            <span>Dùng địa chỉ: @Model.CustomerInfo.Address</span>
+                        </label>
+                        <label class="radio-compact">
+                            <input type="radio" name="addressChoice" value="new" onchange="toggleAddressInput(true)" />
+                            <span>Nhập địa chỉ khác</span>
+                        </label>
+                    </div>
+                }
+
+                <div class="new-address-section" id="newAddressSection" style="@(string.IsNullOrEmpty(Model.CustomerInfo.Address) ? "" : "display:none;")">
+                    <textarea id="deliveryAddress" class="form-textarea" rows="2"
+                              placeholder="Nhập địa chỉ giao hàng đầy đủ"
+                              required>@Model.CustomerInfo.Address</textarea>
+
+                    @if (string.IsNullOrEmpty(Model.CustomerInfo.Address))
+                    {
+                        <label class="checkbox-compact">
+                            <input type="checkbox" id="saveAddress" />
+                            <span>Lưu địa chỉ này</span>
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <!-- Phương thức giao hàng & thanh toán -->
+            <div class="checkout-section">
+                <h3 class="section-title"><i class="fas fa-shipping-fast"></i> Giao hàng & Thanh toán</h3>
+
+                <div class="option-group">
+                    <strong class="option-group-title">Phương thức giao hàng:</strong>
+                    <label class="radio-compact">
+                        <input type="radio" name="deliveryMethod" value="Giao hàng COD" checked onchange="updateShippingFee()" />
+                        <span>Giao hàng COD (Miễn phí)</span>
+                    </label>
+                    <label class="radio-compact">
+                        <input type="radio" name="deliveryMethod" value="Giao hàng nhanh" onchange="updateShippingFee()" />
+                        <span>Giao hàng nhanh (1-2 ngày) - Phí: 30.000₫</span>
+                    </label>
+                </div>
+
+                <div class="option-group">
+                    <strong class="option-group-title">Phương thức thanh toán:</strong>
+                    <label class="radio-compact">
+                        <input type="radio" name="paymentMethod" value="COD" checked />
+                        <span>Thanh toán khi nhận hàng (COD)</span>
+                    </label>
+                    <label class="radio-compact">
+                        <input type="radio" name="paymentMethod" value="Chuyển khoản" />
+                        <span>Chuyển khoản ngân hàng</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Order Summary -->
+        <div class="checkout-right">
+            <div class="order-summary">
+                <h3>Tổng thanh toán</h3>
+                <div class="summary-row">
+                    <span>Tạm tính:</span>
+                    <span id="subtotal">@String.Format("{0:N0} ₫", Model.TotalAmount)</span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển:</span>
+                    <span class="text-success" id="shippingFee">Miễn phí</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row summary-total">
+                    <span>Tổng cộng:</span>
+                    <span class="total-amount" id="totalAmount">@String.Format("{0:N0} ₫", Model.TotalAmount)</span>
+                </div>
+                <button class="btn-confirm-order" onclick="confirmOrder()">
+                    <i class="fas fa-check-circle"></i> XÁC NHẬN ĐẶT HÀNG
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        // Store values
+        var savedAddress = @Html.Raw(Json.Encode(Model.CustomerInfo.Address ?? ""));
+        var baseTotal = @Model.TotalAmount;
+        var shippingFeeAmount = 0;
+
+        function toggleAddressInput(showNew) {
+            var newSection = document.getElementById('newAddressSection');
+            var addressInput = document.getElementById('deliveryAddress');
+
+            if (showNew) {
+                newSection.style.display = 'block';
+                addressInput.value = '';
+                addressInput.required = true;
+            } else {
+                newSection.style.display = 'none';
+                addressInput.value = savedAddress;
+                addressInput.required = false;
+            }
+        }
+
+        // Cập nhật phí vận chuyển khi thay đổi phương thức
+        function updateShippingFee() {
+            var deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked').value;
+            var shippingFeeText = 'Miễn phí';
+            shippingFeeAmount = 0;
+
+            if (deliveryMethod === 'Giao hàng nhanh') {
+                shippingFeeAmount = 30000;
+                shippingFeeText = '30,000 ₫';
+                document.getElementById('shippingFee').className = 'text-danger';
+            } else {
+                document.getElementById('shippingFee').className = 'text-success';
+            }
+
+            var totalAmount = baseTotal + shippingFeeAmount;
+
+            document.getElementById('shippingFee').textContent = shippingFeeText;
+            document.getElementById('totalAmount').textContent = totalAmount.toLocaleString('vi-VN') + ' ₫';
+        }
+
+        function confirmOrder() {
+            var deliveryAddress = '';
+            var useCustomerAddress = document.querySelector('input[name="addressChoice"]:checked');
+
+            if (useCustomerAddress && useCustomerAddress.value === 'saved') {
+                deliveryAddress = savedAddress;
+            } else {
+                deliveryAddress = document.getElementById('deliveryAddress').value.trim();
+            }
+
+            if (!deliveryAddress) {
+                alert('Vui lòng nhập địa chỉ giao hàng!');
+                return;
+            }
+
+            var deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked').value;
+            var paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            var saveAddress = document.getElementById('saveAddress')?.checked || false;
+
+            // Get AntiForgery Token
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            // Sử dụng FormData để gửi data
+            var formData = new FormData();
+            formData.append('__RequestVerificationToken', token);
+            formData.append('DeliveryAddress', deliveryAddress);
+            formData.append('DeliveryMethod', deliveryMethod);
+            formData.append('PaymentMethod', paymentMethod);
+            formData.append('SaveAddress', saveAddress);
+            formData.append('UseCustomerAddress', useCustomerAddress?.value === 'saved');
+
+            // Disable button
+            var btnSubmit = $('.btn-confirm-order');
+            btnSubmit.prop('disabled', true);
+            btnSubmit.html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...');
+
+            $.ajax({
+                url: '@Url.Action("Checkout", "Order")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = '@Url.Action("OrderConfirmed", "Order")?orderId=' + response.orderId;
+                    } else {
+                        alert(response.message);
+                        btnSubmit.prop('disabled', false);
+                        btnSubmit.html('<i class="fas fa-check-circle"></i> XÁC NHẬN ĐẶT HÀNG');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.error('Response:', xhr.responseText);
+                    alert('Có lỗi xảy ra. Vui lòng thử lại!');
+                    btnSubmit.prop('disabled', false);
+                    btnSubmit.html('<i class="fas fa-check-circle"></i> XÁC NHẬN ĐẶT HÀNG');
+                }
+            });
+        }
+    </script>
+}

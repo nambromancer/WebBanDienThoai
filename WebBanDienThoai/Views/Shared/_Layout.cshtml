@@ -6,6 +6,10 @@
     // Lấy thông tin user từ Session
     var userName = Session["UserName"] as string;
     var isLoggedIn = !string.IsNullOrEmpty(userName);
+
+    // Lấy số lượng sản phẩm trong giỏ hàng
+    var cart = Session["Cart"] as List<WebBanDienThoai.Models.ViewModel.CartItem>;
+    var cartCount = cart != null ? cart.Sum(c => c.Quantity) : 0;
 }
 
 <!DOCTYPE html>
@@ -19,6 +23,8 @@
     <link href="~/Content/header-style.css" rel="stylesheet" />
     <link href="~/Content/footer-style.css" rel="stylesheet" />
     <link href="~/Content/modal-tgdd.css" rel="stylesheet" />
+    <link href="~/Content/responsive-customer.css" rel="stylesheet" />
+
     @RenderSection("Styles", required: false)
 
     @Scripts.Render("~/bundles/modernizr")
@@ -53,7 +59,7 @@
                             <span class="user-name">@userName</span>
                         </a>
                         <div class="dropdown-menu">
-                            <a href="@Url.Action("PersonalInfo", "Account")" class="dropdown-item">
+                            <a href="@Url.Action("UserProfile", "Account")" class="dropdown-item">
                                 <span class="dropdown-icon">ℹ️</span>
                                 Thông tin cá nhân
                             </a>
@@ -81,9 +87,10 @@
                     </a>
                 }
 
-                <a href="@Url.Action("Cart","Home")" class="cart-link" aria-label="Xem giỏ hàng">
+                <a href="@Url.Action("Cart","Home")" class="cart-link" aria-label="Xem giỏ hàng" style="position: relative;">
                     <span class="cart-icon">🛒</span>
                     <span>Giỏ hàng</span>
+                    <span class="cart-badge" id="cartBadge" style="display: @(cartCount > 0 ? "inline-block" : "none");">@cartCount</span>
                 </a>
                 <div class="location" aria-label="Vị trí hiện tại">
                     <span class="location-icon">📍</span>
@@ -92,14 +99,12 @@
             </div>
         </div>
 
-        <!-- Menu điều hướng chính - Dynamic từ database -->
         <nav class="main-navigation" aria-label="Danh mục chính">
             <div class="nav-container">
                 <ul class="nav-menu">
                     @foreach (var category in categories)
                     {
-                        // Tự động gán icon dựa trên tên category
-                        string icon = "📱"; // Default
+                        string icon = "📱";
                         var catNameLower = category.CategoryName.ToLower();
                         if (catNameLower.Contains("điện thoại") || catNameLower.Contains("phone"))
                         {
@@ -134,7 +139,6 @@
         </nav>
     </header>
 
-    <!-- Modal đăng nhập -->
     <div class="modal fade tgdd-modal"
          id="loginModal"
          tabindex="-1"
@@ -306,42 +310,58 @@
             if (btn) btn.addEventListener('click', gotoSearch);
         })();
 
-        // User dropdown functionality - SINGLE implementation
         (function () {
             'use strict';
 
-            // Toggle dropdown when clicking the username
-            document.addEventListener('click', function (e) {
-                var toggle = e.target.closest('.user-logged-in');
-                if (toggle) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    var dropdown = toggle.closest('.user-dropdown');
-                    if (dropdown) {
-                        dropdown.classList.toggle('active');
-                    }
-                    return;
-                }
+            var userDropdown = document.querySelector('.user-dropdown');
+            if (!userDropdown) return;
 
-                // Click outside -> close any open dropdowns
-                var openDropdowns = document.querySelectorAll('.user-dropdown.active');
-                openDropdowns.forEach(function (dropdown) {
-                    if (!dropdown.contains(e.target)) {
-                        dropdown.classList.remove('active');
-                    }
-                });
+            var closeTimer = null;
+
+            userDropdown.addEventListener('mouseenter', function () {
+                if (closeTimer) {
+                    clearTimeout(closeTimer);
+                    closeTimer = null;
+                }
+                userDropdown.classList.add('active');
             });
 
-            // Close dropdown on ESC key
+            userDropdown.addEventListener('mouseleave', function () {
+                closeTimer = setTimeout(function () {
+                    userDropdown.classList.remove('active');
+                }, 200);
+            });
+
+            var userToggle = userDropdown.querySelector('.user-logged-in');
+            if (userToggle) {
+                userToggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('active');
+                });
+            }
+
+            document.addEventListener('click', function (e) {
+                if (!userDropdown.contains(e.target)) {
+                    userDropdown.classList.remove('active');
+                }
+            });
+
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') {
-                    var openDropdowns = document.querySelectorAll('.user-dropdown.active');
-                    openDropdowns.forEach(function (dropdown) {
-                        dropdown.classList.remove('active');
-                    });
+                    userDropdown.classList.remove('active');
                 }
             });
         })();
+
+        // Hàm cập nhật badge giỏ hàng
+        window.updateCartBadge = function(count) {
+            var badge = document.getElementById('cartBadge');
+            if (badge) {
+                badge.textContent = count;
+                badge.style.display = count > 0 ? 'inline-block' : 'none';
+            }
+        };
     </script>
 </body>
 </html>

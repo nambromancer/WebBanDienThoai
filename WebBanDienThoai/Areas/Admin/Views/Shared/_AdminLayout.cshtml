@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - QUẢN TRỊ WEBSITE</title>
     <link href="~/Content/_AdminLayout.css" rel="stylesheet" />
-
+    <link href="~/Content/responsive-admin.css" rel="stylesheet" />
 
     @Styles.Render("~/Content/css")
     <link href="~/Content/header-style.css" rel="stylesheet" />
@@ -52,7 +52,7 @@
         </div>
     </header>
 
-    <!-- Menu Admin Navigation với Font Awesome -->
+    <!-- Menu Admin Navigation -->
     <nav class="admin-menu" aria-label="Menu quản trị">
         <div class="nav-container">
             <ul>
@@ -60,34 +60,39 @@
                 <li><a href="@Url.Action("Index", "Categories", new { area = "Admin" })"><i class="fas fa-folder"></i> Danh mục</a></li>
                 <li><a href="@Url.Action("Index", "Products", new { area = "Admin" })"><i class="fas fa-box"></i> Sản phẩm</a></li>
                 <li><a href="@Url.Action("Index", "SpecificationCategories", new { area = "Admin" })"><i class="fas fa-tags"></i> Loại thông số</a></li>
-                <li><a href="@Url.Action("Index", "Customers", new { area = "Admin" })"><i class="fas fa-users"></i> Khách hàng</a></li>
                 <li><a href="@Url.Action("Index", "Orders", new { area = "Admin" })"><i class="fas fa-shopping-cart"></i> Đơn hàng</a></li>
-                <li><a href="@Url.Action("Index", "Users", new { area = "Admin" })"><i class="fas fa-user-lock"></i> Tài khoản</a></li>
+                <li><a href="@Url.Action("Index", "Customers", new { area = "Admin" })"><i class="fas fa-users"></i> Khách hàng</a></li>
+                <li><a href="@Url.Action("Index", "Users", new { area = "Admin" })"><i class="fas fa-user-cog"></i> Tài khoản</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- Khu vực nội dung -->
-    <div class="container body-content" style="margin-top: 30px; min-height: calc(100vh - 350px);">
+    <!-- Main content -->
+    <div class="container-fluid body-content">
         @RenderBody()
+        <hr />
+        <footer>
+            <p class="text-center">&copy; @DateTime.Now.Year - Quản trị Website Thế Giới Di Động</p>
+        </footer>
     </div>
-
-    <!-- Footer đơn giản cho Admin -->
-    <footer style="background: #343a40; color: #fff; text-align: center; padding: 20px 0; margin-top: 50px;">
-        <p>&copy; @DateTime.Now.Year - Website Bán Điện Thoại | <strong>Quản trị viên</strong></p>
-    </footer>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 
     <script>
-        // Confirm logout
         function confirmLogout() {
-            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
                 window.location.href = '@Url.Action("Logout", "Account", new { area = "" })';
             }
         }
+
+        // Auto dismiss alerts after 5 seconds
+        $(document).ready(function () {
+            setTimeout(function () {
+                $('.alert').fadeOut('slow');
+            }, 5000);
+        });
     </script>
-</body>
-</html>
+    </parameter>
+    </invoke>

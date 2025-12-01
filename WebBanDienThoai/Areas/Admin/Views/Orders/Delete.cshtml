@@ -1,0 +1,106 @@
+﻿@model WebBanDienThoai.Models.Order
+
+@{
+    ViewBag.Title = "Xóa đơn hàng #" + Model.OrderID;
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="text-danger"><i class="fas fa-trash"></i> Xóa đơn hàng #@Model.OrderID</h2>
+
+<div class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i>
+    <strong>Cảnh báo!</strong> Bạn có chắc chắn muốn xóa đơn hàng này? Hành động này không thể hoàn tác!
+</div>
+
+<div class="alert alert-info">
+    <i class="fas fa-info-circle"></i>
+    <strong>Lưu ý:</strong> Chỉ có thể xóa các đơn hàng đã hủy. Đơn hàng này có trạng thái: <strong>@Model.OrderStatus</strong>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <i class="fas fa-info-circle"></i> Thông tin đơn hàng sẽ bị xóa
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Mã đơn hàng:</dt>
+                    <dd class="col-sm-9"><strong>#@Model.OrderID</strong></dd>
+
+                    <dt class="col-sm-3">Khách hàng:</dt>
+                    <dd class="col-sm-9">@Model.Customer.CustomerName (@Model.Customer.PhoneNumber)</dd>
+
+                    <dt class="col-sm-3">Ngày đặt:</dt>
+                    <dd class="col-sm-9">@(Model.OrderDate.HasValue ? Model.OrderDate.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")</dd>
+
+                    <dt class="col-sm-3">Trạng thái:</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge badge-danger">@Model.OrderStatus</span>
+                    </dd>
+
+                    <dt class="col-sm-3">Trạng thái thanh toán:</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge badge-secondary">@Model.PaymentStatus</span>
+                    </dd>
+
+                    <dt class="col-sm-3">Tổng tiền:</dt>
+                    <dd class="col-sm-9 text-danger font-weight-bold">@String.Format("{0:N0} ₫", Model.TotalAmount)</dd>
+
+                    <dt class="col-sm-3">Địa chỉ giao hàng:</dt>
+                    <dd class="col-sm-9">@Model.AddressDelivery</dd>
+
+                    <dt class="col-sm-3">Phương thức giao hàng:</dt>
+                    <dd class="col-sm-9">@Model.DeliveryMethod</dd>
+
+                    <dt class="col-sm-3">Phương thức thanh toán:</dt>
+                    <dd class="col-sm-9">@Model.PaymentMethod</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <i class="fas fa-box"></i> Sản phẩm trong đơn
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    @foreach (var detail in Model.OrderDetails)
+                    {
+                        <li class="mb-2">
+                            <strong>@detail.Product.ProductName</strong><br />
+                            <small class="text-muted">
+                                Số lượng: @detail.Quantity |
+                                Giá: @String.Format("{0:N0} ₫", detail.TotalPrice ?? (detail.UnitPrice * detail.Quantity))
+                            </small>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("Delete", "Orders", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.OrderID)
+
+    <div class="form-group mt-4">
+        <button type="submit" class="btn btn-danger">
+            Xác nhận xóa
+        </button>
+        <a href="@Url.Action("Index")" class="btn btn-secondary">
+            Quay lại
+        </a>
+    </div>
+}
+
+<style>
+    .card {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+</style>

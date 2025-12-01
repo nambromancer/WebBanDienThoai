@@ -11,7 +11,6 @@
 <link href="~/Content/category.css" rel="stylesheet" />
 
 <style>
-    /* Custom styles for home page sections */
     .home-section {
         background: #f5f7fb;
         border-radius: 12px;
@@ -128,13 +127,9 @@
         }
 </style>
 
-<!--
-    Trang chủ - Khối "Khuyến mãi online"
--->
 <section class="home-section">
     <h2 class="home-section-title">Khuyến mãi online</h2>
 
-    <!-- Tabs danh mục -->
     <div class="home-tabs">
         @if (categories != null && categories.Any())
         {
@@ -157,12 +152,10 @@
         }
     </div>
 
-    <!-- Banner -->
     <div class="home-banner">
         ĐIỆN THOẠI GIÁ SỐC - DỊCH VỤ ĐẲNG CẤP
     </div>
 
-    <!-- Product grids -->
     <div class="home-grid-container">
         @if (categories != null && productsByCategory != null)
         {
@@ -236,7 +229,6 @@
         }
     </div>
 
-    <!-- Xem thêm -->
     <div class="home-see-more">
         <a id="seeMoreLink" href="#" class="home-see-more-link">
             Xem thêm <span id="seeMoreText">sản phẩm</span> ›
@@ -244,9 +236,6 @@
     </div>
 </section>
 
-<!--
-    Khối "Gợi ý cho bạn"
--->
 <section class="home-section">
     <h2 class="home-section-title">Gợi ý cho bạn</h2>
 
@@ -311,7 +300,7 @@
     }
 </section>
 
-<!-- Khối "Mọi người cũng tìm kiếm" -->
+<!-- Mọi người cũng tìm kiếm - CHUYỂN SANG TÌM KIẾM -->
 <section class="home-section">
     <h2 class="home-section-title">Mọi người cũng tìm kiếm</h2>
     <div class="search-cloud">
@@ -319,9 +308,9 @@
         {
             foreach (var term in searchTerms)
             {
-                <a href="@Url.Action("ProductDetail", "Products", new { id = term.ProductID })"
+                <a href="@Url.Action("Index", "Search", new { q = term.ProductName })"
                    class="search-chip"
-                   aria-label="Xem @term.ProductName">
+                   aria-label="Tìm kiếm @term.ProductName">
                     @term.ProductName
                 </a>
             }
@@ -340,13 +329,11 @@
 
             console.log('=== Home Page Initialized ===');
 
-            // Tab switching
             var tabs = document.querySelectorAll('.home-tab');
             var seeMoreLink = document.getElementById('seeMoreLink');
             var seeMoreText = document.getElementById('seeMoreText');
             var container = document.querySelector('.home-grid-container');
 
-            // Log initial state
             var panels = document.querySelectorAll('[data-tab-panel]');
             console.log('Total panels:', panels.length);
             panels.forEach(function(panel) {
@@ -367,18 +354,14 @@
                     console.log('CategoryName:', categoryName);
                     console.log('TabKey:', tabKey);
 
-                    // Remove active from all tabs
                     tabs.forEach(function(t) { t.classList.remove('active'); });
 
-                    // Add active to clicked tab
                     this.classList.add('active');
 
-                    // Hide all panels first
                     panels.forEach(function(panel) {
                         panel.classList.remove('active');
                     });
 
-                    // Show corresponding panel
                     var targetPanel = container.querySelector('[data-tab-panel="' + tabKey + '"]');
                     if (targetPanel) {
                         targetPanel.classList.add('active');
@@ -388,7 +371,6 @@
                         console.error('Target panel not found:', tabKey);
                     }
 
-                    // Update see more link
                     if (seeMoreText) seeMoreText.textContent = categoryName;
                     if (seeMoreLink && categoryId) {
                         seeMoreLink.href = '@Url.Action("Index", "Products")?categoryId=' + categoryId;
@@ -396,7 +378,6 @@
                 });
             });
 
-            // Initialize first tab
             if (tabs.length > 0) {
                 var firstTab = tabs[0];
                 var categoryName = firstTab.getAttribute('data-category-name');
@@ -407,7 +388,6 @@
                 }
             }
 
-            // Load more for suggestions
             var suggestGrid = document.getElementById('suggestGrid');
             var loadMoreBtn = document.getElementById('loadMoreSuggest');
             var countSpan = document.getElementById('suggestCount');
@@ -416,7 +396,6 @@
             if (suggestGrid && loadMoreBtn) {
                 var cards = Array.from(suggestGrid.querySelectorAll('.product-card'));
 
-                // Hide cards after first 15
                 cards.forEach(function(card, index) {
                     if (index >= pageSize) {
                         card.classList.add('is-hidden-loadmore');

@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using WebBanDienThoai.Models;
 using WebBanDienThoai.Models.ViewModel;
@@ -110,6 +111,12 @@ namespace WebBanDienThoai.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "CustomerID,CustomerName,PhoneNumber,CustomerEmail,CustomerAddress,DateOfBirth,Gender")] Customer customer)
         {
+            // ✅ VALIDATION SỐ ĐIỆN THOẠI - ĐỒNG BỘ VỚI CUSTOMER REGISTRATION
+            if (!Regex.IsMatch(customer.PhoneNumber, @"^(0[3|5|7|8|9])+([0-9]{8})$"))
+            {
+                ModelState.AddModelError("PhoneNumber", "Số điện thoại phải bắt đầu bằng 03, 05, 07, 08, 09 và có 10 chữ số.");
+            }
+
             if (ModelState.IsValid)
             {
                 // Kiểm tra email đã tồn tại chưa
@@ -163,6 +170,12 @@ namespace WebBanDienThoai.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "CustomerID,CustomerName,PhoneNumber,CustomerEmail,CustomerAddress,DateOfBirth,Gender")] Customer customer)
         {
+            // ✅ VALIDATION SỐ ĐIỆN THOẠI - ĐỒNG BỘ VỚI CUSTOMER REGISTRATION
+            if (!Regex.IsMatch(customer.PhoneNumber, @"^(0[3|5|7|8|9])+([0-9]{8})$"))
+            {
+                ModelState.AddModelError("PhoneNumber", "Số điện thoại phải bắt đầu bằng 03, 05, 07, 08, 09 và có 10 chữ số.");
+            }
+
             if (ModelState.IsValid)
             {
                 // Kiểm tra email đã tồn tại chưa (trừ chính khách hàng này)

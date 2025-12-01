@@ -18,7 +18,7 @@
 
 /* Container: thu gọn và canh giữa */
 .header-container {
-    max-width: 720px; /* thu gọn để gọn mắt */
+    max-width: 720px;
     margin: 0 auto;
     padding: 3px 4px;
     display: flex;
@@ -146,6 +146,22 @@
     font-size: 11px;
 }
 
+/* Cart Badge */
+.cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #e74c3c;
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 4px;
+    border-radius: 8px;
+    min-width: 14px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
 .location {
     display: flex;
     align-items: center;
@@ -155,7 +171,7 @@
     font-weight: 500;
 }
 
-/* User Dropdown Styles - FIXED VERSION */
+/* ===== USER DROPDOWN - EXTRA COMPACT & RIGHT ALIGNED ===== */
 .user-dropdown {
     position: relative;
     display: inline-block;
@@ -176,73 +192,104 @@
     white-space: nowrap;
 }
 
-.dropdown-menu {
-    position: absolute;
-    top: calc(100% + 5px);
-    right: 0;
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    min-width: 200px;
-    display: none; /* Hide by default */
-    z-index: 1001;
+/* DROPDOWN MENU - CỰC KỲ NHỎ GỌN & CĂN SÁT PHẢI */
+.user-dropdown .dropdown-menu {
+    position: absolute !important;
+    top: calc(100% + 5px) !important;
+    right: -8px !important;
+    left: auto !important;
+    background: #fff !important;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 5px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    min-width: 155px !important;
+    width: 155px !important;
+    display: none !important;
+    z-index: 1001 !important;
+    padding: 5px 0 !important;
+    margin: 0 !important;
+    float: none !important;
+    animation: dropdownFadeIn 0.12s ease-out;
+    transform: none !important;
 }
 
-/* Show dropdown when active class is added */
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .user-dropdown.active .dropdown-menu {
-    display: block;
+    display: block !important;
 }
 
-/* Also show on hover as fallback */
-.user-dropdown:hover .dropdown-menu {
-    display: block;
+/* DROPDOWN ITEMS - EXTRA COMPACT */
+.user-dropdown .dropdown-menu .dropdown-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 8px 12px !important;
+    color: #333 !important;
+    text-decoration: none !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    transition: background 0.15s ease !important;
+    white-space: nowrap !important;
+    border: none !important;
+    background: transparent !important;
+    width: 100% !important;
+    text-align: left !important;
 }
 
-.dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 15px;
-    color: var(--text);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 400;
-    transition: background 0.2s;
-    white-space: nowrap;
-}
-
-    .dropdown-item:hover {
-        background: #f5f5f5;
-        color: var(--text);
+    .user-dropdown .dropdown-menu .dropdown-item:hover {
+        background: #f5f5f5 !important;
+        color: #333 !important;
+        text-decoration: none !important;
     }
 
-    .dropdown-item:first-child {
-        border-radius: 8px 8px 0 0;
+    .user-dropdown .dropdown-menu .dropdown-item:active,
+    .user-dropdown .dropdown-menu .dropdown-item:focus {
+        background: #f5f5f5 !important;
+        color: #333 !important;
+        outline: none !important;
     }
 
-    .dropdown-item:last-child {
-        border-radius: 0 0 8px 8px;
-    }
-
-.dropdown-icon {
-    font-size: 14px;
-    flex-shrink: 0;
+/* DROPDOWN ICONS - EXTRA SMALL */
+.user-dropdown .dropdown-menu .dropdown-icon {
+    font-size: 15px !important;
+    flex-shrink: 0 !important;
+    width: 18px !important;
+    height: 18px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
 }
 
-.dropdown-divider {
-    height: 1px;
-    background: var(--border);
-    margin: 5px 0;
+/* DROPDOWN DIVIDER */
+.user-dropdown .dropdown-menu .dropdown-divider {
+    height: 1px !important;
+    background: #e0e0e0 !important;
+    margin: 5px 0 !important;
+    padding: 0 !important;
+    border: none !important;
 }
 
-.logout-item {
-    color: #d32f2f;
+/* LOGOUT ITEM */
+.user-dropdown .dropdown-menu .logout-item {
+    color: #d32f2f !important;
+    font-weight: 500 !important;
 }
 
-    .logout-item:hover {
-        background: #ffebee;
-        color: #c62828;
+    .user-dropdown .dropdown-menu .logout-item:hover {
+        background: #ffebee !important;
+        color: #c62828 !important;
     }
 
 /* Menu điều hướng dưới header */
@@ -324,7 +371,7 @@
     .logo-text {
         display: none;
     }
-    /* Ẩn chữ logo để tiết kiệm chỗ */
+
     .search-section {
         margin: 0 4px;
     }
@@ -347,14 +394,23 @@
         font-size: 8px;
     }
 
-    .dropdown-menu {
-        min-width: 180px;
+    /* Dropdown responsive - extra compact */
+    .user-dropdown .dropdown-menu {
+        min-width: 150px !important;
+        width: 150px !important;
+        right: -8px !important;
     }
 
-    .dropdown-item {
-        font-size: 12px;
-        padding: 8px 12px;
-    }
+        .user-dropdown .dropdown-menu .dropdown-item {
+            font-size: 11px !important;
+            padding: 7px 10px !important;
+        }
+
+        .user-dropdown .dropdown-menu .dropdown-icon {
+            font-size: 14px !important;
+            width: 16px !important;
+            height: 16px !important;
+        }
 }
 
 @media (max-width: 480px) {
@@ -389,7 +445,22 @@
         max-width: 60px;
     }
 
-    .dropdown-menu {
-        min-width: 160px;
+    /* Dropdown mobile - extra compact */
+    .user-dropdown .dropdown-menu {
+        min-width: 145px !important;
+        width: 145px !important;
+        right: -8px !important;
     }
+
+        .user-dropdown .dropdown-menu .dropdown-item {
+            font-size: 10px !important;
+            padding: 7px 10px !important;
+            gap: 6px !important;
+        }
+
+        .user-dropdown .dropdown-menu .dropdown-icon {
+            font-size: 13px !important;
+            width: 15px !important;
+            height: 15px !important;
+        }
 }

@@ -24,9 +24,9 @@
                 <div class="form-group">
                     @Html.LabelFor(m => m.PhoneNumber, "Số điện thoại:", new { @class = "control-label col-md-3" })
                     <div class="col-md-9">
-                        @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "Nhập số điện thoại", maxlength = "11" })
+                        @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "Nhập số điện thoại", maxlength = "10" })
                         @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
-                        <small class="form-text text-muted">Số điện thoại sẽ được dùng làm tên đăng nhập</small>
+                        <small class="form-text text-muted">Số điện thoại sẽ được dùng làm tên đăng nhập. Phải bắt đầu bằng 03, 05, 07, 08, 09.</small>
                     </div>
                 </div>
 
@@ -35,6 +35,7 @@
                     <div class="col-md-9">
                         @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Nhập mật khẩu" })
                         @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                        <small class="form-text text-muted">Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số.</small>
                     </div>
                 </div>
 
@@ -65,19 +66,21 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script>$(document).ready(function () {
-            // Validation rules
+    <script>
+        $(document).ready(function () {
+            // ✅ ĐỒNG BỘ VỚI CUSTOMER REGISTRATION
             $('form').validate({
                 rules: {
                     PhoneNumber: {
                         required: true,
-                        digits: true,
-                        minlength: 10,
-                        maxlength: 11
+                        // ✅ Pattern giống Customer Registration
+                        pattern: /^(0[3|5|7|8|9])+([0-9]{8})$/
                     },
                     Password: {
                         required: true,
-                        minlength: 6
+                        minlength: 6,
+                        // ✅ Yêu cầu chữ hoa, chữ thường, số
+                        strongPassword: true
                     },
                     UserRole: {
                         required: true
@@ -86,18 +89,27 @@
                 messages: {
                     PhoneNumber: {
                         required: "Vui lòng nhập số điện thoại",
-                        digits: "Số điện thoại chỉ chứa số",
-                        minlength: "Số điện thoại phải có ít nhất 10 số",
-                        maxlength: "Số điện thoại không quá 11 số"
+                        pattern: "Số điện thoại phải bắt đầu bằng 03, 05, 07, 08, 09 và có 10 chữ số"
                     },
                     Password: {
                         required: "Vui lòng nhập mật khẩu",
-                        minlength: "Mật khẩu phải có ít nhất 6 ký tự"
+                        minlength: "Mật khẩu phải có ít nhất 6 ký tự",
+                        strongPassword: "Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số"
                     },
                     UserRole: {
                         required: "Vui lòng chọn vai trò"
                     }
                 }
             });
-        });</script>
+
+            // ✅ Custom validators
+            $.validator.addMethod("pattern", function (value, element, param) {
+                return this.optional(element) || param.test(value);
+            }, "Format không hợp lệ");
+
+            $.validator.addMethod("strongPassword", function (value, element) {
+                return this.optional(element) || /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(value);
+            }, "Mật khẩu không đủ mạnh");
+        });
+    </script>
 }

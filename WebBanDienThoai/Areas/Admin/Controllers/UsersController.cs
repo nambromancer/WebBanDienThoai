@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using System.Web.Security;
 using WebBanDienThoai.Models;
@@ -109,8 +110,21 @@ namespace WebBanDienThoai.Areas.Admin.Controllers
         // POST: Admin/Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Obsolete]
         public ActionResult Create([Bind(Include = "PhoneNumber,Password,UserRole")] User user)
         {
+            // ✅ VALIDATION SỐ ĐIỆN THOẠI - ĐỒNG BỘ VỚI CUSTOMER
+            if (!Regex.IsMatch(user.PhoneNumber, @"^(0[3|5|7|8|9])+([0-9]{8})$"))
+            {
+                ModelState.AddModelError("PhoneNumber", "Số điện thoại phải bắt đầu bằng 03, 05, 07, 08, 09 và có 10 chữ số.");
+            }
+
+            // ✅ VALIDATION MẬT KHẨU - ĐỒNG BỘ VỚI CUSTOMER
+            if (!Regex.IsMatch(user.Password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$"))
+            {
+                ModelState.AddModelError("Password", "Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số.");
+            }
+
             if (ModelState.IsValid)
             {
                 // Kiểm tra số điện thoại đã tồn tại chưa
@@ -182,8 +196,18 @@ namespace WebBanDienThoai.Areas.Admin.Controllers
         // POST: Admin/Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Obsolete]
         public ActionResult Edit([Bind(Include = "PhoneNumber,UserRole")] User user, string NewPassword)
         {
+            // ✅ VALIDATION MẬT KHẨU MỚI (nếu có) - ĐỒNG BỘ VỚI CUSTOMER
+            if (!string.IsNullOrEmpty(NewPassword))
+            {
+                if (!Regex.IsMatch(NewPassword, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$"))
+                {
+                    ModelState.AddModelError("NewPassword", "Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số.");
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 var existingUser = db.Users.Find(user.PhoneNumber);

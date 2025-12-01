@@ -37,7 +37,7 @@
                     <label for="NewPassword" class="control-label col-md-3">Mật khẩu mới:</label>
                     <div class="col-md-9">
                         <input type="password" id="NewPassword" name="NewPassword" class="form-control" placeholder="Để trống nếu không muốn thay đổi" />
-                        <small class="form-text text-muted">Chỉ nhập khi muốn thay đổi mật khẩu</small>
+                        <small class="form-text text-muted">Chỉ nhập khi muốn thay đổi mật khẩu. Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số.</small>
                     </div>
                 </div>
 
@@ -78,12 +78,15 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script>$(document).ready(function () {
-            // Validation rules
+    <script>
+        $(document).ready(function () {
+            // ✅ ĐỒNG BỘ VỚI CUSTOMER REGISTRATION
             $('form').validate({
                 rules: {
                     NewPassword: {
-                        minlength: 6
+                        minlength: 6,
+                        // ✅ Yêu cầu chữ hoa, chữ thường, số
+                        strongPassword: true
                     },
                     UserRole: {
                         required: true
@@ -91,12 +94,20 @@
                 },
                 messages: {
                     NewPassword: {
-                        minlength: "Mật khẩu phải có ít nhất 6 ký tự"
+                        minlength: "Mật khẩu phải có ít nhất 6 ký tự",
+                        strongPassword: "Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số"
                     },
                     UserRole: {
                         required: "Vui lòng chọn vai trò"
                     }
                 }
             });
-        });</script>
+
+            // ✅ Custom validator
+            $.validator.addMethod("strongPassword", function (value, element) {
+                if (!value) return true; // Optional khi edit
+                return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(value);
+            }, "Mật khẩu không đủ mạnh");
+        });
+    </script>
 }

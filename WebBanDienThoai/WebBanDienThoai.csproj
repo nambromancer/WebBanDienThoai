@@ -140,6 +140,7 @@
     <Compile Include="Areas\Admin\Controllers\CustomersController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\OrdersController.cs" />
     <Compile Include="Areas\Admin\Controllers\ProductsController.cs" />
     <Compile Include="Areas\Admin\Controllers\SpecificationCategoriesController.cs" />
     <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
@@ -181,7 +182,11 @@
     <Compile Include="Models\User.cs">
       <DependentUpon>WebBanDienThoaiDBModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ViewModel\CartItem.cs" />
+    <Compile Include="Models\ViewModel\CheckoutViewModel.cs" />
     <Compile Include="Models\ViewModel\ProductWithSpecificationsVM.cs" />
+    <Compile Include="Models\ViewModel\ProfileViewModel.cs" />
+    <Compile Include="Models\ViewModel\SearchOrderVM.cs" />
     <Compile Include="Models\ViewModel\SearchUserVM.cs" />
     <Compile Include="Models\ViewModel\SearchCustomerVM.cs" />
     <Compile Include="Models\ViewModel\SearchProductVM.cs" />
@@ -220,7 +225,9 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\cart-style.css" />
     <Content Include="Content\category.css" />
+    <Content Include="Content\checkout-style.css" />
     <Content Include="Content\footer-style.css" />
     <Content Include="Content\header-style.css" />
     <Content Include="Content\img\acer-aspire-lite-15-al15-71p-517d-i5-nxj7ksv001-thumb-638804825325953513-600x600.jpg" />
@@ -250,6 +257,8 @@
     <Content Include="Content\product-detail.css" />
     <Content Include="Content\product-slider.css" />
     <Content Include="Content\register-tgdd.css" />
+    <Content Include="Content\responsive-admin.css" />
+    <Content Include="Content\responsive-customer.css" />
     <Content Include="Content\_AdminLayout.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -316,6 +325,12 @@
     <Content Include="Areas\Admin\Views\Users\Details.cshtml" />
     <Content Include="Areas\Admin\Views\Users\Edit.cshtml" />
     <Content Include="Areas\Admin\Views\Users\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Orders\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Orders\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\Orders\Delete.cshtml" />
+    <Content Include="Areas\Admin\Views\Orders\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\Orders\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\Orders\Statistics.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -342,15 +357,19 @@
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Products\ProductDetail.cshtml" />
-    <Content Include="Views\Order\DeliveryAddress.cshtml" />
-    <Content Include="Views\Order\Payment.cshtml" />
-    <Content Include="Views\Order\OrderConfirmed.cshtml" />
     <Content Include="Views\Home\Cart.cshtml" />
     <Content Include="Views\Search\Index.cshtml" />
     <Content Include="Views\Products\Index.cshtml" />
     <Content Include="Views\Products\_ProductSlider.cshtml" />
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
+    <Content Include="Views\Home\_ProductSliderWithCart.cshtml" />
+    <Content Include="Views\Order\Checkout.cshtml" />
+    <Content Include="Views\Order\OrderConfirmed.cshtml" />
+    <Content Include="Views\Account\_AccountLayout.cshtml" />
+    <Content Include="Views\Account\UserProfile.cshtml" />
+    <Content Include="Views\Account\PurchaseHistory.cshtml" />
+    <Content Include="Views\Account\OrderDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

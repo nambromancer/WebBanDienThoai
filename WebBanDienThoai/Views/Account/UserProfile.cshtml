@@ -1,0 +1,544 @@
+﻿@model WebBanDienThoai.Models.ViewModel.ProfileViewModel
+
+@{
+    ViewBag.Title = "Thông tin cá nhân";
+    Layout = "~/Views/Account/_AccountLayout.cshtml";
+}
+
+<h2 class="content-title">Thông tin cá nhân</h2>
+
+@Html.AntiForgeryToken()
+
+<div class="profile-container">
+    <!-- All information in single section -->
+    <div class="info-list">
+        <!-- Read-only fields -->
+        <div class="info-row">
+            <span class="info-label">Họ và tên:</span>
+            <span class="info-value">@Model.CustomerName</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Số điện thoại:</span>
+            <span class="info-value">@Model.PhoneNumber</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Ngày sinh:</span>
+            <span class="info-value">
+                @if (Model.DateOfBirth.HasValue)
+                {
+                    @Model.DateOfBirth.Value.ToString("dd/MM/yyyy")
+                }
+                else
+                {
+                    <span class="text-muted">Chưa cập nhật</span>
+                }
+            </span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Giới tính:</span>
+            <span class="info-value">
+                @if (!string.IsNullOrEmpty(Model.Gender))
+                {
+                    @Model.Gender
+                }
+                else
+                {
+                    <span class="text-muted">Chưa cập nhật</span>
+                }
+            </span>
+        </div>
+
+        <!-- Editable: Email -->
+        <div class="info-row">
+            <span class="info-label">Email:</span>
+            <span class="info-value" id="emailDisplay">@(string.IsNullOrEmpty(Model.Email) ? "Chưa cập nhật" : Model.Email)</span>
+            <input type="email" id="emailInput" class="info-input" value="@Model.Email" style="display:none;" />
+            <div class="info-actions">
+                <button type="button" class="btn-edit" id="btnEditEmail" onclick="editField('email')">
+                    <i class="fas fa-edit"></i> Sửa
+                </button>
+                <button type="button" class="btn-save" id="btnSaveEmail" onclick="saveEmail()" style="display:none;">
+                    <i class="fas fa-check"></i> Lưu
+                </button>
+                <button type="button" class="btn-cancel" id="btnCancelEmail" onclick="cancelEdit('email')" style="display:none;">
+                    <i class="fas fa-times"></i> Hủy
+                </button>
+            </div>
+        </div>
+
+        <!-- Editable: Address -->
+        <div class="info-row">
+            <span class="info-label">Địa chỉ:</span>
+            <span class="info-value" id="addressDisplay">@(string.IsNullOrEmpty(Model.Address) ? "Chưa cập nhật" : Model.Address)</span>
+            <textarea id="addressInput" class="info-textarea" rows="2" style="display:none;">@Model.Address</textarea>
+            <div class="info-actions">
+                <button type="button" class="btn-edit" id="btnEditAddress" onclick="editField('address')">
+                    <i class="fas fa-edit"></i> Sửa
+                </button>
+                <button type="button" class="btn-save" id="btnSaveAddress" onclick="saveAddress()" style="display:none;">
+                    <i class="fas fa-check"></i> Lưu
+                </button>
+                <button type="button" class="btn-cancel" id="btnCancelAddress" onclick="cancelEdit('address')" style="display:none;">
+                    <i class="fas fa-times"></i> Hủy
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Button & Form -->
+    <div class="password-section">
+        <button type="button" class="btn-change-password" id="btnShowPasswordForm" onclick="togglePasswordForm()">
+            <i class="fas fa-key"></i> Đổi mật khẩu
+        </button>
+
+        <div class="password-form" id="passwordForm" style="display:none;">
+            <h3 class="form-title">Đổi mật khẩu</h3>
+            <div class="form-group">
+                <label for="oldPassword">Mật khẩu cũ:</label>
+                <input type="password" id="oldPassword" class="form-input" placeholder="Nhập mật khẩu cũ" />
+            </div>
+            <div class="form-group">
+                <label for="newPassword">Mật khẩu mới:</label>
+                <input type="password" id="newPassword" class="form-input" placeholder="Nhập mật khẩu mới (ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số)" />
+                <small class="form-text text-muted">Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số.</small>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Xác nhận mật khẩu mới:</label>
+                <input type="password" id="confirmPassword" class="form-input" placeholder="Nhập lại mật khẩu mới" />
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-submit" onclick="changePassword()">
+                    <i class="fas fa-save"></i> Lưu mật khẩu
+                </button>
+                <button type="button" class="btn-cancel-form" onclick="togglePasswordForm()">
+                    <i class="fas fa-times"></i> Hủy
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-container {
+        max-width: 800px;
+    }
+
+    .info-list {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .info-row {
+        display: grid;
+        grid-template-columns: 180px 1fr auto;
+        gap: 15px;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+    .info-label {
+        font-weight: 600;
+        color: #555;
+        font-size: 14px;
+    }
+
+    .info-value {
+        color: #2c3e50;
+        font-size: 14px;
+    }
+
+    .text-muted {
+        color: #999;
+        font-style: italic;
+    }
+
+    .info-input,
+    .info-textarea {
+        width: 100%;
+        padding: 8px 12px;
+        border: 2px solid #3498db;
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: inherit;
+    }
+
+        .info-input:focus,
+        .info-textarea:focus {
+            outline: none;
+            border-color: #2980b9;
+        }
+
+    .info-textarea {
+        resize: vertical;
+    }
+
+    .info-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+
+    .btn-edit,
+    .btn-save,
+    .btn-cancel {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+    }
+
+    .btn-edit {
+        background: #3498db;
+        color: white;
+    }
+
+        .btn-edit:hover {
+            background: #2980b9;
+        }
+
+    .btn-save {
+        background: #27ae60;
+        color: white;
+    }
+
+        .btn-save:hover {
+            background: #229954;
+        }
+
+    .btn-cancel {
+        background: #e74c3c;
+        color: white;
+    }
+
+        .btn-cancel:hover {
+            background: #c0392b;
+        }
+
+    /* Password Section */
+    .password-section {
+        margin-top: 20px;
+    }
+
+    .btn-change-password {
+        padding: 12px 24px;
+        background: #f39c12;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+    }
+
+        .btn-change-password:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+        }
+
+    .password-form {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 25px;
+        margin-top: 20px;
+        animation: slideDown 0.3s ease;
+    }
+
+    @@keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+    .form-text {
+        display: block;
+        margin-top: 5px;
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #dee2e6;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn-submit,
+    .btn-cancel-form {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+    }
+
+    .btn-submit {
+        background: #27ae60;
+        color: white;
+    }
+
+        .btn-submit:hover {
+            background: #229954;
+        }
+
+    .btn-cancel-form {
+        background: #95a5a6;
+        color: white;
+    }
+
+        .btn-cancel-form:hover {
+            background: #7f8c8d;
+        }
+
+    @@media (max-width: 768px) {
+        .info-row {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .info-actions {
+            justify-content: flex-start;
+        }
+    }
+</style>
+
+@section scripts {
+    <script>
+        var originalEmail = '@Model.Email';
+        var originalAddress = '@Model.Address';
+
+        function editField(field) {
+            if (field === 'email') {
+                $('#emailDisplay').hide();
+                $('#emailInput').show().focus();
+                $('#btnEditEmail').hide();
+                $('#btnSaveEmail, #btnCancelEmail').show();
+            } else if (field === 'address') {
+                $('#addressDisplay').hide();
+                $('#addressInput').show().focus();
+                $('#btnEditAddress').hide();
+                $('#btnSaveAddress, #btnCancelAddress').show();
+            }
+        }
+
+        function cancelEdit(field) {
+            if (field === 'email') {
+                $('#emailInput').val(originalEmail).hide();
+                $('#emailDisplay').show();
+                $('#btnSaveEmail, #btnCancelEmail').hide();
+                $('#btnEditEmail').show();
+            } else if (field === 'address') {
+                $('#addressInput').val(originalAddress).hide();
+                $('#addressDisplay').show();
+                $('#btnSaveAddress, #btnCancelAddress').hide();
+                $('#btnEditAddress').show();
+            }
+        }
+
+        function saveEmail() {
+            var email = $('#emailInput').val().trim();
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            if (!email) {
+                alert('Vui lòng nhập email!');
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('__RequestVerificationToken', token);
+            formData.append('Email', email);
+            formData.append('Address', originalAddress);
+
+            $.ajax({
+                url: '@Url.Action("UpdateProfile", "Account")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        originalEmail = email;
+                        $('#emailDisplay').text(email);
+                        cancelEdit('email');
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Có lỗi xảy ra. Vui lòng thử lại!');
+                }
+            });
+        }
+
+        function saveAddress() {
+            var address = $('#addressInput').val().trim();
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            var formData = new FormData();
+            formData.append('__RequestVerificationToken', token);
+            formData.append('Email', originalEmail);
+            formData.append('Address', address);
+
+            $.ajax({
+                url: '@Url.Action("UpdateProfile", "Account")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        originalAddress = address;
+                        $('#addressDisplay').text(address || 'Chưa cập nhật');
+                        cancelEdit('address');
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Có lỗi xảy ra. Vui lòng thử lại!');
+                }
+            });
+        }
+
+        function togglePasswordForm() {
+            var form = $('#passwordForm');
+            if (form.is(':visible')) {
+                form.slideUp(300);
+                $('#oldPassword, #newPassword, #confirmPassword').val('');
+            } else {
+                form.slideDown(300);
+            }
+        }
+
+        function validatePassword(password) {
+            // Password must contain at least:
+            // - 6 characters
+            // - 1 uppercase letter
+            // - 1 lowercase letter
+            // - 1 number
+            var regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+            return regex.test(password);
+        }
+
+        function changePassword() {
+            var oldPassword = $('#oldPassword').val();
+            var newPassword = $('#newPassword').val();
+            var confirmPassword = $('#confirmPassword').val();
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            if (!oldPassword || !newPassword || !confirmPassword) {
+                alert('Vui lòng nhập đầy đủ thông tin!');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert('Mật khẩu mới phải có ít nhất 6 ký tự!');
+                return;
+            }
+
+            if (!validatePassword(newPassword)) {
+                alert('Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số!');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert('Mật khẩu xác nhận không khớp!');
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('__RequestVerificationToken', token);
+            formData.append('OldPassword', oldPassword);
+            formData.append('NewPassword', newPassword);
+            formData.append('ConfirmPassword', confirmPassword);
+
+            $.ajax({
+                url: '@Url.Action("ChangePassword", "Account")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        togglePasswordForm();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Có lỗi xảy ra. Vui lòng thử lại!');
+                }
+            });
+        }
+    </script>
+}

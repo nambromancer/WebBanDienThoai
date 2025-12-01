@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
 using WebBanDienThoai.Models;
+using WebBanDienThoai.Models.ViewModel;
 
 namespace WebBanDienThoai.Controllers
 {
@@ -10,14 +11,231 @@ namespace WebBanDienThoai.Controllers
     {
         private WebBanDienThoaiDBEntities db = new WebBanDienThoaiDBEntities();
 
-        // GET: /Account/Register
+        public ActionResult MyAccount()
+        {
+            if (Session["UserPhone"] == null)
+            {
+                return RedirectToAction("Login", new { returnUrl = Url.Action("MyAccount") });
+            }
+
+            return RedirectToAction("UserProfile");
+        }
+
+        public ActionResult UserProfile()
+        {
+            if (Session["UserPhone"] == null)
+            {
+                return RedirectToAction("Login", new { returnUrl = Url.Action("UserProfile") });
+            }
+
+            var userPhone = Session["UserPhone"].ToString();
+            var customer = db.Customers.FirstOrDefault(c => c.PhoneNumber == userPhone);
+
+            if (customer == null)
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy thông tin khách hàng.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var model = new ProfileViewModel
+            {
+                CustomerID = customer.CustomerID,
+                CustomerName = customer.CustomerName,
+                PhoneNumber = customer.PhoneNumber,
+                Email = customer.CustomerEmail,
+                Address = customer.CustomerAddress,
+                DateOfBirth = customer.DateOfBirth,
+                Gender = customer.Gender
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateProfile(ProfileViewModel model)
+        {
+            if (Session["UserPhone"] == null)
+            {
+                return Json(new { success = false, message = "Vui lòng đăng nhập." });
+            }
+
+            var userPhone = Session["UserPhone"].ToString();
+            var customer = db.Customers.FirstOrDefault(c => c.PhoneNumber == userPhone);
+
+            if (customer == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy thông tin khách hàng." });
+            }
+
+            try
+            {
+                customer.CustomerEmail = model.Email;
+                customer.CustomerAddress = model.Address;
+                db.SaveChanges();
+
+                return Json(new { success = true, message = "Cập nhật thông tin thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Có lỗi xảy ra: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Obsolete]
+        public ActionResult ChangePassword(ChangePasswordViewModel model)
+        {
+            if (Session["UserPhone"] == null)
+            {
+                return Json(new { success = false, message = "Vui lòng đăng nhập." });
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
+            }
+
+            var userPhone = Session["UserPhone"].ToString();
+            var user = db.Users.Find(userPhone);
+
+            if (user == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy tài khoản." });
+            }
+
+            string hashedOldPassword = FormsAuthentication.HashPasswordForStoringInConfigFile(model.OldPassword, "MD5");
+            if (user.Password != hashedOldPassword)
+            {
+                return Json(new { success = false, message = "Mật khẩu cũ không đúng." });
+            }
+
+            try
+            {
+                user.Password = FormsAuthentication.HashPasswordForStoringInConfigFile(model.NewPassword, "MD5");
+                db.SaveChanges();
+
+                return Json(new { success = true, message = "Đổi mật khẩu thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Có lỗi xảy ra: " + ex.Message });
+            }
+        }
+
+        public ActionResult PurchaseHistory()
+        {
+            if (Session["UserPhone"] == null)
+            {
+                return RedirectToAction("Login", new { returnUrl = Url.Action("PurchaseHistory") });
+            }
+
+            var userPhone = Session["UserPhone"].ToString();
+            var customer = db.Customers.FirstOrDefault(c => c.PhoneNumber == userPhone);
+
+            if (customer == null)
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy thông tin khách hàng.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var orders = db.Orders
+                .Include("OrderDetails")
+                .Include("OrderDetails.Product")
+                .Where(o => o.CustomerID == customer.CustomerID)
+                .OrderByDescending(o => o.OrderDate)
+                .ToList();
+
+            return View(orders);
+        }
+
+        public ActionResult OrderDetail(int orderId)
+        {
+            if (Session["UserPhone"] == null)
+            {
+                return RedirectToAction("Login", new { returnUrl = Url.Action("OrderDetail", new { orderId = orderId }) });
+            }
+
+            var userPhone = Session["UserPhone"].ToString();
+            var customer = db.Customers.FirstOrDefault(c => c.PhoneNumber == userPhone);
+
+            if (customer == null)
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy thông tin khách hàng.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var order = db.Orders
+                .Include("OrderDetails")
+                .Include("OrderDetails.Product")
+                .Include("OrderDetails.Product.ProductImages")
+                .Include("Customer")
+                .FirstOrDefault(o => o.OrderID == orderId && o.CustomerID == customer.CustomerID);
+
+            if (order == null)
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy đơn hàng.";
+                return RedirectToAction("PurchaseHistory");
+            }
+
+            return View(order);
+        }
+
+        [HttpPost]
+        public ActionResult CancelOrder(int orderId)
+        {
+            if (Session["UserPhone"] == null)
+            {
+                return Json(new { success = false, message = "Vui lòng đăng nhập." });
+            }
+
+            var userPhone = Session["UserPhone"].ToString();
+            var customer = db.Customers.FirstOrDefault(c => c.PhoneNumber == userPhone);
+
+            if (customer == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy thông tin khách hàng." });
+            }
+
+            var order = db.Orders.Find(orderId);
+            if (order == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy đơn hàng." });
+            }
+
+            // ✅ Kiểm tra quyền sở hữu đơn hàng
+            if (order.CustomerID != customer.CustomerID)
+            {
+                return Json(new { success = false, message = "Bạn không có quyền hủy đơn hàng này." });
+            }
+
+            // ✅ Chỉ cho phép hủy đơn đang chờ xử lý hoặc đang xử lý (TIẾNG VIỆT)
+            if (order.OrderStatus != "Chờ xử lý" && order.OrderStatus != "Đang xử lý")
+            {
+                return Json(new { success = false, message = "Không thể hủy đơn hàng này. Chỉ có thể hủy đơn hàng đang chờ xử lý hoặc đang xử lý." });
+            }
+
+            try
+            {
+                // ✅ Cập nhật trạng thái thành "Đã hủy" (TIẾNG VIỆT)
+                order.OrderStatus = "Đã hủy";
+                db.SaveChanges();
+
+                return Json(new { success = true, message = "Hủy đơn hàng thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Có lỗi xảy ra: " + ex.Message });
+            }
+        }
+
         [HttpGet]
         public ActionResult Register()
         {
             return View(new RegisterViewModel());
         }
 
-        // POST: /Account/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Obsolete]
@@ -78,18 +296,17 @@ namespace WebBanDienThoai.Controllers
             }
         }
 
-        // GET: /Account/Login
         [HttpGet]
-        public ActionResult Login()
+        public ActionResult Login(string returnUrl)
         {
+            ViewBag.ReturnUrl = returnUrl;
             return View(new LoginViewModel());
         }
 
-        // POST: /Account/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Obsolete]
-        public ActionResult Login(LoginViewModel model)
+        public ActionResult Login(LoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid)
             {
@@ -107,10 +324,16 @@ namespace WebBanDienThoai.Controllers
                 return View(model);
             }
 
+            var tempCart = Session["Cart"];
+
             Session["UserPhone"] = user.PhoneNumber;
             Session["UserRole"] = user.UserRole;
 
-            // Try to get customer display name (if a Customer record exists for this phone)
+            if (tempCart != null)
+            {
+                Session["Cart"] = tempCart;
+            }
+
             var customer = db.Customers.FirstOrDefault(c => c.PhoneNumber == user.PhoneNumber);
             if (customer != null && !string.IsNullOrEmpty(customer.CustomerName))
             {
@@ -118,7 +341,6 @@ namespace WebBanDienThoai.Controllers
             }
             else
             {
-                // Fallback to phone number when no friendly name available
                 Session["UserName"] = user.PhoneNumber;
             }
 
@@ -132,18 +354,31 @@ namespace WebBanDienThoai.Controllers
             else
             {
                 TempData["SuccessMessage"] = "Đăng nhập thành công!";
+
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
+
                 return RedirectToAction("Index", "Home");
             }
         }
 
-        // GET: /Account/ForgotPassword
+        public ActionResult Logout()
+        {
+            Session.Clear();
+            Session.Abandon();
+            FormsAuthentication.SignOut();
+            TempData["SuccessMessage"] = "Đăng xuất thành công!";
+            return RedirectToAction("Index", "Home");
+        }
+
         [HttpGet]
         public ActionResult ForgotPassword()
         {
             return View(new ForgotPasswordViewModel());
         }
 
-        // POST: /Account/ForgotPassword
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ForgotPassword(ForgotPasswordViewModel model)
@@ -153,7 +388,6 @@ namespace WebBanDienThoai.Controllers
                 return View(model);
             }
 
-            // Kiểm tra customer có tồn tại với SĐT và Email khớp không
             var customer = db.Customers.FirstOrDefault(c =>
                 c.PhoneNumber == model.PhoneNumber &&
                 c.CustomerEmail == model.Email);
@@ -164,7 +398,6 @@ namespace WebBanDienThoai.Controllers
                 return View(model);
             }
 
-            // Kiểm tra user tồn tại
             var user = db.Users.Find(model.PhoneNumber);
             if (user == null)
             {
@@ -172,13 +405,11 @@ namespace WebBanDienThoai.Controllers
                 return View(model);
             }
 
-            // Lưu thông tin vào Session để xác thực ở bước tiếp theo
             Session["ResetPasswordPhone"] = model.PhoneNumber;
             TempData["SuccessMessage"] = "Xác thực thành công! Vui lòng nhập mật khẩu mới.";
             return RedirectToAction("ResetPassword");
         }
 
-        // GET: /Account/ResetPassword
         [HttpGet]
         public ActionResult ResetPassword()
         {
@@ -194,7 +425,6 @@ namespace WebBanDienThoai.Controllers
             return View(model);
         }
 
-        // POST: /Account/ResetPassword
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Obsolete]
@@ -218,25 +448,13 @@ namespace WebBanDienThoai.Controllers
                 return RedirectToAction("ForgotPassword");
             }
 
-            // Cập nhật mật khẩu mới
             user.Password = FormsAuthentication.HashPasswordForStoringInConfigFile(model.NewPassword, "MD5");
             db.SaveChanges();
 
-            // Xóa session
             Session.Remove("ResetPasswordPhone");
 
             TempData["SuccessMessage"] = "Đặt lại mật khẩu thành công! Vui lòng đăng nhập.";
             return RedirectToAction("Login");
-        }
-
-        // GET: /Account/Logout
-        public ActionResult Logout()
-        {
-            Session.Clear();
-            Session.Abandon();
-            FormsAuthentication.SignOut();
-            TempData["SuccessMessage"] = "Đăng xuất thành công!";
-            return RedirectToAction("Index", "Home");
         }
 
         protected override void Dispose(bool disposing)

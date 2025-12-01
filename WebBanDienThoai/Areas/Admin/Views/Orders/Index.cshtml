@@ -1,0 +1,227 @@
+﻿@model IEnumerable<WebBanDienThoai.Models.Order>
+@using WebBanDienThoai.Models.ViewModel
+
+@{
+    ViewBag.Title = "Quản lý đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var searchModel = ViewBag.SearchModel as SearchOrderVM ?? new SearchOrderVM();
+}
+
+<h2><i class="fas fa-shopping-cart"></i> Quản lý đơn hàng</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+<!-- Search Form -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <i class="fas fa-search"></i> Tìm kiếm đơn hàng
+    </div>
+    <div class="card-body">
+        @using (Html.BeginForm("Index", "Orders", FormMethod.Get, new { @class = "form-horizontal" }))
+        {
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="control-label">Mã đơn hàng</label>
+                        @Html.TextBox("OrderID", searchModel.OrderID, new { @class = "form-control", placeholder = "Nhập mã đơn hàng" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="control-label">Tên khách hàng</label>
+                        @Html.TextBox("CustomerName", searchModel.CustomerName, new { @class = "form-control", placeholder = "Nhập tên khách hàng" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="control-label">Số điện thoại</label>
+                        @Html.TextBox("PhoneNumber", searchModel.PhoneNumber, new { @class = "form-control", placeholder = "Nhập số điện thoại" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="control-label">Trạng thái</label>
+                        @Html.DropDownList("OrderStatus", ViewBag.OrderStatuses as SelectList, "-- Tất cả --", new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="control-label">Từ ngày</label>
+                        @Html.TextBox("FromDate", searchModel.FromDate.HasValue ? searchModel.FromDate.Value.ToString("yyyy-MM-dd") : "", new { @class = "form-control", type = "date" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="control-label">Đến ngày</label>
+                        @Html.TextBox("ToDate", searchModel.ToDate.HasValue ? searchModel.ToDate.Value.ToString("yyyy-MM-dd") : "", new { @class = "form-control", type = "date" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label">&nbsp;</label>
+                        <div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Tìm kiếm
+                            </button>
+                            <a href="@Url.Action("Index")" class="btn btn-secondary">
+                                <i class="fas fa-redo"></i> Làm mới
+                            </a>
+                            <a href="@Url.Action("Statistics")" class="btn btn-info">
+                                <i class="fas fa-chart-bar"></i> Thống kê
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Orders Table -->
+<div class="card">
+    <div class="card-header bg-info text-white">
+        <i class="fas fa-list"></i> Danh sách đơn hàng
+        <span class="badge badge-light ml-2">@Model.Count() đơn hàng</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Mã ĐH</th>
+                        <th>Khách hàng</th>
+                        <th>SĐT</th>
+                        <th>Ngày đặt</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th>TT Thanh toán</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                <i class="fas fa-inbox fa-3x text-muted mb-2"></i>
+                                <p class="text-muted">Không tìm thấy đơn hàng nào</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var order in Model)
+                        {
+                            var statusClass = "";
+                            var statusIcon = "";
+                            switch (order.OrderStatus)
+                            {
+                                case "Chờ xử lý":
+                                    statusClass = "badge-warning";
+                                    statusIcon = "fa-clock";
+                                    break;
+                                case "Đang xử lý":
+                                    statusClass = "badge-info";
+                                    statusIcon = "fa-spinner";
+                                    break;
+                                case "Đang giao hàng":
+                                    statusClass = "badge-primary";
+                                    statusIcon = "fa-shipping-fast";
+                                    break;
+                                case "Đã giao hàng":
+                                    statusClass = "badge-success";
+                                    statusIcon = "fa-check-circle";
+                                    break;
+                                case "Đã hủy":
+                                    statusClass = "badge-danger";
+                                    statusIcon = "fa-times-circle";
+                                    break;
+                            }
+
+                            var paymentClass = order.PaymentStatus == "Đã thanh toán" ? "badge-success" : "badge-secondary";
+
+                            // ✅ Xác định quyền thao tác - CẬP NHẬT
+                            var canEdit = order.OrderStatus != "Đã hủy" && order.OrderStatus != "Đã giao hàng";
+                            var canDelete = order.OrderStatus == "Đã hủy";
+
+                            <tr>
+                                <td><strong>#@order.OrderID</strong></td>
+                                <td>@order.Customer.CustomerName</td>
+                                <td>@order.Customer.PhoneNumber</td>
+                                <td>@(order.OrderDate.HasValue ? order.OrderDate.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")</td>
+                                <td class="text-danger font-weight-bold">@String.Format("{0:N0} ₫", order.TotalAmount)</td>
+                                <td>
+                                    <span class="badge @statusClass">
+                                        <i class="fas @statusIcon"></i> @order.OrderStatus
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge @paymentClass">@order.PaymentStatus</span>
+                                </td>
+                                <td class="text-center">
+                                    <a href="@Url.Action("Details", new { id = order.OrderID })" class="btn btn-sm btn-info">
+                                        Chi tiết
+                                    </a>
+                                    @if (canEdit)
+                                    {
+                                        <a href="@Url.Action("Edit", new { id = order.OrderID })" class="btn btn-sm btn-primary">
+                                            Chỉnh sửa
+                                        </a>
+                                    }
+                                    @if (canDelete)
+                                    {
+                                        <a href="@Url.Action("Delete", new { id = order.OrderID })" class="btn btn-sm btn-danger">
+                                            Xóa
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .table td, .table th {
+        vertical-align: middle;
+    }
+
+    .badge {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    .btn-sm {
+        padding: 4px 12px;
+        font-size: 13px;
+        margin: 2px;
+    }
+</style>
