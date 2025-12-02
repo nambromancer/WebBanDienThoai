@@ -1,4 +1,5 @@
-﻿@model List<WebBanDienThoai.Models.Order>
+﻿@model PagedList.IPagedList<WebBanDienThoai.Models.Order>
+@using PagedList.Mvc
 
 @{
     ViewBag.Title = "Lịch sử mua hàng";
@@ -26,7 +27,6 @@ else
             var statusClass = "";
             var canCancel = false;
 
-            // ✅ SỬ DỤNG TIẾNG VIỆT ĐỂ ĐỒNG BỘ VỚI DATABASE VÀ ADMIN
             switch (order.OrderStatus)
             {
                 case "Chờ xử lý":
@@ -126,6 +126,15 @@ else
                 </div>
             </div>
         }
+    </div>
+
+    @* Phân trang - Cú pháp đơn giản nhất *@
+    <div class="pagination-container">
+        @Html.PagedListPager(Model, page => Url.Action("PurchaseHistory", new { page }))
+
+        <div class="pagination-info">
+            Trang @Model.PageNumber / @Model.PageCount (Tổng @Model.TotalItemCount đơn hàng)
+        </div>
     </div>
 }
 
@@ -367,6 +376,59 @@ else
             background: #c0392b;
         }
 
+    /* Phân trang */
+    .pagination-container {
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    .pagination-info {
+        color: #7f8c8d;
+        font-size: 14px;
+        margin-top: 15px;
+    }
+
+    /* Style cho pagination mặc định của PagedList */
+    .pagination-container > div:first-child {
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+
+    .pagination-container a,
+    .pagination-container span {
+        display: inline-block;
+        padding: 8px 12px;
+        margin: 0 2px;
+        text-decoration: none;
+        color: #3498db;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        transition: all 0.3s;
+    }
+
+        .pagination-container a:hover {
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+        }
+
+    /* Active page */
+    .pagination-container .active {
+        background: #3498db !important;
+        color: white !important;
+        border-color: #3498db !important;
+        font-weight: 600;
+    }
+
+    /* Disabled links */
+    .pagination-container .disabled {
+        color: #6c757d !important;
+        pointer-events: none;
+        background: #f8f9fa !important;
+        border-color: #dee2e6 !important;
+    }
+
     @@media (max-width: 768px) {
         .order-info-row {
             flex-direction: column;
@@ -390,6 +452,12 @@ else
         .btn-cancel {
             width: 100%;
             justify-content: center;
+        }
+
+        .pagination-container a,
+        .pagination-container span {
+            padding: 6px 10px;
+            font-size: 13px;
         }
     }
 </style>

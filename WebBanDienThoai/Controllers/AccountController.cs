@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
+using PagedList;
 using WebBanDienThoai.Models;
 using WebBanDienThoai.Models.ViewModel;
 
@@ -124,7 +125,7 @@ namespace WebBanDienThoai.Controllers
             }
         }
 
-        public ActionResult PurchaseHistory()
+        public ActionResult PurchaseHistory(int? page)
         {
             if (Session["UserPhone"] == null)
             {
@@ -140,12 +141,16 @@ namespace WebBanDienThoai.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
+            int pageSize = 2; // 2 đơn hàng mỗi trang
+            int pageNumber = (page ?? 1);
+
             var orders = db.Orders
                 .Include("OrderDetails")
                 .Include("OrderDetails.Product")
+                .Include("OrderDetails.Product.ProductImages")
                 .Where(o => o.CustomerID == customer.CustomerID)
                 .OrderByDescending(o => o.OrderDate)
-                .ToList();
+                .ToPagedList(pageNumber, pageSize);
 
             return View(orders);
         }
