@@ -4,16 +4,16 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="8f0efeaecb7145ec9b5250af8a6699cb" Name="Diagram1">
-        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.Category" Width="1.5" PointX="0.75" PointY="5.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.Customer" Width="1.5" PointX="0.75" PointY="8.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.Order" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.OrderDetail" Width="1.5" PointX="5.25" PointY="5" IsExpanded="true" />
-        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.Product" Width="1.5" PointX="3" PointY="4.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.ProductImage" Width="1.5" PointX="5.25" PointY="8.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.ProductSpecification" Width="1.5" PointX="8.25" PointY="5" IsExpanded="true" />
-        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.SpecificationCategory" Width="1.5" PointX="6" PointY="2.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.User" Width="1.5" PointX="1.5" PointY="13.125" IsExpanded="true" />
+      <Diagram DiagramId="8f0efeaecb7145ec9b5250af8a6699cb" Name="Diagram1" ZoomLevel="93">
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.Category" Width="1.5" PointX="13.75" PointY="6.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.Customer" Width="1.5" PointX="5" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.Order" Width="1.5" PointX="4.875" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.OrderDetail" Width="1.5" PointX="7.625" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.Product" Width="1.5" PointX="10.5" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.ProductImage" Width="1.5" PointX="10.25" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.ProductSpecification" Width="1.5" PointX="10.125" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.SpecificationCategory" Width="1.5" PointX="13" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebBanDienThoaiDBModel.User" Width="1.5" PointX="7.125" PointY="7.875" IsExpanded="true" />
         <AssociationConnector Association="WebBanDienThoaiDBModel.FK_Pro_Category" ManuallyRouted="false" />
         <AssociationConnector Association="WebBanDienThoaiDBModel.FK_Order_Customer" ManuallyRouted="false" />
         <AssociationConnector Association="WebBanDienThoaiDBModel.FK_User_Customer" ManuallyRouted="false" />

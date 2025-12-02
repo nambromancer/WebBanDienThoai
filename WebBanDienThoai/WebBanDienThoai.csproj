@@ -326,7 +326,6 @@
     <Content Include="Areas\Admin\Views\Users\Edit.cshtml" />
     <Content Include="Areas\Admin\Views\Users\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Orders\Index.cshtml" />
-    <Content Include="Areas\Admin\Views\Orders\Create.cshtml" />
     <Content Include="Areas\Admin\Views\Orders\Delete.cshtml" />
     <Content Include="Areas\Admin\Views\Orders\Details.cshtml" />
     <Content Include="Areas\Admin\Views\Orders\Edit.cshtml" />
