@@ -248,7 +248,10 @@
     <div id="suggestGrid" class="product-grid active">
         @if (suggestedProducts != null && suggestedProducts.Any())
         {
-            foreach (var product in suggestedProducts)
+            var random = new Random();
+            var randomSuggestedProducts = suggestedProducts.OrderBy(x => random.Next()).ToList();
+
+            foreach (var product in randomSuggestedProducts)
             {
                 var firstImage = product.ProductImages != null && product.ProductImages.Any()
                     ? Url.Content(product.ProductImages.OrderBy(img => img.DisplayOrder ?? int.MaxValue).First().ImageURL)
@@ -266,6 +269,12 @@
                         <div class="card-topline">
                             <span class="pill mint">Trả góp 0%</span>
                             <span class="pill flash-sale">Flash Sale</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="card-topline">
+                            <span class="pill mint">Trả góp 0%</span>
                         </div>
                     }
 
@@ -312,7 +321,10 @@
     <div class="search-cloud">
         @if (searchTerms != null && searchTerms.Any())
         {
-            foreach (var term in searchTerms)
+            var random = new Random();
+            var randomTerms = searchTerms.OrderBy(x => random.Next()).Take(15).ToList();
+
+            foreach (var term in randomTerms)
             {
                 <a href="@Url.Action("Index", "Search", new { q = term.ProductName })"
                    class="search-chip"

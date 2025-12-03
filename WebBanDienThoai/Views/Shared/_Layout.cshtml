@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
     // Lấy danh sách categories từ database
     var db = new WebBanDienThoai.Models.WebBanDienThoaiDBEntities();
     var categories = db.Categories.OrderBy(c => c.CategoryID).ToList();
@@ -25,6 +26,9 @@
     <link href="~/Content/modal-tgdd.css" rel="stylesheet" />
     <link href="~/Content/responsive-customer.css" rel="stylesheet" />
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     @RenderSection("Styles", required: false)
 
     @Scripts.Render("~/bundles/modernizr")
@@ -35,7 +39,7 @@
             <div class="logo-section">
                 <a href="@Url.Action("Index", "Home")" class="logo-link" aria-label="Về trang chủ">
                     <div class="logo-circle">
-                        <span class="logo-icon">📱</span>
+                        <span class="logo-icon"><i class="fas fa-mobile-alt"></i></span>
                     </div>
                     <span class="logo-text">thegioididong</span>
                 </a>
@@ -45,7 +49,7 @@
                 <div class="search-container">
                     <input type="text" class="search-input" placeholder="Laptop nhập học..." aria-label="Từ khóa tìm kiếm">
                     <button class="search-btn" type="button" aria-label="Tìm kiếm">
-                        <span class="search-icon">🔍</span>
+                        <span class="search-icon"><i class="fas fa-search"></i></span>
                     </button>
                 </div>
             </div>
@@ -55,21 +59,21 @@
                 {
                     <div class="user-dropdown">
                         <a href="javascript:void(0)" class="user-login user-logged-in">
-                            <span class="user-icon">👤</span>
+                            <span class="user-icon"><i class="fas fa-user"></i></span>
                             <span class="user-name">@userName</span>
                         </a>
                         <div class="dropdown-menu">
                             <a href="@Url.Action("UserProfile", "Account")" class="dropdown-item">
-                                <span class="dropdown-icon">ℹ️</span>
+                                <span class="dropdown-icon"><i class="fas fa-info-circle"></i></span>
                                 Thông tin cá nhân
                             </a>
                             <a href="@Url.Action("PurchaseHistory", "Account")" class="dropdown-item">
-                                <span class="dropdown-icon">📦</span>
+                                <span class="dropdown-icon"><i class="fas fa-box"></i></span>
                                 Lịch sử mua hàng
                             </a>
                             <div class="dropdown-divider"></div>
                             <a href="@Url.Action("Logout", "Account")" class="dropdown-item logout-item">
-                                <span class="dropdown-icon">🚪</span>
+                                <span class="dropdown-icon"><i class="fas fa-sign-out-alt"></i></span>
                                 Đăng xuất
                             </a>
                         </div>
@@ -82,18 +86,18 @@
                        class="user-login"
                        data-toggle="modal" data-target="#loginModal"
                        data-bs-toggle="modal" data-bs-target="#loginModal">
-                        <span class="user-icon">👤</span>
+                        <span class="user-icon"><i class="fas fa-user"></i></span>
                         <span>Đăng nhập</span>
                     </a>
                 }
 
                 <a href="@Url.Action("Cart","Home")" class="cart-link" aria-label="Xem giỏ hàng" style="position: relative;">
-                    <span class="cart-icon">🛒</span>
+                    <span class="cart-icon"><i class="fas fa-shopping-cart"></i></span>
                     <span>Giỏ hàng</span>
                     <span class="cart-badge" id="cartBadge" style="display: @(cartCount > 0 ? "inline-block" : "none");">@cartCount</span>
                 </a>
                 <div class="location" aria-label="Vị trí hiện tại">
-                    <span class="location-icon">📍</span>
+                    <span class="location-icon"><i class="fas fa-map-marker-alt"></i></span>
                     <span>Hồ Chí Minh</span>
                 </div>
             </div>
@@ -104,32 +108,32 @@
                 <ul class="nav-menu">
                     @foreach (var category in categories)
                     {
-                        string icon = "📱";
+                        string icon = "fa-mobile-alt";
                         var catNameLower = category.CategoryName.ToLower();
                         if (catNameLower.Contains("điện thoại") || catNameLower.Contains("phone"))
                         {
-                            icon = "📱";
+                            icon = "fa-mobile-alt";
                         }
                         else if (catNameLower.Contains("laptop"))
                         {
-                            icon = "💻";
+                            icon = "fa-laptop";
                         }
                         else if (catNameLower.Contains("phụ kiện") || catNameLower.Contains("accessory"))
                         {
-                            icon = "🔌";
+                            icon = "fa-plug";
                         }
                         else if (catNameLower.Contains("smartwatch") || catNameLower.Contains("đồng hồ"))
                         {
-                            icon = "⌚";
+                            icon = "fa-clock";
                         }
                         else if (catNameLower.Contains("tablet"))
                         {
-                            icon = "📱";
+                            icon = "fa-tablet-alt";
                         }
 
                         <li class="nav-item">
                             <a href="@Url.Action("Index", "Products", new { categoryId = category.CategoryID })" class="nav-link">
-                                <span class="nav-icon">@icon</span>
+                                <span class="nav-icon"><i class="fas @icon"></i></span>
                                 @category.CategoryName
                             </a>
                         </li>
